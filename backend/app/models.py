@@ -7,11 +7,13 @@ Relationships:
 Uses JSON (JSONB on PostgreSQL) for array/dict fields to keep the schema
 flexible for travel content (highlights, galleries, inclusions, etc.).
 """
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from typing import Optional
 
 from sqlalchemy import (
     JSON,
     Boolean,
+    Date,
     DateTime,
     ForeignKey,
     Integer,
@@ -31,6 +33,38 @@ def utcnow() -> datetime:
 def json_column(default_factory: callable) -> Mapped[list]:
     """Helper for JSON columns defaulting to an empty list."""
     return mapped_column(JSON, default=default_factory)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String(254), unique=True, index=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(160), nullable=False, default="")
+    phone: Mapped[str] = mapped_column(String(60), default="")
+    country: Mapped[str] = mapped_column(String(120), default="")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    bookings: Mapped[list["Booking"]] = relationship(back_populates="user")
+    reset_tokens: Mapped[list["PasswordResetToken"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    user: Mapped["User"] = relationship(back_populates="reset_tokens")
 
 
 class Destination(Base):
@@ -89,6 +123,7 @@ class Package(Base):
     meal_summary: Mapped[str] = mapped_column(Text, default="")
     cancellation_policy: Mapped[str] = mapped_column(Text, default="")
     important_information: Mapped[list] = json_column(list)
+    booking_mode: Mapped[str] = mapped_column(String(32), default="REQUEST_ONLY")
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
@@ -144,3 +179,85 @@ Package.faqs = relationship(
     cascade="all, delete-orphan",
     order_by="PackageFaq.sort_order",
 )
+
+
+class Booking(Base):
+    __tablename__ = "bookings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    booking_reference: Mapped[str] = mapped_column(String(32), unique=True, index=True, nullable=False)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    package_id: Mapped[int] = mapped_column(ForeignKey("packages.id", ondelete="RESTRICT"), nullable=False, index=True)
+    travel_date: Mapped[date] = mapped_column(Date, nullable=False)
+    adults: Mapped[int] = mapped_column(Integer, nullable=False)
+    children: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    infants: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    departure_information: Mapped[str] = mapped_column(Text, default="")
+    full_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    email: Mapped[str] = mapped_column(String(254), nullable=False, index=True)
+    phone: Mapped[str] = mapped_column(String(60), nullable=False)
+    country: Mapped[str] = mapped_column(String(120), nullable=False)
+    special_requirements: Mapped[str] = mapped_column(Text, default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    subtotal: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    taxes: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False, default=0)
+    total: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING_CONFIRMATION", index=True)
+    payment_status: Mapped[str] = mapped_column(String(32), nullable=False, default="NOT_REQUIRED")
+    package_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    destination_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    duration_days: Mapped[int] = mapped_column(Integer, nullable=False)
+    booking_mode: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    package: Mapped["Package"] = relationship()
+    user: Mapped[Optional["User"]] = relationship(back_populates="bookings")
+    travellers: Mapped[list["BookingTraveller"]] = relationship(back_populates="booking", cascade="all, delete-orphan")
+    payments: Mapped[list["Payment"]] = relationship(back_populates="booking", cascade="all, delete-orphan")
+    documents: Mapped[list["BookingDocument"]] = relationship(back_populates="booking", cascade="all, delete-orphan")
+
+
+class BookingTraveller(Base):
+    __tablename__ = "booking_travellers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), nullable=False, index=True)
+    traveller_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    booking: Mapped["Booking"] = relationship(back_populates="travellers")
+
+
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), nullable=False, index=True)
+    amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
+    provider: Mapped[str] = mapped_column(String(64), default="")
+    provider_reference: Mapped[str] = mapped_column(String(160), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    booking: Mapped["Booking"] = relationship(back_populates="payments")
+
+
+class BookingDocument(Base):
+    """A downloadable document for a booking, authored by staff."""
+
+    __tablename__ = "booking_documents"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), nullable=False, index=True)
+    document_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    file_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    file_path: Mapped[str] = mapped_column(String(500), nullable=False)
+    is_secure: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    booking: Mapped["Booking"] = relationship(back_populates="documents")

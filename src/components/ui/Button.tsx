@@ -30,6 +30,7 @@ type ButtonProps = {
   type?: "button" | "submit";
   onClick?: () => void;
   ariaLabel?: string;
+  disabled?: boolean;
 };
 
 export function Button({
@@ -41,8 +42,9 @@ export function Button({
   type = "button",
   onClick,
   ariaLabel,
+  disabled = false,
 }: ButtonProps) {
-  const cls = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+  const cls = `${base} ${variants[variant]} ${sizes[size]} ${className} ${disabled ? "pointer-events-none opacity-60" : ""}`;
 
   if (href) {
     return (
@@ -53,7 +55,7 @@ export function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} className={cls} aria-label={ariaLabel}>
+    <button type={type} onClick={onClick} className={cls} aria-label={ariaLabel} disabled={disabled}>
       {children}
     </button>
   );

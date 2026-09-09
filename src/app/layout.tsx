@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { Providers } from "@/components/providers";
+import { LayoutShell } from "@/components/layout/LayoutShell";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -34,11 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${manrope.variable} ${serifDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ivory text-charcoal">
-        <Providers>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </Providers>
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );

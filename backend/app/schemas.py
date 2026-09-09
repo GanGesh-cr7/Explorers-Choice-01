@@ -1,5 +1,5 @@
 """Pydantic schemas for the destination/package system."""
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -113,6 +113,7 @@ class PackageBase(BaseModel):
     meal_summary: str = ""
     cancellation_policy: str = ""
     important_information: list[str] = []
+    booking_mode: str = Field(default="REQUEST_ONLY", pattern=r"^(REQUEST_ONLY|INSTANT_BOOKING)$")
     is_featured: bool = False
     is_active: bool = True
 
@@ -142,6 +143,7 @@ class PackageUpdate(BaseModel):
     meal_summary: Optional[str] = None
     cancellation_policy: Optional[str] = None
     important_information: Optional[list[str]] = None
+    booking_mode: Optional[str] = Field(default=None, pattern=r"^(REQUEST_ONLY|INSTANT_BOOKING)$")
     is_featured: Optional[bool] = None
     is_active: Optional[bool] = None
 
@@ -191,3 +193,148 @@ class PackageSummary(PackageBase):
 
 
 PackageCreate.model_rebuild()
+
+
+# ---------------------------------------------------------------------------
+# Booking schemas
+# ---------------------------------------------------------------------------
+class BookingCreate(BaseModel):
+    package_slug: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$", max_length=220)
+    travel_date: date
+    adults: int = Field(ge=1, le=20)
+    children: int = Field(default=0, ge=0, le=20)
+    infants: int = Field(default=0, ge=0, le=10)
+    departure_information: str = Field(default="", max_length=1000)
+    full_name: str = Field(min_length=2, max_length=160)
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    phone: str = Field(min_length=5, max_length=60)
+    country: str = Field(min_length=2, max_length=120)
+    special_requirements: str = Field(default="", max_length=4000)
+    notes: str = Field(default="", max_length=4000)
+
+
+class BookingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    booking_reference: str
+    package_name: str
+    destination_name: str
+    travel_date: date
+    adults: int
+    children: int
+    infants: int
+    subtotal: float
+    taxes: float
+    total: float
+    currency: str
+    status: str
+    payment_status: str
+    booking_mode: str
+    created_at: datetime
+
+
+class BookingStatusUpdate(BaseModel):
+    status: str = Field(pattern=r"^(PENDING|PENDING_CONFIRMATION|CONFIRMED|PAYMENT_PENDING|PARTIALLY_PAID|PAID|CANCELLED|COMPLETED)$")
+    payment_status: Optional[str] = Field(default=None, pattern=r"^(NOT_REQUIRED|PENDING|PARTIALLY_PAID|PAID|FAILED|REFUNDED)$")
+
+
+class BookingDetail(BaseModel):
+    """Authorized owner/admin view of a single booking."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    booking_reference: str
+    package_id: int
+    package_name: str
+    destination_name: str
+    duration_days: int
+    travel_date: date
+    adults: int
+    children: int
+    infants: int
+    departure_information: str
+    country: str
+    special_requirements: str
+    notes: str
+    subtotal: float
+    taxes: float
+    total: float
+    currency: str
+    status: str
+    payment_status: str
+    booking_mode: str
+    created_at: datetime
+    updated_at: datetime
+    payments: list["PaymentRead"] = []
+    documents: list["DocumentRead"] = []
+
+
+class PaymentRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    amount: float
+    currency: str
+    status: str
+    provider_reference: str
+    created_at: datetime
+
+
+class DocumentRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    document_type: str
+    title: str
+    file_name: str
+    created_at: datetime
+
+
+# ---------------------------------------------------------------------------
+# Customer authentication + profile
+# ---------------------------------------------------------------------------
+class UserCreate(BaseModel):
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    password: str = Field(min_length=8, max_length=128)
+    full_name: str = Field(min_length=2, max_length=160)
+    phone: str = Field(default="", max_length=60)
+    country: str = Field(default="", max_length=120)
+
+
+class UserRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    full_name: str
+    phone: str
+    country: str
+    created_at: datetime
+
+
+class LoginRequest(BaseModel):
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    password: str = Field(min_length=1, max_length=128)
+
+
+class ProfileUpdate(BaseModel):
+    full_name: Optional[str] = Field(default=None, min_length=2, max_length=160)
+    phone: Optional[str] = Field(default=None, max_length=60)
+    country: Optional[str] = Field(default=None, max_length=120)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(min_length=1, max_length=300)
+    password: str = Field(min_length=8, max_length=128)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)
+
+
+BookingDetail.model_rebuild()

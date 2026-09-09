@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { DestinationCard } from "@/components/cards/DestinationCard";
 import { destinations } from "@/data/destinations";
 

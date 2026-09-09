@@ -1,10 +1,13 @@
 "use client";
 
+"use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { useAuth } from "@/components/providers";
 
 const navLinks = [
   { label: "Destinations", href: "/destinations" },
@@ -33,6 +36,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -40,11 +44,6 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // Close the menu on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   return (
     <header
@@ -75,12 +74,7 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <Link
-            href="/login"
-            className="text-sm font-semibold text-charcoal-soft transition-colors hover:text-forest"
-          >
-            Login
-          </Link>
+          {user ? <Link href="/account" className="text-sm font-semibold text-charcoal-soft transition-colors hover:text-forest">{user.full_name || user.email}</Link> : <Link href="/login" className="text-sm font-semibold text-charcoal-soft transition-colors hover:text-forest">Login</Link>}
           <Button href="/book" variant="primary" size="sm">
             Book Now
           </Button>
@@ -115,6 +109,7 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={() => setOpen(false)}
                   className="border-b border-line/60 py-4 text-base font-semibold text-charcoal last:border-0 hover:text-terracotta"
                 >
                   {link.label}
@@ -122,13 +117,8 @@ export function Header() {
               ))}
             </nav>
             <div className="mt-4 flex flex-col gap-3">
-              <Link
-                href="/login"
-                className="rounded-full border border-forest/25 py-2.5 text-center text-sm font-semibold text-forest"
-              >
-                Login
-              </Link>
-              <Button href="/book" variant="primary" size="md" className="w-full">
+              {user ? <Link href="/account" onClick={() => setOpen(false)} className="rounded-full border border-forest/25 py-2.5 text-center text-sm font-semibold text-forest">My Trips</Link> : <Link href="/login" onClick={() => setOpen(false)} className="rounded-full border border-forest/25 py-2.5 text-center text-sm font-semibold text-forest">Login</Link>}
+              <Button href="/book" variant="primary" size="md" className="w-full" onClick={() => setOpen(false)}>
                 Book Now
               </Button>
             </div>

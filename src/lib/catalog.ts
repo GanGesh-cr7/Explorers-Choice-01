@@ -60,7 +60,6 @@ function toDestination(api: Record<string, unknown>): Destination {
 function toPackage(api: Record<string, unknown>, detail = false): CatalogPackageDetail {
   const destination = api.destination as Record<string, unknown> | undefined;
   const durationDays = Number(api.duration_days ?? 0);
-  const durationNights = Number(api.duration_nights ?? Math.max(durationDays - 1, 0));
   const itinerary = Array.isArray(api.itinerary) ? (api.itinerary as ApiItineraryDay[]) : [];
   const faqs = Array.isArray(api.faqs) ? (api.faqs as ApiPackageFaq[]) : [];
   return {
