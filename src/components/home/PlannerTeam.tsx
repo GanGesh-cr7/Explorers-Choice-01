@@ -8,6 +8,7 @@ export function PlannerTeam() {
     <section className="border-t border-line bg-forest text-ivory">
       <Container className="py-20 sm:py-24">
         <SectionHeading
+          onDark
           eyebrow="Your travel team"
           title="The people who'll plan your trip"
           description="Real people, real questions, real answers. Meet the planners who design every journey and stay on call while you travel."

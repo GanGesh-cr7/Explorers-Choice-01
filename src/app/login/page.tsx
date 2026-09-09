@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { loginUser } from "@/lib/auth";
+import { useAuth } from "@/components/providers";
 
 const fieldClasses =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none";
@@ -14,6 +14,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/account";
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +24,7 @@ function LoginContent() {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      await loginUser({ email, password });
+      await login(email, password);
       router.push(redirect);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed. Please try again.");

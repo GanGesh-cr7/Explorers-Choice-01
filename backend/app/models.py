@@ -44,7 +44,12 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String(160), nullable=False, default="")
     phone: Mapped[str] = mapped_column(String(60), default="")
     country: Mapped[str] = mapped_column(String(120), default="")
+    role: Mapped[str] = mapped_column(
+        String(32), nullable=False, default="CUSTOMER", index=True
+    )  # CUSTOMER | TRAVEL_AGENT | MANAGER | ACCOUNTANT | ADMIN
+    is_staff: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    token_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # bumped on password change/reset
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
@@ -261,3 +266,131 @@ class BookingDocument(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     booking: Mapped["Booking"] = relationship(back_populates="documents")
+
+
+class BookingNote(Base):
+    """Internal operations note attached to a booking (never customer-visible)."""
+
+    __tablename__ = "booking_notes"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    booking: Mapped["Booking"] = relationship(back_populates="internal_notes")
+    author: Mapped[Optional["User"]] = relationship(foreign_keys=[user_id])
+
+
+Booking.internal_notes = relationship(
+    "BookingNote",
+    back_populates="booking",
+    cascade="all, delete-orphan",
+    order_by="BookingNote.created_at.desc()",
+)
+
+
+class Enquiry(Base):
+    """CRM lead captured from the site or logged in by staff."""
+
+    __tablename__ = "enquiries"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    customer_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    email: Mapped[str] = mapped_column(String(254), nullable=False, index=True)
+    phone: Mapped[str] = mapped_column(String(60), default="")
+    country: Mapped[str] = mapped_column(String(120), default="")
+    destination_interest: Mapped[str] = mapped_column(String(160), default="")
+    package_id: Mapped[int | None] = mapped_column(ForeignKey("packages.id", ondelete="SET NULL"), nullable=True)
+    package_name: Mapped[str] = mapped_column(String(200), default="")
+    travel_date_from: Mapped[date | None] = mapped_column(Date, nullable=True)
+    travel_date_to: Mapped[date | None] = mapped_column(Date, nullable=True)
+    travellers: Mapped[int] = mapped_column(Integer, default=2)
+    budget: Mapped[str] = mapped_column(String(120), default="")
+    message: Mapped[str] = mapped_column(Text, default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default="NEW", index=True
+    )  # NEW → CONTACTED → REQUIREMENTS_COLLECTED → PLANNING → QUOTE_SENT → NEGOTIATION → WON|LOST
+    assigned_staff_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    last_contact_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    next_action: Mapped[str] = mapped_column(String(320), default="")
+    next_action_at: Mapped[date | None] = mapped_column(Date, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    package: Mapped[Optional["Package"]] = relationship()
+    assigned_staff: Mapped[Optional["User"]] = relationship()
+
+
+class CustomerStory(Base):
+    """Featured traveller testimonials (replaces reviews)."""
+
+    __tablename__ = "customer_stories"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    customer_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    destination: Mapped[str] = mapped_column(String(160), default="")
+    package_id: Mapped[int | None] = mapped_column(ForeignKey("packages.id", ondelete="SET NULL"), nullable=True)
+    package_name: Mapped[str] = mapped_column(String(200), default="")
+    story: Mapped[str] = mapped_column(Text, default="")
+    photos: Mapped[list] = json_column(list)
+    travel_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    package: Mapped[Optional["Package"]] = relationship()
+
+
+class Offer(Base):
+    """Marketing offer that can be shown on packages."""
+
+    __tablename__ = "offers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    code: Mapped[str] = mapped_column(String(40), default="")
+    description: Mapped[str] = mapped_column(Text, default="")
+    discount_type: Mapped[str] = mapped_column(String(16), default="PERCENT")  # PERCENT | FIXED
+    discount_value: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+    package_id: Mapped[int | None] = mapped_column(ForeignKey("packages.id", ondelete="SET NULL"), nullable=True)
+    package_name: Mapped[str] = mapped_column(String(200), default="")
+    valid_from: Mapped[date | None] = mapped_column(Date, nullable=True)
+    valid_to: Mapped[date | None] = mapped_column(Date, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+    package: Mapped[Optional["Package"]] = relationship()
+
+
+class AuditLog(Base):
+    """Immutable record of important staff/admin actions."""
+
+    __tablename__ = "audit_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    username: Mapped[str] = mapped_column(String(254), default="")
+    action: Mapped[str] = mapped_column(String(120), nullable=False)
+    entity: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[str] = mapped_column(String(64), default="")
+    details: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+    user: Mapped[Optional["User"]] = relationship()
+
+
+class Setting(Base):
+    """Company-wide key/value settings edited by administrators."""
+
+    __tablename__ = "settings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    key: Mapped[str] = mapped_column(String(120), unique=True, index=True, nullable=False)
+    value: Mapped[dict] = mapped_column(JSON, default=dict)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

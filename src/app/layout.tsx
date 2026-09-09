@@ -17,12 +17,30 @@ const serifDisplay = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
     default: "Explorers Choice — Journeys Worth Remembering",
     template: "%s | Explorers Choice",
   },
   description:
     "Carefully chosen journeys, memorable places, and a travel team that handles the details. Explore curated destinations and packages with Explorers Choice.",
+  openGraph: {
+    type: "website",
+    title: "Explorers Choice — Journeys Worth Remembering",
+    description:
+      "Carefully chosen journeys, memorable places, and a travel team that handles the details.",
+    siteName: "Explorers Choice",
+  },
+  twitter: {
+    card: "summary",
+    title: "Explorers Choice — Journeys Worth Remembering",
+    description:
+      "Carefully chosen journeys, memorable places, and a travel team that handles the details.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

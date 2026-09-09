@@ -27,6 +27,8 @@ export default function ForgotPasswordPage() {
     }
   }
 
+  const emailNotConfigured = /not configured/i.test(error);
+
   return (
     <Container className="flex flex-1 flex-col items-center justify-center py-20">
       <div className="w-full max-w-sm">
@@ -49,7 +51,16 @@ export default function ForgotPasswordPage() {
               Enter your registered email and we&apos;ll send you a link to set a new password.
             </p>
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-              {error && <p className="rounded-xl border border-terracotta/30 bg-terracotta/10 p-4 text-sm text-charcoal">{error}</p>}
+              {emailNotConfigured ? (
+                <div className="rounded-xl border border-terracotta/30 bg-terracotta/10 p-4">
+                  <p className="text-sm font-semibold text-forest">Email delivery isn&apos;t set up yet.</p>
+                  <p className="mt-1 text-sm text-charcoal-soft">
+                    Password-reset emails aren&apos;t configured on this server. Please contact our team and they&apos;ll help you reset your password.
+                  </p>
+                </div>
+              ) : (
+                error && <p className="rounded-xl border border-terracotta/30 bg-terracotta/10 p-4 text-sm text-charcoal">{error}</p>
+              )}
               <label className="block text-sm font-semibold text-forest">
                 Email
                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className={`${fieldClasses} mt-2`} />

@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from .. import crud, schemas, security
-from ..admin_auth import require_admin
 from ..database import get_db
 
 router = APIRouter()
@@ -38,41 +37,62 @@ def create_booking(
     return booking
 
 
+@router.get("/reference/{reference}", response_model=schemas.BookingConfirmationRead)
+def get_booking_confirmation(reference: str, db: Session = Depends(get_db)):
+    """Public confirmation lookup by booking reference.
+
+    Returns only a safe, non-sensitive subset (no contact details / PII) so
+    customers can re-open their confirmation page using the reference. The
+    reference is a high-entropy token, which provides a reasonable barrier to
+    casual enumeration.
+    """
+    booking = crud.get_booking_by_reference(db, reference)
+    if booking is None:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    return booking
+
+
 @admin_router.get(
     "/bookings",
     response_model=list[schemas.BookingRead],
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(security.require_admin)],
 )
 def admin_list_bookings(
     booking_status: str | None = Query(default=None, alias="status"),
     db: Session = Depends(get_db),
 ):
-    return crud.list_bookings(db, status=booking_status)
+    return crud.list_bookings(db, admin_view=True, booking_status=booking_status)
 
 
 @admin_router.get(
     "/bookings/{booking_id}",
-    response_model=schemas.BookingRead,
-    dependencies=[Depends(require_admin)],
+    response_model=schemas.BookingAdminDetail,
+    dependencies=[Depends(security.require_admin)],
 )
 def admin_get_booking(booking_id: int, db: Session = Depends(get_db)):
     booking = crud.get_booking(db, booking_id)
     if booking is None:
         raise HTTPException(status_code=404, detail="Booking not found")
+    booking.package_slug = booking.package.slug
+    booking.payments = crud.list_payments(db, booking.id)
+    booking.documents = crud.list_documents(db, booking.id)
+    booking.travellers = booking.travellers or []
+    booking.internal_notes = crud.list_booking_notes(db, booking.id)
     return booking
 
 
 @admin_router.patch(
     "/bookings/{booking_id}",
     response_model=schemas.BookingRead,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(security.require_roles("TRAVEL_AGENT", "MANAGER", "ADMIN"))],
 )
 def admin_update_booking(
     booking_id: int,
     data: schemas.BookingStatusUpdate,
     db: Session = Depends(get_db),
+    user=Depends(security.require_roles("TRAVEL_AGENT", "MANAGER", "ADMIN")),
 ):
     booking = crud.get_booking(db, booking_id)
     if booking is None:
         raise HTTPException(status_code=404, detail="Booking not found")
-    return crud.update_booking_status(db, booking, data)
+    return crud.update_booking_status(db, booking, data, actor=user)

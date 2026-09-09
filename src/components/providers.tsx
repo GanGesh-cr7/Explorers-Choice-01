@@ -1,15 +1,23 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { fetchCurrentUser, type UserProfile } from "@/lib/auth";
+import { fetchCurrentUser, loginUser, logoutUser, registerUser, type UserProfile } from "@/lib/auth";
 
 type AuthContextType = {
   user: UserProfile | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { email: string; password: string; full_name: string; phone: string; country: string }) => Promise<void>;
+  register: (data: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+};
+
+type RegisterPayload = {
+  email: string;
+  password: string;
+  full_name: string;
+  phone: string;
+  country: string;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,34 +37,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const current = await fetchCurrentUser();
-    if (current) return;
-    // Call login which sets the cookie
-    const response = await fetch((process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "") + "/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
-    const body = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(body?.detail ?? "Incorrect email or password.");
-    setUser(body as UserProfile);
+    const current = await loginUser({ email, password });
+    setUser(current);
+    await refresh();
   };
 
-  const register = async (data: { email: string; password: string; full_name: string; phone: string; country: string }) => {
-    const response = await fetch((process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "") + "/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-    const body = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(body?.detail ?? "We could not create your account. Please try again.");
-    setUser(body as UserProfile);
+  const register = async (data: RegisterPayload) => {
+    const current = await registerUser(data);
+    setUser(current);
+    await refresh();
   };
 
   const logout = async () => {
-    await fetch((process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "") + "/auth/logout", { method: "POST", credentials: "include" });
+    await logoutUser();
     setUser(null);
   };
 

@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { registerUser } from "@/lib/auth";
+import { useAuth } from "@/components/providers";
 
 const fieldClasses = "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -23,7 +24,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      await registerUser({ full_name: fullName, email, phone, country, password });
+      await register({ full_name: fullName, email, phone, country, password });
       router.push("/account");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create your account. Please try again.");

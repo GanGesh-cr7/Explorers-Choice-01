@@ -33,6 +33,7 @@ def my_booking(
     db: Session = Depends(get_db),
 ):
     booking = _owned_booking(db, user, booking_id)
+    booking.package_slug = booking.package.slug
     booking.payments = crud.list_payments(db, booking.id)
     booking.documents = crud.list_documents(db, booking.id)
     return booking

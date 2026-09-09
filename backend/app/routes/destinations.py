@@ -1,13 +1,13 @@
 """Destination endpoints.
 
 Public:  GET /api/destinations, GET /api/destinations/{slug}
-Admin:   POST|PATCH|DELETE under /api/admin/destinations (requires admin key)
+Admin:   POST|PATCH|DELETE under /api/admin/destinations (MANAGER or ADMIN)
 """
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from .. import crud, schemas
-from ..admin_auth import require_admin
+from ..security import require_roles
 from ..database import get_db
 
 router = APIRouter()
@@ -41,7 +41,7 @@ def get_destination(slug: str, db: Session = Depends(get_db)):
     "/destinations",
     response_model=schemas.DestinationRead,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_create_destination(data: schemas.DestinationCreate, db: Session = Depends(get_db)):
     if crud.get_destination(db, slug=data.slug):
@@ -52,7 +52,7 @@ def admin_create_destination(data: schemas.DestinationCreate, db: Session = Depe
 @admin_router.patch(
     "/destinations/{destination_id}",
     response_model=schemas.DestinationRead,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_update_destination(
     destination_id: int, data: schemas.DestinationUpdate, db: Session = Depends(get_db)
@@ -68,7 +68,7 @@ def admin_update_destination(
 @admin_router.delete(
     "/destinations/{destination_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_delete_destination(
     destination_id: int,

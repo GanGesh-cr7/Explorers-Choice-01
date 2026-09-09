@@ -18,6 +18,7 @@ export type BookingSummary = {
 };
 
 export type BookingDetail = BookingSummary & {
+  package_slug: string;
   duration_days: number;
   departure_information: string;
   country: string;
@@ -42,6 +43,31 @@ export type DocumentRecord = {
   title: string;
   file_name: string;
   created_at: string;
+};
+
+export type ItineraryDay = {
+  day_number: number;
+  title: string;
+  description: string;
+  activities: string[];
+  meals: string;
+  accommodation: string;
+  transportation: string;
+};
+
+export type PackageDetail = {
+  id: number;
+  slug: string;
+  name: string;
+  hero_image: string;
+  duration_days: number;
+  itinerary: ItineraryDay[];
+  included: string[];
+  excluded: string[];
+  accommodation_summary: string;
+  transportation_summary: string;
+  meal_summary: string;
+  important_information: string;
 };
 
 const API_URL = (process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
@@ -72,4 +98,10 @@ export async function fetchMyDocuments(bookingId: number): Promise<DocumentRecor
 
 export function buildDocumentDownloadUrl(documentId: number): string {
   return `${API_URL}/account/documents/${documentId}/download`;
+}
+
+export async function fetchPackageDetail(slug: string): Promise<PackageDetail> {
+  const response = await fetch(`${API_URL}/packages/${slug}`);
+  if (!response.ok) throw new Error("Package not found");
+  return (await response.json()) as PackageDetail;
 }

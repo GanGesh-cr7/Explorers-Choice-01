@@ -53,6 +53,11 @@ export default function ProfilePage() {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
         <form onSubmit={handleProfile} className="grid gap-6 sm:grid-cols-2">
           <label className="sm:col-span-2 text-sm font-semibold text-forest">
+            Email
+            <input type="email" disabled value={user?.email ?? ""} className={`${fieldClasses} mt-2 cursor-not-allowed bg-ivory text-charcoal-soft`} />
+            <span className="mt-1.5 block text-xs font-normal text-charcoal-soft">Your email is your sign-in. Please contact support to change it.</span>
+          </label>
+          <label className="sm:col-span-2 text-sm font-semibold text-forest">
             Full name
             <input value={name} onChange={(e) => setName(e.target.value)} className={`${fieldClasses} mt-2`} />
           </label>

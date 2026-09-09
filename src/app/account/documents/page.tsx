@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { fetchMyBookings, fetchMyDocuments, buildDocumentDownloadUrl, type DocumentRecord } from "@/lib/account";
-import { Button } from "@/components/ui/Button";
+import { SupportPanel } from "@/components/account/SupportPanel";
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -18,6 +19,9 @@ export default function DocumentsPage() {
         return Promise.all(ids.map((id) => fetchMyDocuments(id)))
           .then((groups) => groups.flat())
           .then((docs) => !cancelled && setDocuments(docs));
+      })
+      .catch(() => {
+        if (!cancelled) setError("We could not load your documents right now. Please try again shortly.");
       })
       .finally(() => !cancelled && setLoading(false));
     return () => { cancelled = true; };
@@ -33,11 +37,12 @@ export default function DocumentsPage() {
 
       {loading ? (
         <p className="mt-8 text-charcoal-soft">Loading documents…</p>
+      ) : error ? (
+        <p className="mt-8 rounded-xl border border-terracotta/30 bg-terracotta/10 p-4 text-sm text-charcoal">{error}</p>
       ) : documents.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-line bg-cream p-10 text-center">
           <p className="font-display text-2xl text-forest">Your travel documents will appear here once your booking is confirmed.</p>
           <p className="mt-3 text-charcoal-soft">We will prepare your invoices, vouchers and confirmations as your trip approaches.</p>
-          <Button href="/packages" variant="primary" size="md" className="mt-6">Explore Packages</Button>
         </div>
       ) : (
         <div className="mt-8 space-y-4">
@@ -53,10 +58,11 @@ export default function DocumentsPage() {
         </div>
       )}
 
-      <div className="mt-12 rounded-2xl border border-line bg-sand-light/50 p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Need help?</p>
-        <p className="mt-3 text-sm text-charcoal-soft">Your planner can send you a missing voucher or booking confirmation at any time.</p>
-        <Button href="/contact" variant="primary" size="md" className="mt-4">Talk to Explorers Choice</Button>
+      <div className="mt-12">
+        <SupportPanel
+          message="Your planner can send you a missing voucher or booking confirmation at any time."
+          whatsappMessage="Hello Explorers Choice, I am missing a travel document for my booking."
+        />
       </div>
     </>
   );

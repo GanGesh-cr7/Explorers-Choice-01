@@ -610,6 +610,7 @@ PACKAGES = [
             "Lisbon's hills are steep — comfortable shoes essential",
             "Minimum age: 8 years",
         ],
+        "booking_mode": "INSTANT_BOOKING",
         "is_featured": False,
         "itinerary": [
             {"day_number": 1, "title": "Lisbon arrival", "description": "Old town lights and a fado evening.", "activities": ["Arrival", "Fado dinner"], "meals": "Dinner", "accommodation": "Lisbon boutique hotel", "transportation": "Airport transfer"},
@@ -664,6 +665,7 @@ PACKAGES = [
             "Minimum age: 8 years",
             "Pack insect repellent",
         ],
+        "booking_mode": "INSTANT_BOOKING",
         "is_featured": False,
         "itinerary": [
             {"day_number": 1, "title": "San José arrival", "description": "Settle into the capital's green hills.", "activities": ["Arrival", "Orientation"], "meals": "Dinner", "accommodation": "San José hotel", "transportation": "Airport transfer"},

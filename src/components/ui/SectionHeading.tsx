@@ -5,12 +5,14 @@ export function SectionHeading({
   title,
   description,
   align = "left",
+  onDark = false,
   className = "",
 }: {
   eyebrow?: string;
   title: ReactNode;
   description?: ReactNode;
   align?: "left" | "center";
+  onDark?: boolean;
   className?: string;
 }) {
   const alignCls = align === "center" ? "text-center mx-auto" : "text-left";
@@ -21,11 +23,13 @@ export function SectionHeading({
           {eyebrow}
         </p>
       )}
-      <h2 className="font-display text-4xl leading-tight text-forest sm:text-5xl">
+      <h2 className={`font-display text-4xl leading-tight sm:text-5xl ${onDark ? "text-ivory" : "text-forest"}`}>
         {title}
       </h2>
       {description && (
-        <p className="mt-5 text-lg leading-relaxed text-charcoal-soft">{description}</p>
+        <p className={`mt-5 text-lg leading-relaxed ${onDark ? "text-ivory/75" : "text-charcoal-soft"}`}>
+          {description}
+        </p>
       )}
     </div>
   );

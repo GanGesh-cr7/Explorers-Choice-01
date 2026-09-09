@@ -234,8 +234,32 @@ class BookingRead(BaseModel):
     created_at: datetime
 
 
+class BookingConfirmationRead(BaseModel):
+    """A safe, non-sensitive subset of a booking for the public confirmation
+    page. Never exposes contact details or any PII."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    booking_reference: str
+    package_name: str
+    destination_name: str
+    duration_days: int
+    travel_date: date
+    adults: int
+    children: int
+    infants: int
+    subtotal: float
+    taxes: float
+    total: float
+    currency: str
+    status: str
+    payment_status: str
+    booking_mode: str
+    created_at: datetime
+
+
 class BookingStatusUpdate(BaseModel):
-    status: str = Field(pattern=r"^(PENDING|PENDING_CONFIRMATION|CONFIRMED|PAYMENT_PENDING|PARTIALLY_PAID|PAID|CANCELLED|COMPLETED)$")
+    status: str = Field(pattern=r"^(PENDING|PENDING_CONFIRMATION|CONFIRMED|PAYMENT_PENDING|PARTIALLY_PAID|PAID|UPCOMING|TRAVELLING|COMPLETED|CANCELLED)$")
     payment_status: Optional[str] = Field(default=None, pattern=r"^(NOT_REQUIRED|PENDING|PARTIALLY_PAID|PAID|FAILED|REFUNDED)$")
 
 
@@ -246,6 +270,7 @@ class BookingDetail(BaseModel):
 
     booking_reference: str
     package_id: int
+    package_slug: str = ""
     package_name: str
     destination_name: str
     duration_days: int
@@ -273,11 +298,15 @@ class BookingDetail(BaseModel):
 class PaymentRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
+    booking_id: int
     amount: float
     currency: str
     status: str
+    provider: str
     provider_reference: str
     created_at: datetime
+    updated_at: datetime
 
 
 class DocumentRead(BaseModel):
@@ -309,6 +338,8 @@ class UserRead(BaseModel):
     full_name: str
     phone: str
     country: str
+    role: str
+    is_staff: bool
     created_at: datetime
 
 
@@ -337,4 +368,344 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(min_length=8, max_length=128)
 
 
+# ---------------------------------------------------------------------------
+# Staff / roles
+# ---------------------------------------------------------------------------
+class UserBasicRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    full_name: str
+    role: str
+    is_staff: bool
+
+
+class StaffCreate(BaseModel):
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    password: str = Field(min_length=8, max_length=128)
+    full_name: str = Field(min_length=2, max_length=160)
+    phone: str = Field(default="", max_length=60)
+    country: str = Field(default="", max_length=120)
+    role: str = Field(pattern=r"^(TRAVEL_AGENT|MANAGER|ACCOUNTANT|ADMIN)$")
+
+
+class StaffUpdate(BaseModel):
+    full_name: Optional[str] = Field(default=None, min_length=2, max_length=160)
+    phone: Optional[str] = None
+    country: Optional[str] = None
+    role: Optional[str] = Field(default=None, pattern=r"^(TRAVEL_AGENT|MANAGER|ACCOUNTANT|ADMIN)$")
+    is_active: Optional[bool] = None
+
+
+class StaffRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    full_name: str
+    phone: str
+    country: str
+    role: str
+    is_staff: bool
+    is_active: bool
+    created_at: datetime
+
+
+# ---------------------------------------------------------------------------
+# Booking notes + admin booking detail
+# ---------------------------------------------------------------------------
+class BookingNoteRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    booking_id: int
+    body: str
+    created_at: datetime
+    author: Optional[UserBasicRead] = None
+
+
+class BookingNoteCreate(BaseModel):
+    body: str = Field(min_length=1, max_length=4000)
+
+
+class TravellerRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    traveller_type: str
+    quantity: int
+
+
+class BookingAdminDetail(BookingDetail):
+    id: int
+    full_name: str
+    email: str
+    phone: str
+    user: Optional[UserBasicRead] = None
+    travellers: list[TravellerRead] = []
+    internal_notes: list[BookingNoteRead] = []
+    payments: list[PaymentRead] = []
+    documents: list[DocumentRead] = []
+
+
+class PaymentUpdate(BaseModel):
+    status: str = Field(pattern=r"^(PENDING|PARTIALLY_PAID|PAID|FAILED|REFUNDED)$")
+    provider_reference: Optional[str] = Field(default=None, max_length=160)
+
+
+class ManualPaymentCreate(BaseModel):
+    booking_id: int
+    amount: float = Field(gt=0)
+    currency: str = Field(default="USD", max_length=3)
+    status: str = Field(default="PAID", pattern=r"^(PENDING|PARTIALLY_PAID|PAID|FAILED|REFUNDED)$")
+    provider: str = Field(default="manual", max_length=64)
+    provider_reference: str = Field(default="", max_length=160)
+
+
+class DocumentAdminRead(DocumentRead):
+    booking_id: int
+
+
+# ---------------------------------------------------------------------------
+# Enquiry CRM
+# ---------------------------------------------------------------------------
+class EnquiryCreate(BaseModel):
+    customer_name: str = Field(min_length=1, max_length=160)
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    phone: str = ""
+    country: str = ""
+    destination_interest: str = ""
+    package_id: Optional[int] = None
+    travel_date_from: Optional[date] = None
+    travel_date_to: Optional[date] = None
+    travellers: int = Field(default=2, ge=1, le=50)
+    budget: str = ""
+    message: str = ""
+    notes: str = ""
+    status: str = Field(default="NEW", pattern=r"^(NEW|CONTACTED|REQUIREMENTS_COLLECTED|PLANNING|QUOTE_SENT|NEGOTIATION|WON|LOST)$")
+    assigned_staff_id: Optional[int] = None
+    next_action: str = ""
+    next_action_at: Optional[date] = None
+
+
+class EnquiryUpdate(BaseModel):
+    customer_name: Optional[str] = Field(default=None, min_length=1, max_length=160)
+    email: Optional[str] = Field(default=None, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    phone: Optional[str] = None
+    country: Optional[str] = None
+    destination_interest: Optional[str] = None
+    package_id: Optional[int] = None
+    travel_date_from: Optional[date] = None
+    travel_date_to: Optional[date] = None
+    travellers: Optional[int] = Field(default=None, ge=1, le=50)
+    budget: Optional[str] = None
+    message: Optional[str] = None
+    notes: Optional[str] = None
+    status: Optional[str] = Field(default=None, pattern=r"^(NEW|CONTACTED|REQUIREMENTS_COLLECTED|PLANNING|QUOTE_SENT|NEGOTIATION|WON|LOST)$")
+    assigned_staff_id: Optional[int] = None
+    last_contact_at: Optional[datetime] = None
+    next_action: Optional[str] = None
+    next_action_at: Optional[date] = None
+
+
+class EnquiryRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    customer_name: str
+    email: str
+    phone: str
+    country: str
+    destination_interest: str
+    package_id: Optional[int] = None
+    package_name: str
+    travel_date_from: Optional[date] = None
+    travel_date_to: Optional[date] = None
+    travellers: int
+    budget: str
+    message: str
+    notes: str
+    status: str
+    assigned_staff_id: Optional[int] = None
+    assigned_staff: Optional[UserBasicRead] = None
+    last_contact_at: Optional[datetime] = None
+    next_action: str
+    next_action_at: Optional[date] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+# ---------------------------------------------------------------------------
+# Customer stories + offers
+# ---------------------------------------------------------------------------
+class CustomerStoryBase(BaseModel):
+    customer_name: str = Field(min_length=1, max_length=160)
+    destination: str = ""
+    package_id: Optional[int] = None
+    story: str = ""
+    photos: list[str] = []
+    travel_date: Optional[date] = None
+    is_featured: bool = False
+    is_published: bool = True
+
+
+class CustomerStoryCreate(CustomerStoryBase):
+    pass
+
+
+class CustomerStoryUpdate(BaseModel):
+    customer_name: Optional[str] = Field(default=None, min_length=1, max_length=160)
+    destination: Optional[str] = None
+    package_id: Optional[int] = None
+    story: Optional[str] = None
+    photos: Optional[list[str]] = None
+    travel_date: Optional[date] = None
+    is_featured: Optional[bool] = None
+    is_published: Optional[bool] = None
+
+
+class CustomerStoryRead(CustomerStoryBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    package_name: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class OfferBase(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+    code: str = ""
+    description: str = ""
+    discount_type: str = Field(default="PERCENT", pattern=r"^(PERCENT|FIXED)$")
+    discount_value: float = Field(ge=0, default=0)
+    package_id: Optional[int] = None
+    valid_from: Optional[date] = None
+    valid_to: Optional[date] = None
+    is_active: bool = True
+
+
+class OfferCreate(OfferBase):
+    pass
+
+
+class OfferUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    code: Optional[str] = None
+    description: Optional[str] = None
+    discount_type: Optional[str] = Field(default=None, pattern=r"^(PERCENT|FIXED)$")
+    discount_value: Optional[float] = Field(default=None, ge=0)
+    package_id: Optional[int] = None
+    valid_from: Optional[date] = None
+    valid_to: Optional[date] = None
+    is_active: Optional[bool] = None
+
+
+class OfferRead(OfferBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    package_name: str
+    created_at: datetime
+    updated_at: datetime
+
+
+# ---------------------------------------------------------------------------
+# Audit log + settings
+# ---------------------------------------------------------------------------
+class AuditLogRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    user_id: Optional[int] = None
+    username: str
+    action: str
+    entity: str
+    entity_id: str
+    details: str
+    created_at: datetime
+
+
+class SettingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    key: str
+    value: dict
+    updated_at: datetime
+
+
+class SettingUpdate(BaseModel):
+    value: dict
+
+
+# ---------------------------------------------------------------------------
+# Admin dashboard
+# ---------------------------------------------------------------------------
+class DashboardMetric(BaseModel):
+    label: str
+    value: int
+
+
+class DashboardAction(BaseModel):
+    kind: str  # booking_departure | enquiry_followup
+    id: int
+    title: str
+    when: str
+    href: str
+
+
+class DashboardPaymentItem(BaseModel):
+    booking_ref: str
+    amount: float
+    currency: str
+    status: str
+    created_at: datetime
+
+
+class DashboardCustomerItem(BaseModel):
+    id: int
+    name: str
+    email: str
+    last_activity: datetime
+
+
+class AdminDashboardRead(BaseModel):
+    new_enquiries: int
+    pending_bookings: int
+    confirmed_bookings: int
+    upcoming_trips: int
+    total_bookings: int
+    today_actions: list[DashboardAction]
+    recent_payments: list[DashboardPaymentItem]
+    recent_customers: list[DashboardCustomerItem]
+    booking_status_counts: dict[str, int]
+
+
+# ---------------------------------------------------------------------------
+# Customers (admin)
+# ---------------------------------------------------------------------------
+class CustomerAdminRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    full_name: str
+    phone: str
+    country: str
+    role: str
+    is_active: bool
+    created_at: datetime
+
+    booking_count: int = 0
+    enquiry_count: int = 0
+    total_spent: float = 0
+
+
+class CustomerAdminDetail(CustomerAdminRead):
+    bookings: list[BookingAdminDetail] = []
+    enquiries: list[EnquiryRead] = []
+
+
 BookingDetail.model_rebuild()
+BookingAdminDetail.model_rebuild()
+CustomerAdminDetail.model_rebuild()

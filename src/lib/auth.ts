@@ -4,6 +4,8 @@ export type UserProfile = {
   full_name: string;
   phone: string;
   country: string;
+  role: string;
+  is_staff: boolean;
   created_at: string;
 };
 

@@ -1,13 +1,13 @@
 """Package endpoints.
 
 Public:  GET /api/packages, GET /api/packages/{slug}
-Admin:   POST|PATCH|DELETE under /api/admin/packages (requires admin key)
+Admin:   POST|PATCH|DELETE under /api/admin/packages (MANAGER or ADMIN)
 """
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from .. import crud, models, schemas
-from ..admin_auth import require_admin
+from ..security import require_roles
 from ..database import get_db
 
 router = APIRouter()
@@ -44,7 +44,7 @@ def get_package(slug: str, db: Session = Depends(get_db)):
     "/packages",
     response_model=schemas.PackageRead,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_create_package(data: schemas.PackageCreate, db: Session = Depends(get_db)):
     if crud.get_destination(db, destination_id=data.destination_id) is None:
@@ -57,7 +57,7 @@ def admin_create_package(data: schemas.PackageCreate, db: Session = Depends(get_
 @admin_router.patch(
     "/packages/{package_id}",
     response_model=schemas.PackageRead,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_update_package(
     package_id: int, data: schemas.PackageUpdate, db: Session = Depends(get_db)
@@ -75,7 +75,7 @@ def admin_update_package(
 @admin_router.delete(
     "/packages/{package_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_delete_package(
     package_id: int,
@@ -95,7 +95,7 @@ def admin_delete_package(
 @admin_router.put(
     "/packages/{package_id}/itinerary",
     response_model=schemas.PackageRead,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_replace_itinerary(
     package_id: int,
@@ -114,7 +114,7 @@ def admin_replace_itinerary(
     "/packages/{package_id}/itinerary",
     response_model=schemas.PackageRead,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(require_admin)],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_add_itinerary_day(
     package_id: int,
