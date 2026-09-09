@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
+/* ============================================================
+   EXPLORERS CHOICE — DESIGN SYSTEM
+   Warm Ivory background · Deep Forest Green primary
+   Charcoal text · Terracotta accent · Sand secondary neutral
+   ============================================================ */
+
+@theme {
+  /* Brand colors */
+  --color-ivory: #F7F3EA;
+  --color-ivory-warm: #FDFBF5;
+  --color-forest: #1E3B2F;
+  --color-forest-dark: #142A21;
+  --color-forest-light: #2C5340;
+  --color-charcoal: #2B2A26;
+  --color-charcoal-soft: #55534C;
+  --color-terracotta: #C4633A;
+  --color-terracotta-dark: #A8502E;
+  --color-terracotta-light: #E8A97F;
+  --color-sand: #E4D9C2;
+  --color-sand-light: #EFE7D6;
+  --color-line: #E2DAC8;
+  --color-cream: #FBF8F1;
+
+  /* Typography */
+  --font-display: var(--font-serif-display), Georgia, serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+
+  /* Shadows */
+  --shadow-soft: 0 2px 12px rgba(30, 59, 47, 0.06);
+  --shadow-lift: 0 10px 30px rgba(30, 59, 47, 0.10);
+  --shadow-card: 0 1px 0 rgba(30, 59, 47, 0.04), 0 8px 24px rgba(30, 59, 47, 0.06);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F7F3EA;
+  --foreground: #2B2A26;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Editorial display type */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Natural image treatment: subtle rounding + soft inner tone */
+.img-natural {
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+/* Tactile button press */
+.btn-press {
+  transition: transform 120ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+.btn-press:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* Focus visibility for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+}
+
+/* Hide scrollbar for story scrollers if used */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
