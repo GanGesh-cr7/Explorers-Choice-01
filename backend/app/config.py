@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Database
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/explorers_choice"
+    database_url: str = "sqlite:///./explorers_choice.db"
 
     # Shared secret used by the admin UI to authenticate admin operations
     # (`X-ADMIN-KEY` header). Keep in sync with the admin area deployment.

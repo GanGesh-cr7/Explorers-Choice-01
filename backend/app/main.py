@@ -5,6 +5,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
 from .config import settings
+from .database import Base, engine
+from . import models
 from .routes import account as account_router
 from .routes import admin as admin_router
 from .routes import auth as auth_router
@@ -17,6 +19,9 @@ app = FastAPI(
     description="Destination, package, itinerary, booking and account management for Explorers Choice.",
     version="2.0.0",
 )
+
+if settings.database_url.startswith("sqlite"):
+    Base.metadata.create_all(bind=engine)
 
 
 @app.exception_handler(IntegrityError)

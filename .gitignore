@@ -47,6 +47,7 @@ next-env.d.ts
 *.pyc
 *.pyo
 *.egg-info/
+*.db
 /dist/
 /build/
 

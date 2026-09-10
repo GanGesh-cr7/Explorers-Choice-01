@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "server:dev": "cd backend && EXPLORERS_ALLOW_INSECURE=true .venv/bin/python -m uvicorn app.main:app --reload",
+    "server:dev": "cd backend && set \"DATABASE_URL=sqlite:///./explorers_choice.db\" && set \"EXPLORERS_ALLOW_INSECURE=true\" && set \"COOKIE_SECURE=false\" && ..\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
