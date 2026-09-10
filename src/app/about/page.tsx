@@ -67,8 +67,8 @@ export default function AboutPage() {
             />
             <div className="mt-6 space-y-5 text-lg leading-relaxed text-charcoal-soft">
               <p>
-                Explorers Choice began in a small kitchen over a map of the Ring Road, with
-                two friends arguing about whether six days was enough for Iceland. (It wasn&apos;t.
+                Explorers Choice began in a small kitchen over a map of Rajasthan, with
+                two friends arguing about whether six days was enough for the desert. (It wasn&apos;t.
                 It is now eight.) Both of us had spent years in the travel industry, watching
                 great places get flattened into checklists and bus itineraries.
               </p>

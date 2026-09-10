@@ -91,7 +91,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-display text-lg text-forest">
-                      {new Intl.NumberFormat(undefined, { style: "currency", currency: p.currency ?? "USD" }).format(p.amount)}
+                      {new Intl.NumberFormat(undefined, { style: "currency", currency: p.currency ?? "INR" }).format(p.amount)}
                     </p>
                     <span className="mt-0.5 inline-block rounded-full bg-ivory px-2.5 py-0.5 text-[11px] font-semibold text-forest">
                       {paymentStatusLabel(p.status)}

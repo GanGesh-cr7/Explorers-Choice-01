@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Package } from "@/data/packages";
 
 export function formatPrice(price: number) {
-  return price.toLocaleString("en-US");
+  return price.toLocaleString("en-IN");
 }
 
 export function PackageCard({ pkg }: { pkg: Package }) {
@@ -59,7 +59,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
           <p className="text-sm text-charcoal-soft">
             From{" "}
             <span className="font-display text-2xl text-forest">
-              ${formatPrice(pkg.startingPrice)}
+              ₹{formatPrice(pkg.startingPrice)}
             </span>{" "}
             <span className="text-xs">/ person</span>
           </p>

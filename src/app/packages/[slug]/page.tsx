@@ -54,7 +54,7 @@ export default async function PackageDetail({ params }: { params: Promise<{ slug
           </h1>
           <p className="mt-2 text-sm uppercase tracking-wide text-ivory/80">
             {pkg.duration} · From{" "}
-            <span className="font-display text-xl">${pkg.startingPrice.toLocaleString()}</span> per person
+            <span className="font-display text-xl">₹{pkg.startingPrice.toLocaleString("en-IN")}</span> per person
           </p>
         </Container>
       </section>
@@ -127,7 +127,7 @@ export default async function PackageDetail({ params }: { params: Promise<{ slug
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Starting from</p>
             <p className="mt-2">
               <span className="font-display text-4xl text-forest">
-                ${pkg.startingPrice.toLocaleString()}
+                ₹{pkg.startingPrice.toLocaleString("en-IN")}
               </span>{" "}
               <span className="text-sm text-charcoal-soft">/ person</span>
             </p>

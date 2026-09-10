@@ -82,7 +82,7 @@ export async function fetchBookingPackages(): Promise<BookingOptionPackage[]> {
         country: String(destination?.country ?? ""),
         duration_days: Number(p.duration_days ?? 0),
         starting_price: Number(p.starting_price ?? 0),
-        currency: String(p.currency ?? "USD").toUpperCase(),
+        currency: String(p.currency ?? "INR").toUpperCase(),
         highlights: Array.isArray(p.highlights) ? p.highlights.map(String) : [],
         booking_mode: (p.booking_mode ?? "REQUEST_ONLY") as BookingMode,
         is_active: Boolean(p.is_active),

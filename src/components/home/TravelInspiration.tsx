@@ -5,19 +5,19 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const inspiration = [
   {
-    title: "The best time to visit Iceland",
+    title: "The best time to visit Rajasthan",
     tag: "When to go",
-    image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Slow travel in the Sacred Valley",
+    title: "Slow travel on the Kerala backwaters",
     tag: "How to travel",
-    image: "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=900&q=80",
   },
   {
-    title: "Packing for Japan, without overpacking",
+    title: "Packing for Ladakh, without overpacking",
     tag: "Plan better",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=900&q=80",
   },
 ];
 

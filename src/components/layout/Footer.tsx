@@ -5,10 +5,10 @@ import { Logo } from "@/components/layout/Header";
 const exploreLinks = [
   { label: "Destinations", href: "/destinations" },
   { label: "Packages", href: "/packages" },
-  { label: "Iceland", href: "/destinations/iceland" },
-  { label: "Peru", href: "/destinations/peru" },
-  { label: "Japan", href: "/destinations/japan" },
-  { label: "Morocco", href: "/destinations/morocco" },
+  { label: "Rajasthan", href: "/destinations/rajasthan" },
+  { label: "Kerala", href: "/destinations/kerala" },
+  { label: "Ladakh", href: "/destinations/ladakh" },
+  { label: "Goa", href: "/destinations/goa" },
 ];
 
 const companyLinks = [
