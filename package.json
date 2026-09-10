@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "server:dev": "set \"EXPLORERS_ALLOW_INSECURE=true\" && set \"COOKIE_SECURE=false\" && cd backend && python -m uvicorn app.main:app --reload --port 8000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

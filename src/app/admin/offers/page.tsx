@@ -126,7 +126,7 @@ export default function AdminOffersPage() {
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <label className="block text-sm font-semibold text-forest sm:col-span-2 lg:col-span-1">
               Title *
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Iceland in the off-season" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none" />
+              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Rajasthan in the off-season" className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none" />
             </label>
             <label className="block text-sm font-semibold text-forest">
               Code
@@ -194,7 +194,7 @@ export default function AdminOffersPage() {
                   {!o.is_active && <span className="rounded-full bg-sand-light px-2.5 py-0.5 text-[11px] font-semibold text-charcoal-soft">inactive</span>}
                 </div>
                 <p className="mt-0.5 text-sm text-charcoal-soft">
-                  {o.discount_type === "PERCENT" ? `${o.discount_value}% off` : `$${o.discount_value} off`}{o.package_name ? ` · ${o.package_name}` : " · any package"}{o.valid_from ? ` · ${formatWhen(o.valid_from)}${o.valid_to ? ` to ${formatWhen(o.valid_to)}` : ""}` : ""}
+                  {o.discount_type === "PERCENT" ? `${o.discount_value}% off` : `₹${o.discount_value} off`}{o.package_name ? ` · ${o.package_name}` : " · any package"}{o.valid_from ? ` · ${formatWhen(o.valid_from)}${o.valid_to ? ` to ${formatWhen(o.valid_to)}` : ""}` : ""}
                 </p>
               </div>
               <div className="flex shrink-0 gap-3">

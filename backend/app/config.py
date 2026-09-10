@@ -3,7 +3,7 @@
 Secrets fail closed: the app refuses to start with the placeholder values
 unless `EXPLORERS_ALLOW_INSECURE=true` is explicitly set for local development.
 """
-from pydantic import model_validator
+from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,7 +29,10 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3100"]
 
     # Local development escape hatch: allows the placeholder secrets above.
-    allow_insecure_defaults: bool = False
+    allow_insecure_defaults: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("EXPLORERS_ALLOW_INSECURE", "ALLOW_INSECURE_DEFAULTS"),
+    )
 
     @model_validator(mode="after")
     def _guard_placeholder_secrets(self) -> "Settings":

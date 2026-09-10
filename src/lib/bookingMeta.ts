@@ -55,8 +55,8 @@ export function bookingModeLabel(mode: string): string {
   return BOOKING_MODE_LABELS[mode as BookingMode] ?? mode;
 }
 
-export function formatMoney(amount: number, currency = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
+export function formatMoney(amount: number, currency = "INR"): string {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,

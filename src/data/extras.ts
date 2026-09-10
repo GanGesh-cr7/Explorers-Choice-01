@@ -9,7 +9,7 @@ export const faqs: Faq[] = [
   {
     question: "Do I need to be fit to travel with you?",
     answer:
-      "You don't need to be an athlete. Most days involve gentle walking—old towns, coastal paths, market strolls. A few packages include a slightly longer hike (the Japanese countryside, the Milford Sound tracks), which our team will flag clearly so you can choose the right trip.",
+      "You don't need to be an athlete. Most days involve gentle walking—heritage lanes, ghats, market strolls. A few packages include a slightly longer hike (the Ladakh high passes, the tea trails of Munnar), which our team will flag clearly so you can choose the right trip.",
   },
   {
     question: "What's included in the price?",
@@ -53,30 +53,30 @@ export type Planner = {
 
 export const planners: Planner[] = [
   {
-    name: "Maya Bennett",
+    name: "Maya Sharma",
     role: "Head of Destinations",
-    speciality: "Iceland · New Zealand · Patagonia",
+    speciality: "Rajasthan · Kashmir · Ladakh",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
     quote: "Travel should leave you with fewer assumptions than you started with.",
   },
   {
-    name: "Alistair Rowan",
+    name: "Arjun Verma",
     role: "Senior Travel Planner",
-    speciality: "Japan · Portugal · Greece",
+    speciality: "Kerala · Goa · Andaman",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80",
     quote: "The best itineraries are the ones that give you room to be surprised.",
   },
   {
-    name: "Fatima El-Amin",
+    name: "Fatima Noor",
     role: "Travel Planner",
-    speciality: "Morocco · Egypt · Jordan",
+    speciality: "Varanasi · Agra · Himachal",
     image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
     quote: "A good guide doesn't explain a place. They introduce you to it.",
   },
   {
-    name: "Lucas O'Keefe",
+    name: "Raghav Iyer",
     role: "Operations & Care",
-    speciality: "Peru · Costa Rica · logistics",
+    speciality: "Goa · Kerala · logistics",
     image: "https://images.unsplash.com/photo-1556157388-97ec21184b4a?auto=format&fit=crop&w=600&q=80",
     quote: "The details that feel invisible on the trip are the ones we worked hardest on.",
   },

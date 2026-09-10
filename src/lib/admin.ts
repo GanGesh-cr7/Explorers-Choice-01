@@ -313,8 +313,8 @@ export function adminDocumentUrl(documentId: number): string {
 
 export function formatMoneyAmount(amount: number, currency?: string): string {
   try {
-    return new Intl.NumberFormat(undefined, { style: "currency", currency: currency ?? "USD" }).format(amount);
+    return new Intl.NumberFormat(undefined, { style: "currency", currency: currency ?? "INR" }).format(amount);
   } catch {
-    return `${currency ?? "$"}${amount}`;
+    return `${currency ?? "₹"}${amount}`;
   }
 }

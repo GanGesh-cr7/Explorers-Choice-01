@@ -7,8 +7,8 @@ export function Hero() {
     <section className="relative overflow-hidden">
       <div className="relative h-[88vh] min-h-[540px] w-full sm:h-[86vh]">
         <Image
-          src="https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=2000&q=80"
-          alt="A glacier lagoon in Iceland reflecting the mountains at twilight"
+          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80"
+          alt="Snow-capped Himalayan peaks glowing at golden hour"
           fill
           priority
           sizes="100vw"
