@@ -20,7 +20,7 @@ export const destinations: Destination[] = [
     tagline: "Chasing waterfalls under the midnight sun",
     description:
       "A land shaped by fire and ice, where thundering waterfalls, black-sand beaches and moss-draped lava fields unfold along the Ring Road. Explorers Choice pairs you with local guides who know the quieter corners—glacial lagoons at golden hour, hot springs away from the crowds.",
-    image: "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=1600&q=80",
+    image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80",
     region: "Nordic",
     bestTime: "June – August",
     highlights: ["Glacier lagoons", "Golden Circle", "Local hot springs", "Ring Road drive"],

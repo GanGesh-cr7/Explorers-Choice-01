@@ -53,9 +53,13 @@ export async function logoutUser(): Promise<void> {
 }
 
 export async function fetchCurrentUser(): Promise<UserProfile | null> {
-  const response = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
-  if (!response.ok) return null;
-  return (await response.json()) as UserProfile;
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
+    if (!response.ok) return null;
+    return (await response.json()) as UserProfile;
+  } catch {
+    return null;
+  }
 }
 
 export async function updateProfile(updates: Partial<Pick<UserProfile, "full_name" | "phone" | "country">>): Promise<UserProfile> {

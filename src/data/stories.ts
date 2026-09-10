@@ -34,7 +34,7 @@ export const stories: Story[] = [
     author: "James Wilson",
     trip: "Morocco Unveiled",
     date: "November 2023",
-    image: "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1400&q=80",
+    image: "https://images.unsplash.com/photo-1489493585363-d69421e0edd3?auto=format&fit=crop&w=1400&q=80",
     body: [
       "The plan was adventure. I had pictured the desert, the souks, the long road through the Atlas. I hadn't pictured sitting on a kitchen floor in a village above the clouds, drinking tea with three generations of a Berber family.",
       "Our driver, Youssef, seemed to know everyone. The woman who made our lunch, the boy who showed us the path to a hidden waterfall, the old man who insisted we share his oranges. Morocco unfolded through people, not places.",

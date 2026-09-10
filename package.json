@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "server:dev": "cd backend && EXPLORERS_ALLOW_INSECURE=true .venv/bin/python -m uvicorn app.main:app --reload",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

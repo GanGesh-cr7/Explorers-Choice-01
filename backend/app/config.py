@@ -3,7 +3,7 @@
 Secrets fail closed: the app refuses to start with the placeholder values
 unless `EXPLORERS_ALLOW_INSECURE=true` is explicitly set for local development.
 """
-from pydantic import model_validator
+from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Database
-    database_url: str = "postgresql://postgres:postgres@localhost:5432/explorers_choice"
+    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/explorers_choice"
 
     # Shared secret used by the admin UI to authenticate admin operations
     # (`X-ADMIN-KEY` header). Keep in sync with the admin area deployment.
@@ -22,14 +22,17 @@ class Settings(BaseSettings):
     secret_key: str = "change-me-customer-secret"
     access_token_expire_minutes: int = 60 * 24  # 24h
 
-    # Session cookie flag. Keep True in production (HTTPS only).
-    cookie_secure: bool = True
+    # Local development uses HTTP; production must set COOKIE_SECURE=true.
+    cookie_secure: bool = False
 
     # CORS origins — the frontend host(s)
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3100"]
 
     # Local development escape hatch: allows the placeholder secrets above.
-    allow_insecure_defaults: bool = False
+    allow_insecure_defaults: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("EXPLORERS_ALLOW_INSECURE", "ALLOW_INSECURE_DEFAULTS"),
+    )
 
     @model_validator(mode="after")
     def _guard_placeholder_secrets(self) -> "Settings":
