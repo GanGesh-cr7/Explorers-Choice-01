@@ -47,7 +47,7 @@ export type BookingOptionPackage = {
   is_active: boolean;
 };
 
-const API_URL = (process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
+import { CLIENT_API_URL as API_URL } from "@/lib/api";
 
 async function readError(response: Response): Promise<string> {
   try {

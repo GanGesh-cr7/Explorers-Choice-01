@@ -13,7 +13,8 @@ const fieldClasses =
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") ?? "/account";
+  const rawRedirect = searchParams.get("redirect") ?? "/account";
+  const redirect = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/account";
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,7 +52,7 @@ function LoginContent() {
           </div>
           <div>
             <label htmlFor="password" className="mb-2 block text-sm font-semibold text-forest">Password</label>
-            <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={fieldClasses} />
+            <input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={fieldClasses} />
           </div>
           <Button type="submit" variant="primary" size="lg" className="w-full" ariaLabel="Sign in" disabled={loading}>
             {loading ? "Signing in…" : "Sign in"}

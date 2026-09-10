@@ -3,7 +3,7 @@ import { destinations as fallbackDestinations } from "@/data/destinations";
 import type { Package as CatalogPackage } from "@/data/packages";
 import { packages as fallbackPackages } from "@/data/packages";
 
-const API_URL = (process.env.EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
+import { SERVER_API_URL as API_URL } from "@/lib/api";
 
 export type ApiItineraryDay = {
   id?: number;

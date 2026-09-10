@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
               )}
               <label className="block text-sm font-semibold text-forest">
                 Email
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className={`${fieldClasses} mt-2`} />
+                <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className={`${fieldClasses} mt-2`} />
               </label>
               <Button type="submit" variant="primary" size="lg" className="w-full" ariaLabel="Send reset link" disabled={loading}>{loading ? "Sending…" : "Send reset link"}</Button>
             </form>

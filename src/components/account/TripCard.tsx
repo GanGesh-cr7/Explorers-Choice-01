@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { formatDate, formatMoney, paymentStatusLabel, statusLabel } from "@/lib/bookingMeta";
 import type { BookingSummary } from "@/lib/account";

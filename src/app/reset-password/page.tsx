@@ -46,7 +46,7 @@ function ResetContent() {
           <h1 className="text-center font-display text-4xl text-forest">Set a new password</h1>
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             {error && <p className="rounded-xl border border-terracotta/30 bg-terracotta/10 p-4 text-sm text-charcoal">{error}</p>}
-            <label className="block text-sm font-semibold text-forest">New password<input required type="password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className={`${fieldClasses} mt-2`} /></label>
+            <label className="block text-sm font-semibold text-forest">New password<input required type="password" minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className={`${fieldClasses} mt-2`} /></label>
             <Button type="submit" variant="primary" size="lg" className="w-full" ariaLabel="Reset password" disabled={loading}>{loading ? "Resetting…" : "Reset password"}</Button>
           </form>
           <p className="mt-6 text-center text-sm text-charcoal-soft"><Link href="/login" className="font-semibold text-terracotta hover:underline">Back to login</Link></p>

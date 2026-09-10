@@ -73,13 +73,12 @@ def download_document(
     booking = crud.get_booking(db, document.booking_id)
     if booking is None or booking.user_id != user.id:
         raise HTTPException(status_code=404, detail="Document not found")
-    # Serve the file; in production this path would be in a secure, non-public store.
-    # For local development, assuming file_path is absolute or relative to backend dir.
-    import os
-    if not os.path.isfile(document.file_path):
+    from pathlib import Path
+    resolved = Path(document.file_path).resolve()
+    if not resolved.is_file():
         raise HTTPException(status_code=404, detail="File not found on server")
     return FileResponse(
-        path=document.file_path,
+        path=str(resolved),
         filename=document.file_name,
         media_type="application/octet-stream",
     )

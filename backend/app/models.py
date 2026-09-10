@@ -13,6 +13,7 @@ from typing import Optional
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     Date,
     DateTime,
     ForeignKey,
@@ -20,6 +21,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -161,6 +163,10 @@ class ItineraryDay(Base):
 
     package: Mapped["Package"] = relationship(back_populates="itinerary")
 
+    __table_args__ = (
+        UniqueConstraint("package_id", "day_number", name="uq_itinerary_day_package_number"),
+    )
+
 
 class PackageFaq(Base):
     """Optional FAQ entries attached to a package (shown on package page)."""
@@ -249,6 +255,10 @@ class Payment(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
     booking: Mapped["Booking"] = relationship(back_populates="payments")
+
+    __table_args__ = (
+        CheckConstraint("amount >= 0", name="ck_payment_amount_non_negative"),
+    )
 
 
 class BookingDocument(Base):
@@ -352,7 +362,7 @@ class Offer(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
-    code: Mapped[str] = mapped_column(String(40), default="")
+    code: Mapped[str] = mapped_column(String(40), default="", index=True)
     description: Mapped[str] = mapped_column(Text, default="")
     discount_type: Mapped[str] = mapped_column(String(16), default="PERCENT")  # PERCENT | FIXED
     discount_value: Mapped[float] = mapped_column(Numeric(12, 2), default=0)

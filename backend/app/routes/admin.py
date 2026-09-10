@@ -191,8 +191,12 @@ def booking_attach_document(
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     safe_name = _safe_stem(file.filename or "document")
     dest = UPLOAD_DIR / f"{booking_id}_{safe_name}"
+    MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20 MB
+    content = file.file.read()
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File too large. Maximum size is 20 MB.")
     with dest.open("wb") as out:
-        out.write(file.file.read())
+        out.write(content)
     document = crud.add_document(
         db, booking_id, document_type, title, file.filename or safe_name, str(dest), actor=user
     )
@@ -213,13 +217,13 @@ def download_document(
     document = crud.get_document(db, document_id)
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
-    path = Path(document.file_path)
-    if not path.is_file():
+    resolved = Path(document.file_path).resolve()
+    if not resolved.is_file():
         raise HTTPException(status_code=404, detail="That file is no longer available")
     return FileResponse(
-        path,
+        str(resolved),
         media_type="application/octet-stream",
-        filename=document.file_name or Path(document.file_path).name,
+        filename=document.file_name or resolved.name,
     )
 
 

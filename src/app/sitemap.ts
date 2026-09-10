@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  const api = (process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
+  const { SERVER_API_URL: api } = await import("@/lib/api");
 
   for (const [prefix, endpoint] of [
     ["/destinations", "/destinations?active=true"],

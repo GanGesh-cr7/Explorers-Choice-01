@@ -47,7 +47,7 @@ export default function RegisterPage() {
           <label className="block text-sm font-semibold text-forest">Email<input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className={`${fieldClasses} mt-2`} /></label>
           <label className="block text-sm font-semibold text-forest">Phone <span className="font-normal text-charcoal-soft">(optional)</span><input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Include country code" className={`${fieldClasses} mt-2`} /></label>
           <label className="block text-sm font-semibold text-forest">Country <span className="font-normal text-charcoal-soft">(optional)</span><input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Your country" className={`${fieldClasses} mt-2`} /></label>
-          <label className="block text-sm font-semibold text-forest">Password<input required type="password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className={`${fieldClasses} mt-2`} /></label>
+          <label className="block text-sm font-semibold text-forest">Password<input required type="password" minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className={`${fieldClasses} mt-2`} /></label>
           <Button type="submit" variant="primary" size="lg" className="w-full" ariaLabel="Create account" disabled={loading}>{loading ? "Creating…" : "Create account"}</Button>
         </form>
         <p className="mt-6 text-center text-sm text-charcoal-soft">

@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/Button";
 
 export function BookingsEmptyState({ message = "Start exploring journeys curated by real local experts." }: { message?: string }) {

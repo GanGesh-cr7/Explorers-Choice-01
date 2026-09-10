@@ -1,7 +1,7 @@
 import type { UserProfile } from "@/lib/auth";
 import type { BookingMode } from "@/lib/bookingMeta";
 
-const API_URL = (process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "");
+import { CLIENT_API_URL as API_URL } from "@/lib/api";
 
 export class AdminApiError extends Error {
   status: number;

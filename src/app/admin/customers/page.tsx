@@ -43,7 +43,7 @@ export default function AdminCustomersPage() {
               </div>
               <div className="flex shrink-0 gap-4 text-sm">
                 <span className="text-charcoal-soft">{c.booking_count} booking{c.booking_count !== 1 ? "s" : ""}</span>
-                <span className="text-charcoal-soft">{c.enquiry_count} enquiry{c.enquiry_count !== 1 ? "ies" : "y"}</span>
+                <span className="text-charcoal-soft">{c.enquiry_count} enquiry{c.enquiry_count !== 1 ? "ies" : ""}</span>
                 <span className="font-semibold text-forest">
                   {new Intl.NumberFormat(undefined, { style: "currency", currency: "INR" }).format(c.total_spent)}
                 </span>

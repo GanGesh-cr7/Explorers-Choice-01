@@ -111,11 +111,7 @@ def optional_current_user(
     request: Request, db: Session = Depends(get_db)
 ) -> models.User | None:
     """Resolve the customer if logged in, else None (used for guest bookings)."""
-    token = request.cookies.get(COOKIE_NAME)
-    decoded = _decode_token(token) if token else None
-    user = crud.get_user(db, user_id=decoded[0]) if decoded is not None and decoded[0] is not None else None
-    if user is None or not user.is_active:
-        return None
+    user = _resolve_token_user(request, db)
     return user
 
 

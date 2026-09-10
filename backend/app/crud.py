@@ -780,14 +780,19 @@ def get_customer_detail(db: Session, user_id: int) -> models.User | None:
     user = db.get(models.User, user_id)
     if user is None or user.role != "CUSTOMER":
         return None
-    user.bookings = db.scalars(
-        select(models.Booking).where(models.Booking.user_id == user_id).order_by(models.Booking.created_at.desc())
-    ).all()
-    for booking in user.bookings:
-        booking.payments = list_payments(db, booking.id)
-        booking.documents = list_documents(db, booking.id)
-        booking.travellers = booking.travellers or []
-        booking.internal_notes = list_booking_notes(db, booking.id)
+    user.bookings = list(
+        db.scalars(
+            select(models.Booking)
+            .options(
+                selectinload(models.Booking.payments),
+                selectinload(models.Booking.documents),
+                selectinload(models.Booking.travellers),
+                selectinload(models.Booking.internal_notes),
+            )
+            .where(models.Booking.user_id == user_id)
+            .order_by(models.Booking.created_at.desc())
+        ).all()
+    )
     user.enquiries = db.scalars(
         select(models.Enquiry).where(models.Enquiry.email == user.email).order_by(models.Enquiry.created_at.desc())
     ).all()

@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { fetchCurrentUser, loginUser, logoutUser, registerUser, type UserProfile } from "@/lib/auth";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { fetchCurrentUser, loginUser, logoutUser, registerUser, type RegisterPayload, type UserProfile } from "@/lib/auth";
 
 type AuthContextType = {
   user: UserProfile | null;
@@ -12,46 +12,36 @@ type AuthContextType = {
   refresh: () => Promise<void>;
 };
 
-type RegisterPayload = {
-  email: string;
-  password: string;
-  full_name: string;
-  phone: string;
-  country: string;
-};
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     const current = await fetchCurrentUser();
     setUser(current);
-  };
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh().finally(() => setLoading(false));
-  }, []);
+  }, [refresh]);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     const current = await loginUser({ email, password });
     setUser(current);
-    await refresh();
-  };
+  }, []);
 
-  const register = async (data: RegisterPayload) => {
+  const register = useCallback(async (data: RegisterPayload) => {
     const current = await registerUser(data);
     setUser(current);
-    await refresh();
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await logoutUser();
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, logout, refresh }}>
