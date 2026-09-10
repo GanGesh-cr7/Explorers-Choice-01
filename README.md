@@ -1,5 +1,30 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Development setup (team)
+
+The app is a Next.js frontend + a FastAPI backend on a shared PostgreSQL database.
+
+**Backend** (from the repo root, once):
+
+```bash
+cd backend
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt
+cp .env.example .env            # fill in SECRET_KEY / ADMIN_API_KEY
+.venv/bin/python -m alembic upgrade head
+```
+
+Then start both servers:
+
+```bash
+npm run dev                                      # frontend → http://localhost:3000
+npm run server:dev                               # backend  → http://localhost:8000
+```
+
+- The frontend calls the API at `http://localhost:8000/api` by default. If your API runs elsewhere, set `NEXT_PUBLIC_EXPLORERS_API_URL`.
+- CORS is open (`["*"]`) for local development because each developer's `next dev` may pick a different port (3000, 3001, 3100…). If login fails with **"Failed to fetch"**, you are almost certainly hitting CORS — the backend must see your frontend origin. Point the backend at your real API host, or verify the origin in the browser's Network tab.
+- Use `http://localhost:3000`, not `http://127.0.0.1:3000`, so the session cookie is treated as same-site.
+
 ## Getting Started
 
 First, run the development server:

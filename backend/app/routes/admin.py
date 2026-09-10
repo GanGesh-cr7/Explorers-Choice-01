@@ -72,6 +72,37 @@ def admin_customer_detail(customer_id: int, db: Session = Depends(get_db), user=
     return customer
 
 
+@router.patch("/customers/{customer_id}/role", response_model=schemas.StaffRead,
+              dependencies=[Depends(require_roles("ADMIN"))])
+def promote_customer(customer_id: int, data: schemas.StaffUpdate, db: Session = Depends(get_db)):
+    customer = crud.get_user(db, user_id=customer_id)
+    if customer is None or customer.is_staff:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    if data.role is None:
+        raise HTTPException(status_code=422, detail="A staff role is required")
+    return crud.update_staff(db, customer, data)
+
+
+@router.delete("/customers/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
+def admin_delete_customer(
+    customer_id: int,
+    db: Session = Depends(get_db),
+    current: models.User = Depends(require_roles("ADMIN")),
+):
+    customer = crud.get_user(db, user_id=customer_id)
+    if customer is None or customer.is_staff:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    crud.audit(
+        db,
+        user=current,
+        action="deleted customer",
+        entity="customer",
+        entity_id=str(customer.id),
+        details=customer.email,
+    )
+    crud.delete_user(db, customer)
+
+
 # ---------------------------------------------------------------------------
 # Enquiries (CRM)
 # ---------------------------------------------------------------------------
@@ -315,6 +346,28 @@ def update_staff(staff_id: int, data: schemas.StaffUpdate, db: Session = Depends
     if staff is None or not staff.is_staff:
         raise HTTPException(status_code=404, detail="Staff member not found")
     return crud.update_staff(db, staff, data)
+
+
+@router.delete("/staff/{staff_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_staff(
+    staff_id: int,
+    db: Session = Depends(get_db),
+    current: models.User = Depends(require_roles("ADMIN")),
+):
+    staff = crud.get_user(db, user_id=staff_id)
+    if staff is None or not staff.is_staff:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    if staff.id == current.id:
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+    crud.audit(
+        db,
+        user=current,
+        action="deleted staff member",
+        entity="staff",
+        entity_id=str(staff.id),
+        details=f"{staff.email} ({staff.role})",
+    )
+    crud.delete_user(db, staff)
 
 
 # ---------------------------------------------------------------------------

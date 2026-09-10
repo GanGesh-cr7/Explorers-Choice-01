@@ -328,6 +328,7 @@ class UserCreate(BaseModel):
     full_name: str = Field(min_length=2, max_length=160)
     phone: str = Field(default="", max_length=60)
     country: str = Field(default="", max_length=120)
+    requested_role: str = Field(default="CUSTOMER", pattern=r"^(CUSTOMER|TRAVEL_AGENT)$")
 
     @field_validator("password")
     @classmethod
@@ -704,6 +705,7 @@ class CustomerAdminRead(BaseModel):
     phone: str
     country: str
     role: str
+    requested_role: Optional[str] = None
     is_active: bool
     created_at: datetime
 

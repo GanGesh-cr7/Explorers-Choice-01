@@ -2,7 +2,7 @@
 from datetime import date, datetime, timedelta, timezone
 import secrets
 
-from sqlalchemy import select, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
@@ -30,6 +30,7 @@ def create_user(db: Session, data: schemas.UserCreate, password_hash: str) -> mo
         full_name=data.full_name.strip(),
         phone=data.phone.strip(),
         country=data.country.strip(),
+        requested_role=data.requested_role if data.requested_role != "CUSTOMER" else None,
     )
     db.add(user)
     db.commit()
@@ -44,6 +45,23 @@ def update_user(db: Session, user: models.User, data: schemas.ProfileUpdate) -> 
     db.commit()
     db.refresh(user)
     return user
+
+
+def delete_user(db: Session, user: models.User) -> None:
+    """Permanently delete a user account.
+
+    Related rows that reference the user are detached first (their foreign keys
+    are SET NULL), while the user's own records such as reset tokens are removed.
+    """
+    uid = user.id
+    db.execute(update(models.Booking).where(models.Booking.user_id == uid).values(user_id=None))
+    db.execute(update(models.BookingNote).where(models.BookingNote.user_id == uid).values(user_id=None))
+    db.execute(update(models.Enquiry).where(models.Enquiry.assigned_staff_id == uid).values(assigned_staff_id=None))
+    db.execute(update(models.AuditLog).where(models.AuditLog.user_id == uid).values(user_id=None))
+    db.execute(update(models.Setting).where(models.Setting.updated_by == uid).values(updated_by=None))
+    db.execute(delete(models.PasswordResetToken).where(models.PasswordResetToken.user_id == uid))
+    db.delete(user)
+    db.commit()
 
 
 def create_password_reset(db: Session, user: models.User, token_hash: str) -> models.PasswordResetToken:
@@ -433,6 +451,7 @@ def update_staff(db: Session, staff: models.User, data: schemas.StaffUpdate) -> 
     if data.role is not None:
         staff.role = data.role
         staff.is_staff = data.role != "CUSTOMER"
+        staff.requested_role = None
     db.commit()
     db.refresh(staff)
     return staff

@@ -15,6 +15,7 @@ export type RegisterPayload = {
   full_name: string;
   phone: string;
   country: string;
+  requested_role?: "CUSTOMER" | "TRAVEL_AGENT";
 };
 
 export type LoginPayload = {
@@ -24,6 +25,25 @@ export type LoginPayload = {
 
 import { CLIENT_API_URL as API_URL } from "@/lib/api";
 
+function apiErrorMessage(body: unknown, fallback: string): string {
+  if (!body || typeof body !== "object" || !("detail" in body)) return fallback;
+
+  const detail = body.detail;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    const messages = detail.map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object" && "msg" in item && typeof item.msg === "string") {
+        return item.msg;
+      }
+      return null;
+    }).filter((message): message is string => Boolean(message));
+    if (messages.length > 0) return messages.join(" ");
+  }
+
+  return fallback;
+}
+
 export async function registerUser(payload: RegisterPayload): Promise<UserProfile> {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -32,7 +52,7 @@ export async function registerUser(payload: RegisterPayload): Promise<UserProfil
     body: JSON.stringify(payload),
   });
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(body?.detail ?? "We could not create your account. Please try again.");
+  if (!response.ok) throw new Error(apiErrorMessage(body, "We could not create your account. Please try again."));
   return body as UserProfile;
 }
 
@@ -44,7 +64,7 @@ export async function loginUser(payload: LoginPayload): Promise<UserProfile> {
     body: JSON.stringify(payload),
   });
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(body?.detail ?? "Incorrect email or password.");
+  if (!response.ok) throw new Error(apiErrorMessage(body, "Incorrect email or password."));
   return body as UserProfile;
 }
 
@@ -70,7 +90,7 @@ export async function updateProfile(updates: Partial<Pick<UserProfile, "full_nam
     body: JSON.stringify(updates),
   });
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(body?.detail ?? "Your profile could not be updated.");
+  if (!response.ok) throw new Error(apiErrorMessage(body, "Your profile could not be updated."));
   return body as UserProfile;
 }
 
@@ -82,7 +102,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
     body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
   });
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(body?.detail ?? "Your password could not be changed.");
+  if (!response.ok) throw new Error(apiErrorMessage(body, "Your password could not be changed."));
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
@@ -94,7 +114,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
-    throw new Error(body?.detail ?? "We could not send a reset link.");
+    throw new Error(apiErrorMessage(body, "We could not send a reset link."));
   }
 }
 
@@ -107,6 +127,6 @@ export async function resetPassword(token: string, password: string): Promise<vo
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
-    throw new Error(body?.detail ?? "This reset link is invalid or has expired.");
+    throw new Error(apiErrorMessage(body, "This reset link is invalid or has expired."));
   }
 }

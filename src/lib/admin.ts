@@ -155,6 +155,7 @@ export type CustomerSummary = {
   phone: string;
   country: string;
   role: Role;
+  requested_role: "CUSTOMER" | "TRAVEL_AGENT" | null;
   is_active: boolean;
   created_at: string;
   booking_count: number;
@@ -254,6 +255,7 @@ export const adminApi = {
 
   customers: () => request<CustomerSummary[]>("/admin/customers"),
   customer: (id: number) => request<CustomerDetail>(`/admin/customers/${id}`),
+  deleteCustomer: (id: number) => request<void>(`/admin/customers/${id}`, { method: "DELETE" }),
 
   offers: () => request<Offer[]>("/admin/offers"),
   createOffer: (data: Partial<Offer>) => request<Offer>("/admin/offers", { method: "POST", body: JSON.stringify(data) }),
@@ -269,6 +271,9 @@ export const adminApi = {
   createStaff: (data: { email: string; password: string; full_name: string; phone?: string; country?: string; role: Role }) =>
     request<StaffMember>("/admin/staff", { method: "POST", body: JSON.stringify(data) }),
   updateStaff: (id: number, data: Partial<StaffMember>) => request<StaffMember>(`/admin/staff/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteStaff: (id: number) => request<void>(`/admin/staff/${id}`, { method: "DELETE" }),
+  promoteCustomer: (id: number, role: Exclude<Role, "CUSTOMER">) =>
+    request<StaffMember>(`/admin/customers/${id}/role`, { method: "PATCH", body: JSON.stringify({ role }) }),
   staffAssign: () => request<StaffMember[]>("/admin/staff-assign"),
 
   settings: () => request<Setting[]>("/admin/settings"),

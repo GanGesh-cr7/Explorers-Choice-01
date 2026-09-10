@@ -25,8 +25,14 @@ class Settings(BaseSettings):
     # Local development uses HTTP; production must set COOKIE_SECURE=true.
     cookie_secure: bool = False
 
-    # CORS origins — the frontend host(s)
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3100"]
+    # CORS origins — include both local hostnames used during development.
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://localhost:3100",
+    ]
 
     # Local development escape hatch: allows the placeholder secrets above.
     allow_insecure_defaults: bool = Field(

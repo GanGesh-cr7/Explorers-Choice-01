@@ -62,6 +62,18 @@ export default function AdminStaffPage() {
     await update(member, { is_active: !member.is_active });
   }
 
+  async function remove(member: StaffMember) {
+    setFlash("");
+    if (!confirm(`Delete ${member.full_name} (${member.email}) permanently? This cannot be undone.`)) return;
+    try {
+      await adminApi.deleteStaff(member.id);
+      setStaff((current) => current.filter((item) => item.id !== member.id));
+      setFlash(`${member.email} deleted.`);
+    } catch (err) {
+      setFlash(err instanceof Error ? err.message : "Could not delete this staff member.");
+    }
+  }
+
   if (error && staff.length === 0) return <p className="rounded-xl border border-terracotta/30 bg-terracotta/10 p-4 text-sm text-charcoal">{error}</p>;
   if (loading) return <p className="text-charcoal-soft">Loading staff…</p>;
 
@@ -148,6 +160,17 @@ export default function AdminStaffPage() {
                 }`}
               >
                 {m.is_active ? "Deactivate" : "Activate"}
+              </button>
+              <button
+                type="button"
+                onClick={() => remove(m)}
+                aria-label={`Delete ${m.full_name}`}
+                title="Delete member"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-terracotta/30 text-terracotta transition-colors hover:bg-terracotta hover:text-ivory"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M10 11v6M14 11v6" />
+                </svg>
               </button>
             </div>
           </div>

@@ -49,6 +49,7 @@ class User(Base):
     role: Mapped[str] = mapped_column(
         String(32), nullable=False, default="CUSTOMER", index=True
     )  # CUSTOMER | TRAVEL_AGENT | MANAGER | ACCOUNTANT | ADMIN
+    requested_role: Mapped[str | None] = mapped_column(String(32), nullable=True)
     is_staff: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     token_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # bumped on password change/reset

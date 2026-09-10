@@ -10,6 +10,7 @@ import { useAuth } from "@/components/providers";
 const navLinks = [
   { label: "Destinations", href: "/destinations" },
   { label: "Packages", href: "/packages" },
+  { label: "Hotels", href: "/hotels" },
   { label: "About", href: "/about" },
   { label: "Customer Stories", href: "/stories" },
   { label: "Contact", href: "/contact" },
