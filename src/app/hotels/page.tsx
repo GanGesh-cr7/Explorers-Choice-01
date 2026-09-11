@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { HotelCard } from "@/components/cards/HotelCard";
-import { hotels } from "@/data/hotels";
+import { getMergedHotels } from "@/lib/hotels";
 
 export const metadata: Metadata = {
   title: "Hotels",
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "Handpicked stays from floating palaces to mountain retreats. Every hotel we feature has been personally tried and recommended by the Explorers Choice team.",
 };
 
-export default function HotelsPage() {
+export default async function HotelsPage() {
+  const mergedHotels = await getMergedHotels();
+
   return (
     <>
       <section className="border-b border-line bg-ivory-warm">
@@ -29,11 +31,15 @@ export default function HotelsPage() {
 
       <section className="py-16 sm:py-20">
         <Container>
-          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {hotels.map((hotel) => (
-              <HotelCard key={hotel.slug} hotel={hotel} />
-            ))}
-          </div>
+          {mergedHotels.length === 0 ? (
+            <p className="text-charcoal-soft">No hotels available yet.</p>
+          ) : (
+            <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+              {mergedHotels.map((hotel) => (
+                <HotelCard key={hotel.slug} hotel={hotel} />
+              ))}
+            </div>
+          )}
         </Container>
       </section>
     </>

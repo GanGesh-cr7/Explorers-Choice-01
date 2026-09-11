@@ -1,5 +1,6 @@
 """CRUD operations for destinations, packages, itineraries, users and bookings."""
 from datetime import date, datetime, timedelta, timezone
+import re
 import secrets
 
 from sqlalchemy import delete, select, update
@@ -24,14 +25,25 @@ def get_user(db: Session, user_id: int | None = None, email: str | None = None) 
 
 
 def create_user(db: Session, data: schemas.UserCreate, password_hash: str) -> models.User:
-    user = models.User(
-        email=data.email.strip().lower(),
-        password_hash=password_hash,
-        full_name=data.full_name.strip(),
-        phone=data.phone.strip(),
-        country=data.country.strip(),
-        requested_role=data.requested_role if data.requested_role != "CUSTOMER" else None,
-    )
+    if data.requested_role == "HOTEL_OWNER":
+        user = models.User(
+            email=data.email.strip().lower(),
+            password_hash=password_hash,
+            full_name=data.full_name.strip(),
+            phone=data.phone.strip(),
+            country=data.country.strip(),
+            role="HOTEL_OWNER",
+            requested_role=None,
+        )
+    else:
+        user = models.User(
+            email=data.email.strip().lower(),
+            password_hash=password_hash,
+            full_name=data.full_name.strip(),
+            phone=data.phone.strip(),
+            country=data.country.strip(),
+            requested_role=data.requested_role if data.requested_role != "CUSTOMER" else None,
+        )
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -822,3 +834,92 @@ def list_all_documents(db: Session) -> list[models.BookingDocument]:
     return db.scalars(
         select(models.BookingDocument).order_by(models.BookingDocument.created_at.desc()).limit(200)
     ).all()
+
+
+# ---------------------------------------------------------------------------
+# Hotels (hotel owner listings)
+# ---------------------------------------------------------------------------
+def slugify(value: str) -> str:
+    """Best-effort slug from a natural language name."""
+    slug = re.sub(r"[^a-z0-9]+", "-", value.strip().lower()).strip("-")
+    return slug[:120]
+
+
+def _unique_hotel_slug(db: Session, base: str) -> str:
+    clean = slugify(base) or "hotel"
+    candidate = clean
+    n = 2
+    while get_hotel_by_slug(db, candidate) is not None:
+        candidate = f"{clean}-{n}"
+        n += 1
+        if n > 500:
+            candidate = f"{clean}-{secrets.token_hex(3)}"
+            break
+    return candidate
+
+
+def get_hotel(db: Session, hotel_id: int) -> models.Hotel | None:
+    return db.get(models.Hotel, hotel_id)
+
+
+def get_hotel_by_slug(db: Session, slug: str) -> models.Hotel | None:
+    return db.scalars(
+        select(models.Hotel).where(models.Hotel.slug == slug)
+    ).first()
+
+
+def list_owner_hotels(db: Session, owner_id: int) -> list[models.Hotel]:
+    return db.scalars(
+        select(models.Hotel)
+        .where(models.Hotel.owner_id == owner_id)
+        .order_by(models.Hotel.created_at.desc())
+    ).all()
+
+
+def list_published_hotels(db: Session) -> list[models.Hotel]:
+    return db.scalars(
+        select(models.Hotel)
+        .where(models.Hotel.is_published.is_(True))
+        .order_by(models.Hotel.created_at.desc())
+    ).all()
+
+
+def create_hotel(db: Session, owner_id: int, data: schemas.HotelCreate) -> models.Hotel:
+    hotel = models.Hotel(
+        owner_id=owner_id,
+        slug=_unique_hotel_slug(db, data.name),
+        name=data.name.strip(),
+        location=data.location.strip(),
+        destination=data.destination.strip(),
+        tagline=data.tagline.strip(),
+        description=data.description.strip(),
+        image=data.image.strip(),
+        price_per_night=data.price_per_night,
+        currency=data.currency.strip().upper() or "INR",
+        amenities=[a.strip() for a in data.amenities if a.strip()],
+        highlights=[h.strip() for h in data.highlights if h.strip()],
+    )
+    db.add(hotel)
+    db.commit()
+    db.refresh(hotel)
+    return hotel
+
+
+def update_hotel(db: Session, hotel: models.Hotel, data: schemas.HotelUpdate) -> models.Hotel:
+    patch = data.model_dump(exclude_unset=True)
+    if "name" in patch and patch["name"]:
+        hotel.slug = _unique_hotel_slug(db, patch["name"])
+    for field, value in patch.items():
+        if field == "currency" and value:
+            value = value.strip().upper() or "INR"
+        if field in ("amenities", "highlights") and value is not None:
+            value = [item.strip() for item in value if item.strip()]
+        setattr(hotel, field, value)
+    db.commit()
+    db.refresh(hotel)
+    return hotel
+
+
+def delete_hotel(db: Session, hotel: models.Hotel) -> None:
+    db.delete(hotel)
+    db.commit()

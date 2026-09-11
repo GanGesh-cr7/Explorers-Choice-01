@@ -328,7 +328,7 @@ class UserCreate(BaseModel):
     full_name: str = Field(min_length=2, max_length=160)
     phone: str = Field(default="", max_length=60)
     country: str = Field(default="", max_length=120)
-    requested_role: str = Field(default="CUSTOMER", pattern=r"^(CUSTOMER|TRAVEL_AGENT)$")
+    requested_role: str = Field(default="CUSTOMER", pattern=r"^(CUSTOMER|TRAVEL_AGENT|HOTEL_OWNER)$")
 
     @field_validator("password")
     @classmethod
@@ -719,6 +719,65 @@ class CustomerAdminDetail(CustomerAdminRead):
     enquiries: list[EnquiryRead] = []
 
 
+# ---------------------------------------------------------------------------
+# Hotels (hotel owner listings)
+# ---------------------------------------------------------------------------
+class HotelBase(BaseModel):
+    name: str = Field(min_length=2, max_length=200)
+    location: str = Field(min_length=1, max_length=160)
+    destination: str = Field(default="", max_length=160)
+    tagline: str = Field(default="", max_length=240)
+    description: str = Field(default="", max_length=4000)
+    image: str = Field(default="", max_length=500)
+    price_per_night: float = Field(default=0, ge=0)
+    currency: str = Field(default="INR", max_length=3)
+    amenities: list[str] = Field(default_factory=list)
+    highlights: list[str] = Field(default_factory=list)
+
+
+class HotelCreate(HotelBase):
+    pass
+
+
+class HotelUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=200)
+    location: str | None = Field(default=None, min_length=1, max_length=160)
+    destination: str | None = Field(default=None, max_length=160)
+    tagline: str | None = Field(default=None, max_length=240)
+    description: str | None = Field(default=None, max_length=4000)
+    image: str | None = Field(default=None, max_length=500)
+    price_per_night: float | None = Field(default=None, ge=0)
+    currency: str | None = Field(default=None, max_length=3)
+    amenities: list[str] | None = None
+    highlights: list[str] | None = None
+    is_published: bool | None = None
+
+
+class HotelRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    slug: str
+    name: str
+    location: str
+    destination: str
+    tagline: str
+    description: str
+    image: str
+    price_per_night: float
+    currency: str
+    amenities: list[str]
+    highlights: list[str]
+    created_at: datetime
+    updated_at: datetime
+
+
+class HotelOwnerRead(HotelRead):
+    owner_id: int
+    is_published: bool
+
+
 BookingDetail.model_rebuild()
 BookingAdminDetail.model_rebuild()
 CustomerAdminDetail.model_rebuild()
+HotelOwnerRead.model_rebuild()
