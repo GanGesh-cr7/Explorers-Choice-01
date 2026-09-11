@@ -97,16 +97,7 @@ export default function AboutPage() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="rounded-2xl border border-line bg-cream p-6 text-center">
-                <p className="font-display text-4xl text-terracotta">16</p>
-                <p className="mt-1 text-sm text-charcoal-soft">countries designed</p>
-              </div>
-              <div className="rounded-2xl border border-line bg-cream p-6 text-center">
-                <p className="font-display text-4xl text-terracotta">12k+</p>
-                <p className="mt-1 text-sm text-charcoal-soft">travellers guided</p>
-              </div>
-            </div>
+
           </div>
         </Container>
       </section>

@@ -32,7 +32,7 @@ export function WhyExplorersChoice() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Editorial image column */}
           <div className="relative">
-            <div className="overflow-hidden rounded-3xl">
+            <div className="h-full min-h-[400px] overflow-hidden rounded-3xl lg:min-h-[500px]">
               <Image
                 src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=1200&q=80"
                 alt="A traveller walking a mountain ridge at golden hour"
@@ -40,12 +40,6 @@ export function WhyExplorersChoice() {
                 height={1500}
                 className="h-full w-full object-cover"
               />
-            </div>
-            <div className="absolute -bottom-6 -right-4 hidden max-w-[220px] rounded-2xl border border-line bg-cream p-5 shadow-lift sm:block">
-              <p className="font-display text-4xl text-terracotta">16 yrs</p>
-              <p className="mt-1 text-sm text-charcoal-soft">
-                designing journeys people actually remember
-              </p>
             </div>
           </div>
 
