@@ -3,23 +3,14 @@
 Secrets fail closed: the app refuses to start with the placeholder values
 unless `EXPLORERS_ALLOW_INSECURE=true` is explicitly set for local development.
 """
-from pathlib import Path
-
 from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-# Directory containing this package (backend/app). The local SQLite database
-# always lives in the backend directory so a single shared file is used no
-# matter what directory the server process is started from.
-BACKEND_DIR = Path(__file__).resolve().parent.parent
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    # Database — default anchors the SQLite file to the backend directory so
-    # that the login system always uses one main database.
-    database_url: str = f"sqlite:///{BACKEND_DIR / 'explorers_choice.db'}"
+    # Every environment must point at the team's shared database explicitly.
+    database_url: str = Field(..., validation_alias="DATABASE_URL")
 
     # Shared secret used by the admin UI to authenticate admin operations
     # (`X-ADMIN-KEY` header). Keep in sync with the admin area deployment.
@@ -50,6 +41,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _guard_placeholder_secrets(self) -> "Settings":
+        if not self.database_url.strip():
+            raise ValueError("DATABASE_URL must point to the shared application database.")
         if (
             not self.secret_key
             or self.secret_key == "change-me-customer-secret"

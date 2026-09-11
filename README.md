@@ -10,9 +10,16 @@ The app is a Next.js frontend + a FastAPI backend on a shared PostgreSQL databas
 cd backend
 python -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env            # fill in SECRET_KEY / ADMIN_API_KEY
+cp .env.example .env            # fill in DATABASE_URL / SECRET_KEY / ADMIN_API_KEY
 .venv/bin/python -m alembic upgrade head
 ```
+
+`DATABASE_URL` is required and must be the same shared PostgreSQL connection
+for every developer. Do not use `localhost` or `127.0.0.1` as the database
+host unless that address is a shared database service reachable by the whole
+team. The `.env` file is ignored by Git; share the variable name and approved
+connection details through your team's secret-sharing process, never through
+the repository.
 
 Then start both servers:
 
