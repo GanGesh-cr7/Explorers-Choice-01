@@ -5,6 +5,7 @@ export type UserProfile = {
   phone: string;
   country: string;
   role: string;
+  auth_provider?: "EMAIL" | "GOOGLE";
   is_staff: boolean;
   created_at: string;
 };
@@ -129,4 +130,14 @@ export async function resetPassword(token: string, password: string): Promise<vo
     const body = await response.json().catch(() => null);
     throw new Error(apiErrorMessage(body, "This reset link is invalid or has expired."));
   }
+}
+
+/**
+ * Build a URL that sends the browser through the backend-driven Google OAuth
+ * flow. The `next` path is where the user lands after a successful sign-in
+ * (validated server-side to a local path).
+ */
+export function googleLoginUrl(next?: string): string {
+  const path = next && next.startsWith("/") && !next.startsWith("//") ? next : "/account";
+  return `${API_URL}/auth/google?next=${encodeURIComponent(path)}`;
 }

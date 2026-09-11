@@ -21,6 +21,7 @@ from .routes import auth as auth_router
 from .routes import bookings as bookings_router
 from .routes import destinations as destinations_router
 from .routes import hotels as hotels_router
+from .routes import oauth as oauth_router
 from .routes import packages as packages_router
 
 app = FastAPI(
@@ -69,6 +70,7 @@ app.include_router(destinations_router.router, prefix="/api/destinations", tags=
 app.include_router(packages_router.router, prefix="/api/packages", tags=["packages"])
 app.include_router(bookings_router.router, prefix="/api/bookings", tags=["bookings"])
 app.include_router(auth_router.router, prefix="/api/auth", tags=["auth"])
+app.include_router(oauth_router.router, prefix="/api/auth", tags=["auth"])
 app.include_router(account_router.router, prefix="/api/account", tags=["account"])
 app.include_router(hotels_router.router, prefix="/api/hotels", tags=["hotels"])
 app.include_router(hotels_router.owner_router, prefix="/api/hotel-owner", tags=["hotel owner"])

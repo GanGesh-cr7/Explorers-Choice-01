@@ -60,7 +60,12 @@ def login(
     _rl: None = Depends(security.rate_limit("login", limit=10)),
 ):
     user = crud.get_user(db, email=data.email.strip().lower())
-    if user is None or not user.is_active or not security.verify_password(data.password, user.password_hash):
+    if (
+        user is None
+        or not user.is_active
+        or not user.password_hash
+        or not security.verify_password(data.password, user.password_hash)
+    ):
         raise HTTPException(status_code=401, detail="Incorrect email or password.")
     token = security.create_access_token(user.id, user.token_version)
     _set_session_cookie(response, token)
@@ -121,6 +126,6 @@ def change_password(
     user=Depends(security.get_current_user),
     db: Session = Depends(get_db),
 ):
-    if not security.verify_password(data.current_password, user.password_hash):
+    if not user.password_hash or not security.verify_password(data.current_password, user.password_hash):
         raise HTTPException(status_code=400, detail="Your current password is incorrect.")
     crud.set_user_password(db, user, security.hash_password(data.new_password))

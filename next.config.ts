@@ -15,7 +15,7 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' https://images.unsplash.com data: blob:",
+      "img-src 'self' https://images.unsplash.com http://localhost:8000 data: blob:",
       "font-src 'self'",
       `connect-src 'self' http://localhost:8000`,
       "frame-ancestors 'none'",
@@ -32,6 +32,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
       },
     ],
   },

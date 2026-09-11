@@ -184,6 +184,69 @@ export type Offer = {
   updated_at: string;
 };
 
+export type DestinationOption = {
+  id: number;
+  name: string;
+  slug: string;
+  country: string;
+};
+
+export type Package = {
+  id: number;
+  destination_id: number;
+  name: string;
+  slug: string;
+  short_description: string;
+  description: string;
+  duration_days: number;
+  duration_nights: number;
+  starting_price: number;
+  currency: string;
+  hero_image: string;
+  gallery: string[];
+  highlights: string[];
+  included: string[];
+  excluded: string[];
+  accommodation_summary: string;
+  transportation_summary: string;
+  meal_summary: string;
+  cancellation_policy: string;
+  important_information: string[];
+  booking_mode: "REQUEST_ONLY" | "INSTANT_BOOKING";
+  is_featured: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  destination?: DestinationOption | null;
+  itinerary?: unknown[];
+  faqs?: unknown[];
+};
+
+export type PackageFormPayload = {
+  destination_id: number;
+  name: string;
+  slug: string;
+  short_description: string;
+  description: string;
+  duration_days: number;
+  duration_nights: number;
+  starting_price: number;
+  currency: string;
+  hero_image: string;
+  gallery: string[];
+  highlights: string[];
+  included: string[];
+  excluded: string[];
+  accommodation_summary: string;
+  transportation_summary: string;
+  meal_summary: string;
+  cancellation_policy: string;
+  important_information: string[];
+  booking_mode: "REQUEST_ONLY" | "INSTANT_BOOKING";
+  is_featured: boolean;
+  is_active: boolean;
+};
+
 export type CustomerStory = {
   id: number;
   customer_name: string;
@@ -267,6 +330,15 @@ export const adminApi = {
   updateStory: (id: number, data: Partial<CustomerStory>) => request<CustomerStory>(`/admin/customer-stories/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteStory: (id: number) => request<void>(`/admin/customer-stories/${id}`, { method: "DELETE" }),
 
+  packages: () => request<Package[]>("/admin/packages"),
+  package: (id: number) => request<Package>(`/admin/packages/${id}`),
+  createPackage: (data: PackageFormPayload) => request<Package>("/admin/packages", { method: "POST", body: JSON.stringify(data) }),
+  updatePackage: (id: number, data: Partial<PackageFormPayload>) => request<Package>(`/admin/packages/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deletePackage: (id: number, hard = false) =>
+    request<void>(`/admin/packages/${id}${hard ? "?hard=true" : ""}`, { method: "DELETE" }),
+
+  destinations: () => request<DestinationOption[]>("/destinations"),
+
   staff: () => request<StaffMember[]>("/admin/staff"),
   createStaff: (data: { email: string; password: string; full_name: string; phone?: string; country?: string; role: Role }) =>
     request<StaffMember>("/admin/staff", { method: "POST", body: JSON.stringify(data) }),
@@ -310,6 +382,34 @@ export async function attachDocument(bookingId: number, documentType: string, ti
 export function formatWhen(value: string | null | undefined): string {
   if (!value) return "—";
   return new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+export async function uploadPackageImage(file: File): Promise<{ url: string }> {
+  const form = new FormData();
+  form.append("file", file);
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/admin/packages/upload-image`, { method: "POST", credentials: "include", body: form });
+  } catch {
+    throw new AdminApiError("Could not reach the server. Check your connection and try again.", 0);
+  }
+  if (!response.ok) {
+    let detail = "Could not upload the image.";
+    try {
+      const body = await response.json();
+      if (typeof body?.detail === "string") detail = body.detail;
+    } catch {
+      /* keep default */
+    }
+    throw new AdminApiError(detail, response.status);
+  }
+  return (await response.json()) as { url: string };
+}
+
+export function packageImageUrl(path: string): string {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
 export function adminDocumentUrl(documentId: number): string {

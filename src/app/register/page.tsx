@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/components/providers";
 
 const fieldClasses = "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none";
@@ -58,6 +59,12 @@ export default function RegisterPage() {
           <label className="block text-sm font-semibold text-forest">Password<input required type="password" minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className={`${fieldClasses} mt-2`} /></label>
           <Button type="submit" variant="primary" size="lg" className="w-full" ariaLabel="Create account" disabled={loading}>{loading ? "Creating…" : "Create account"}</Button>
         </form>
+        <div className="my-6 flex items-center gap-3">
+          <span className="h-px flex-1 bg-line" />
+          <span className="text-xs uppercase tracking-[0.2em] text-charcoal-soft">or</span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+        <GoogleSignInButton label="Sign up with Google" />
         <p className="mt-6 text-center text-sm text-charcoal-soft">
           Already have an account? <Link href="/login" className="font-semibold text-terracotta hover:underline">Sign in</Link>
         </p>

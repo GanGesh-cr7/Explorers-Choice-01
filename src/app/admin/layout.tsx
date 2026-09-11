@@ -11,6 +11,7 @@ const navItems = [
   { label: "Bookings", href: "/admin/bookings" },
   { label: "Enquiries", href: "/admin/enquiries" },
   { label: "Customers", href: "/admin/customers" },
+  { label: "Packages", href: "/admin/packages" },
   { label: "Offers", href: "/admin/offers" },
   { label: "Stories", href: "/admin/stories" },
   { label: "Staff", href: "/admin/staff", adminOnly: true },

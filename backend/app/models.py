@@ -42,7 +42,13 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(254), unique=True, index=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True, default=None)
+    auth_provider: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="EMAIL", server_default="EMAIL"
+    )  # EMAIL | GOOGLE
+    provider_account_id: Mapped[str | None] = mapped_column(
+        String(160), nullable=True, default=None, index=True
+    )  # provider-specific identity (e.g. Google "sub")
     full_name: Mapped[str] = mapped_column(String(160), nullable=False, default="")
     phone: Mapped[str] = mapped_column(String(60), default="")
     country: Mapped[str] = mapped_column(String(120), default="")

@@ -25,6 +25,16 @@ class Settings(BaseSettings):
     # Local development uses HTTP; production must set COOKIE_SECURE=true.
     cookie_secure: bool = False
 
+    # Google OAuth (server-driven "Sign in with Google"). Leave blank to disable
+    # the Google login flow entirely; the /api/auth/google endpoints then return 503.
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    # Callback route must exactly match the "Authorized redirect URIs" configured
+    # in the Google Cloud Console OAuth client.
+    google_redirect_uri: str = "http://localhost:8000/api/auth/google/callback"
+    # Where the browser lands after a successful (or failed) Google sign-in.
+    google_return_url: str = "http://localhost:3000"
+
     # CORS origins — include both local hostnames used during development.
     cors_origins: list[str] = [
         "http://localhost:3000",

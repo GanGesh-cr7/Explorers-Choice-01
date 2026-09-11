@@ -5,20 +5,28 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/components/providers";
 
 const fieldClasses =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none";
+
+function googleAuthErrorMessage(code: string): string {
+  if (code === "email_unverified") return "Google could not verify this email address. Please use a different account.";
+  if (code === "state_error") return "Your Google sign-in session expired. Please try again.";
+  return "Google sign-in could not be completed. Please try again or sign in with your email.";
+}
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawRedirect = searchParams.get("redirect") ?? "/account";
   const redirect = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/account";
+  const googleAuthError = searchParams.get("google_auth");
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(googleAuthError ? googleAuthErrorMessage(googleAuthError) : "");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -58,6 +66,12 @@ function LoginContent() {
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
+        <div className="my-6 flex items-center gap-3">
+          <span className="h-px flex-1 bg-line" />
+          <span className="text-xs uppercase tracking-[0.2em] text-charcoal-soft">or</span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+        <GoogleSignInButton next={redirect} />
         <p className="mt-6 text-center text-sm text-charcoal-soft">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="font-semibold text-terracotta hover:underline">Create one</Link>

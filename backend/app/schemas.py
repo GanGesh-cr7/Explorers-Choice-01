@@ -351,6 +351,7 @@ class UserRead(BaseModel):
     phone: str
     country: str
     role: str
+    auth_provider: str
     is_staff: bool
     created_at: datetime
 

@@ -50,6 +50,45 @@ def create_user(db: Session, data: schemas.UserCreate, password_hash: str) -> mo
     return user
 
 
+def get_user_by_provider(
+    db: Session, *, provider: str, provider_account_id: str
+) -> models.User | None:
+    return db.scalars(
+        select(models.User).where(
+            models.User.auth_provider == provider,
+            models.User.provider_account_id == provider_account_id,
+        )
+    ).first()
+
+
+def create_google_user(
+    db: Session, *, email: str, full_name: str, provider_account_id: str
+) -> models.User:
+    """Create a new account purely authenticated via Google (no password)."""
+    user = models.User(
+        email=email.strip().lower(),
+        password_hash=None,
+        full_name=(full_name or "").strip(),
+        auth_provider="GOOGLE",
+        provider_account_id=provider_account_id,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def link_google_account(
+    db: Session, user: models.User, provider_account_id: str
+) -> models.User:
+    """Attach a Google identity to an existing account (auto account linking)."""
+    user.auth_provider = "GOOGLE"
+    user.provider_account_id = provider_account_id
+    db.commit()
+    db.refresh(user)
+    return user
+
+
 def update_user(db: Session, user: models.User, data: schemas.ProfileUpdate) -> models.User:
     for field, value in data.model_dump(exclude_unset=True).items():
         if value is not None:
