@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     def _guard_placeholder_secrets(self) -> "Settings":
         if not self.database_url.strip():
             raise ValueError("DATABASE_URL must point to the shared application database.")
+        if not self.database_url.startswith(("postgresql://", "postgresql+")):
+            raise ValueError(
+                "DATABASE_URL must use the shared PostgreSQL database; local SQLite is not supported."
+            )
         if (
             not self.secret_key
             or self.secret_key == "change-me-customer-secret"
