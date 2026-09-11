@@ -104,18 +104,18 @@ export default function ContactPage() {
               <dl className="mt-5 space-y-4 text-sm">
                 <div>
                   <dt className="font-semibold text-charcoal">Email</dt>
-                  <dd className="mt-1 text-charcoal-soft">hello@explorerschoice.com</dd>
+                  <dd className="mt-1 text-charcoal-soft">infoexplorerschoice@gmail.com</dd>
                 </div>
                 <div>
                   <dt className="font-semibold text-charcoal">Phone</dt>
-                  <dd className="mt-1 text-charcoal-soft">+1 (555) 123-4567</dd>
+                  <dd className="mt-1 text-charcoal-soft">8940185116</dd>
                 </div>
                 <div>
                   <dt className="font-semibold text-charcoal">Office</dt>
                   <dd className="mt-1 text-charcoal-soft">
-                    12 Harbour Lane
+                    Marthandam,
                     <br />
-                    Portland, Oregon
+                    Kanyakumari District
                   </dd>
                 </div>
               </dl>

@@ -4,7 +4,6 @@ import { FeaturedPackages } from "@/components/home/FeaturedPackages";
 import { WhyExplorersChoice } from "@/components/home/WhyExplorersChoice";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { CustomerStories } from "@/components/home/CustomerStories";
-import { PlannerTeam } from "@/components/home/PlannerTeam";
 import { TravelInspiration } from "@/components/home/TravelInspiration";
 import { FaqSection } from "@/components/home/FaqSection";
 import { BookNowCta } from "@/components/cta/BookNowCta";
@@ -18,7 +17,6 @@ export default function Home() {
       <WhyExplorersChoice />
       <HowItWorks />
       <CustomerStories />
-      <PlannerTeam />
       <TravelInspiration />
       <FaqSection />
       <BookNowCta />

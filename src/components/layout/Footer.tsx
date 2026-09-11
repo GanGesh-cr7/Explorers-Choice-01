@@ -31,16 +31,20 @@ export function Footer() {
               handles the details.
             </p>
             <div className="mt-6 flex gap-3">
-              {["Instagram", "Facebook", "Pinterest"].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="rounded-full border border-forest/20 px-4 py-1.5 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory"
-                  aria-label={social}
-                >
-                  {social}
-                </a>
-              ))}
+              <a
+                href="https://www.instagram.com/explorerschoice_tours?stkn=NHRqYmdxdDNqajNp"
+                className="rounded-full border border-forest/20 px-4 py-1.5 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory"
+                aria-label="Instagram"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=infoexplorerschoice@gmail.com"
+                className="rounded-full border border-forest/20 px-4 py-1.5 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory"
+                aria-label="Gmail"
+              >
+                Gmail
+              </a>
             </div>
           </div>
 
