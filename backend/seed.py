@@ -14,267 +14,269 @@ from app.models import Destination, Package, ItineraryDay, PackageFaq
 # ---------------------------------------------------------------------------
 DESTINATIONS = [
     {
-        "name": "Iceland",
-        "slug": "iceland",
-        "country": "Iceland",
-        "region": "Nordic",
-        "short_description": "Chasing waterfalls under the midnight sun",
+        "name": "Rajasthan",
+        "slug": "rajasthan",
+        "country": "India",
+        "region": "North India",
+        "short_description": "Palaces, forts and the colours of the Thar desert",
         "description": (
-            "A land shaped by fire and ice, where thundering waterfalls, black-sand beaches "
-            "and moss-draped lava fields unfold along the Ring Road. Explorers Choice pairs "
-            "you with local guides who know the quieter corners—glacial lagoons at golden "
-            "hour, hot springs away from the crowds."
+            "The land of kings: rose-pink Jaipur, lake-strewn Udaipur, the blue city of "
+            "Jodhpur and the golden ramparts of Jaisalmer. Explorers Choice pairs you with "
+            "local guides who know the quieter courtyards, the best thali houses and the "
+            "desert camps that sit beyond the tourist trail."
         ),
-        "hero_image": "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80",
         ],
-        "best_time": "June – August",
-        "recommended_duration": "6–9 days",
-        "highlights": ["Glacier lagoons", "Golden Circle", "Local hot springs", "Ring Road drive"],
+        "best_time": "October – March",
+        "recommended_duration": "6–10 days",
+        "highlights": ["Jaipur City Palace", "Udaipur lakes", "Jodhpur fort", "Jaisalmer dunes"],
         "things_to_do": [
-            "Boat among icebergs at Jökulsárlón glacier lagoon",
-            "Hike behind Seljalandsfoss waterfall",
-            "Soak in a natural geothermal pool",
-            "Spot puffins on the south coast",
+            "Watch the sun rise over Hawa Mahal from a roof café",
+            "Sail the evening on Lake Pichola",
+            "Walk the lanes of Jodhpur's blue old city",
+            "Camp in the Thar beneath a sky full of stars",
         ],
         "travel_information": [
-            "Currency: Icelandic króna (ISK)",
-            "Language: Icelandic (English widely spoken)",
-            "Visa: Schengen area rules apply",
+            "Currency: Indian rupee (INR)",
+            "Language: Hindi, Rajasthani & English",
+            "Visa: e-Tourist visa available online for most nationalities",
         ],
         "is_featured": True,
     },
     {
-        "name": "Peru",
-        "slug": "peru",
-        "country": "Peru",
-        "region": "South America",
-        "short_description": "From Sacred Valley to the heights of Machu Picchu",
+        "name": "Kerala",
+        "slug": "kerala",
+        "country": "India",
+        "region": "South India",
+        "short_description": "Backwaters, tea hills and God's Own Country",
         "description": (
-            "Journey through the Sacred Valley with thoughtful pacing and small-group travel. "
-            "Walk ancient Inca trails, share meals with Andean families, and arrive at Machu "
-            "Picchu the way it deserves—slowly and with purpose."
+            "Slow mornings at a houseboat, mists rolling over Munnar's tea estates, and "
+            "the old spice lanes of Kochi. Kerala rewards the traveller who lingers — "
+            "we build in unhurried boat days, homely seafood and a pace that lets the "
+            "backwaters do their quiet work."
         ),
-        "hero_image": "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "best_time": "September – March",
+        "recommended_duration": "6–9 days",
+        "highlights": ["Alleppey houseboat", "Munnar tea estates", "Kochi forts", "Kathakali evening"],
+        "things_to_do": [
+            "Sleep aboard a private backwater houseboat",
+            "Walk sunrise through a Munnar tea plantation",
+            "Watch a Kathakali performance in Kochi",
+            "Taste toddy-shop seafood on a village trail",
+        ],
+        "travel_information": [
+            "Currency: Indian rupee (INR)",
+            "Language: Malayalam, English & Hindi",
+            "Visa: e-Tourist visa available online for most nationalities",
+        ],
+        "is_featured": True,
+    },
+    {
+        "name": "Ladakh",
+        "slug": "ladakh",
+        "country": "India",
+        "region": "North India",
+        "short_description": "High passes, monasteries and the moonscape of Pangong",
+        "description": (
+            "A land of high-altitude deserts where prayer flags snap in thin air, white "
+            "monasteries cling to raw cliffs and Pangong Lake shifts through a dozen blues. "
+            "We travel slowly, with acclimatisation built in and a local guide who opens "
+            "the mountain homes others drive past."
+        ),
+        "hero_image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80",
         ],
         "best_time": "May – September",
         "recommended_duration": "8–12 days",
-        "highlights": ["Machu Picchu", "Sacred Valley", "Cusco", "Andean family stays"],
+        "highlights": ["Pangong Lake", "Thiksey monastery", "Nubra sand dunes", "Khardung La"],
         "things_to_do": [
-            "Watch sunrise over Machu Picchu",
-            "Wander the Pisac market",
-            "Share an Andean family lunch",
-            "Walk the terraces of Ollantaytambo",
+            "Camp beside Pangong Lake at golden hour",
+            "Join morning prayers at Thiksey monastery",
+            "Ride a double-humped camel in Nubra",
+            "Cross Khardung La on a clear morning",
         ],
         "travel_information": [
-            "Currency: Sol (PEN)",
-            "Language: Spanish & Quechua",
-            "Altitude: Cusco sits at 3,400m — allow time to acclimatise",
+            "Currency: Indian rupee (INR)",
+            "Language: Ladakhi, Hindi & English",
+            "Altitude: Leh sits at 3,500m — acclimatisation days are included",
         ],
         "is_featured": True,
     },
     {
-        "name": "Japan",
-        "slug": "japan",
-        "country": "Japan",
-        "region": "Asia",
-        "short_description": "Old Kyoto, neon Tokyo and everything between",
+        "name": "Goa",
+        "slug": "goa",
+        "country": "India",
+        "region": "West India",
+        "short_description": "Golden beaches, Portuguese lanes and easy living",
         "description": (
-            "A carefully paced introduction to Japan: temple mornings in Kyoto, the electric "
-            "hum of Tokyo, a bullet-train glide between worlds, and quiet stays in ryokan "
-            "where the pace finally slows."
+            "Sun-warmed beaches, palm-shaded villages and whitewashed churches from its "
+            "Portuguese past. We mix laid-back beach days with spice-farm lunches, old "
+            "city walks and a sunset that never gets old."
         ),
-        "hero_image": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=80",
         ],
-        "best_time": "March – May / Oct – Nov",
-        "recommended_duration": "9–14 days",
-        "highlights": ["Kyoto temples", "Tokyo districts", "Bullet train", "Ryokan stay"],
+        "best_time": "November – February",
+        "recommended_duration": "5–8 days",
+        "highlights": ["North Goa beaches", "Old Goa churches", "Spice farms", "Sunset cruises"],
         "things_to_do": [
-            "Walk Fushimi Inari at quiet hours",
-            "Dip in a ryokan onsen",
-            "Explore the neon lanes of Shibuya",
-            "Ride the Shinkansen at sunrise",
+            "Linger over a beach-shack breakfast",
+            "Walk the Basilica of Bom Jesus in Old Goa",
+            "Lunch on a spice farm in Ponda",
+            "Sail the Mandovi at sunset",
         ],
         "travel_information": [
-            "Currency: Japanese yen (JPY)",
-            "Language: Japanese",
-            "Visa: Most nationalities get 90 days visa-free",
+            "Currency: Indian rupee (INR)",
+            "Language: Konkani, Hindi & English",
+            "Visa: e-Tourist visa available online for most nationalities",
         ],
         "is_featured": True,
     },
     {
-        "name": "Morocco",
-        "slug": "morocco",
-        "country": "Morocco",
-        "region": "North Africa",
-        "short_description": "Medinas, mountains and the Saharan edge",
+        "name": "Kashmir",
+        "slug": "kashmir",
+        "country": "India",
+        "region": "North India",
+        "short_description": "Dal Lake, meadow valleys and the Himalayas",
         "description": (
-            "From the spice-scented lanes of Marrakech to the silence of the Sahara, Morocco "
-            "rewards the curious traveller. Wander riads, ride camels into the dunes at dusk, "
-            "and sleep under a canopy of stars."
+            "Shikaras gliding past lotus blooms on Dal Lake, the meadow valleys of Pahalgam "
+            "and Gulmarg's fir-clad slopes. A journey that feels suspended in time, taken "
+            "at a gentle pace with a host who makes you feel like family."
         ),
-        "hero_image": "https://images.unsplash.com/photo-1489493585363-d69421e0edd3?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1489493585363-d69421e0edd3?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1530908295418-12c326d45a24?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?auto=format&fit=crop&w=1200&q=80",
         ],
-        "best_time": "March – May / Sep – Nov",
-        "recommended_duration": "7–10 days",
-        "highlights": ["Marrakech medina", "Sahara camp", "Atlas mountains", "Riad stays"],
+        "best_time": "April – October",
+        "recommended_duration": "6–9 days",
+        "highlights": ["Dal Lake houseboat", "Gulmarg meadows", "Pahalgam valley", "Mughal gardens"],
         "things_to_do": [
-            "Ride a camel into Erg Chebbi dunes",
-            "Wander the Marrakech souks",
-            "Share tea with an Atlas family",
-            "Sleep under the desert stars",
+            "Wake on a Dal Lake houseboat",
+            "Ride a gondola above Gulmarg",
+            "Walk the pine trails of Pahalgam",
+            "Wander the Shalimar and Nishat gardens",
         ],
         "travel_information": [
-            "Currency: Moroccan dirham (MAD)",
-            "Language: Arabic & French",
-            "Visa: Most nationalities visa-free up to 90 days",
+            "Currency: Indian rupee (INR)",
+            "Language: Kashmiri, Hindi, Urdu & English",
+            "Visa: e-Tourist visa available online for most nationalities",
         ],
-        "is_featured": True,
+        "is_featured": False,
     },
     {
-        "name": "New Zealand",
-        "slug": "new-zealand",
-        "country": "New Zealand",
-        "region": "Oceania",
-        "short_description": "Milford Sound, fjords and the South Island loop",
+        "name": "Andaman & Nicobar",
+        "slug": "andaman",
+        "country": "India",
+        "region": "Islands",
+        "short_description": "Turquoise seas, coral gardens and island days",
         "description": (
-            "A road trip through a landscape that feels invented—emerald lakes, glacier-"
-            "carved fiords and golden high country. Small group, great drivers, and plenty "
-            "of room to simply stop and stare."
+            "White-sand coves, coral gardens and waters clear enough to read the reef by. "
+            "From the historic cells of Port Blair to the beaches of Swaraj Dweep, the "
+            "Andamans are India's slowest, bluest escape."
         ),
-        "hero_image": "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "best_time": "November – April",
+        "recommended_duration": "5–8 days",
+        "highlights": ["Swaraj Dweep beaches", "Snorkelling trips", "Cellular Jail", "Radhanagar Beach"],
+        "things_to_do": [
+            "Snorkel the coral flats of Bharatpur",
+            "Watch the sunset on Radhanagar Beach",
+            "Attend the light-and-sound show at Cellular Jail",
+            "Take a seaplane island hop between isles",
+        ],
+        "travel_information": [
+            "Currency: Indian rupee (INR)",
+            "Language: Hindi, Bengali, Tamil & English",
+            "Permits: Indian citizens need none; foreign visitors apply on arrival",
+        ],
+        "is_featured": False,
+    },
+    {
+        "name": "Himachal Pradesh",
+        "slug": "himachal",
+        "country": "India",
+        "region": "North India",
+        "short_description": "Shimla, Manali and the mountain trails of the north",
+        "description": (
+            "Colonial Shimla, the pine forests of Kullu and the high meadows of Solang. "
+            "Himachal is where the plains turn to peaks — a journey of ropeways, "
+            "apple orchards and tea rooms that feel a century old."
+        ),
+        "hero_image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1503775034369-8705d18e3a4a?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1530189627142-5bec1b282b47?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "best_time": "March – June / Sep – Dec",
+        "recommended_duration": "6–9 days",
+        "highlights": ["Shimla Mall Road", "Manali old town", "Solang valley", "Rohtang Pass"],
+        "things_to_do": [
+            "Ride the Kalka–Shimla toy train",
+            "Walk the Mall Road at dusk",
+            "Paraglide in Solang valley",
+            "Sip kahwa above Manali's apple orchards",
+        ],
+        "travel_information": [
+            "Currency: Indian rupee (INR)",
+            "Language: Hindi, Pahari & English",
+            "Visa: e-Tourist visa available online for most nationalities",
+        ],
+        "is_featured": False,
+    },
+    {
+        "name": "Tamil Nadu",
+        "slug": "tamil-nadu",
+        "country": "India",
+        "region": "South India",
+        "short_description": "Temple towers, Chettinad mansions and coastal Kanyakumari",
+        "description": (
+            "A sacred and storied south: the gopurams of Madurai, the sea temples of "
+            "Rameswaram and the land's-end sunrise at Kanyakumari. Home ground for "
+            "Explorers Choice — expect local hosts, temple food and timeless craft."
+        ),
+        "hero_image": "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1569257088808-a3b739fac9d7?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1600100598826-6b4f6ffe5d32?auto=format&fit=crop&w=1200&q=80",
         ],
         "best_time": "November – March",
-        "recommended_duration": "12–18 days",
-        "highlights": ["Milford Sound", "Queenstown", "Glacier country", "South Island loop"],
+        "recommended_duration": "5–8 days",
+        "highlights": ["Meenakshi temple", "Chettinad heritage", "Rameswaram shores", "Kanyakumari sunrise"],
         "things_to_do": [
-            "Cruise Milford Sound at dawn",
-            "Walk a glacier valley at Fox",
-            "Star-watch above Lake Tekapo",
-            "Stop anywhere the road begs you to",
+            "Watch the Meenakshi temple at dusk",
+            "Sleep in a restored Chettinad mansion",
+            "Walk Rameswaram's longest sea corridor",
+            "See the sunrise where three seas meet",
         ],
         "travel_information": [
-            "Currency: New Zealand dollar (NZD)",
-            "Language: English & Te Reo Māori",
-            "Driving: left-hand side — we drive for you anyway",
-        ],
-        "is_featured": False,
-    },
-    {
-        "name": "Portugal",
-        "slug": "portugal",
-        "country": "Portugal",
-        "region": "Europe",
-        "short_description": "Lisbon light, Douro valleys and Atlantic coast",
-        "description": (
-            "Pastel-hued Lisbon, sun-bleached coastlines, and the terraced vineyards of the "
-            "Douro. A relaxed journey through a country that moves at the perfect pace for "
-            "slow travellers."
-        ),
-        "hero_image": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1533630757306-cbadb934edb9?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "best_time": "May – June / September",
-        "recommended_duration": "7–10 days",
-        "highlights": ["Lisbon", "Douro valley", "Atlantic coast", "Wine country"],
-        "things_to_do": [
-            "Ride Tram 28 through Alfama",
-            "Sail the Douro through vine terraces",
-            "Watch the sunset from Sintra",
-            "Taste port where it's made",
-        ],
-        "travel_information": [
-            "Currency: Euro (EUR)",
-            "Language: Portuguese",
-            "Visa: Schengen area rules apply",
-        ],
-        "is_featured": False,
-    },
-    {
-        "name": "Costa Rica",
-        "slug": "costa-rica",
-        "country": "Costa Rica",
-        "region": "Central America",
-        "short_description": "Cloud forests, volcanoes and wild Pacific shores",
-        "description": (
-            "Pura vida in practice—misty cloud forests alive with wildlife, rumbling "
-            "volcanoes, and long stretches of Pacific coast. A restorative journey for "
-            "nature lovers."
-        ),
-        "hero_image": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "best_time": "December – April",
-        "recommended_duration": "8–12 days",
-        "highlights": ["Cloud forest", "Volcanoes", "Pacific coast", "Wildlife"],
-        "things_to_do": [
-            "Trek Monteverde's hanging bridges",
-            "Soak in volcano-fed hot springs",
-            "Surf the Guanacaste coast",
-            "Meet sea-turtle conservationists",
-        ],
-        "travel_information": [
-            "Currency: Costa Rican colón (CRC)",
-            "Language: Spanish",
-            "Visa: Most nationalities visa-free up to 180 days",
-        ],
-        "is_featured": False,
-    },
-    {
-        "name": "Greece",
-        "slug": "greece",
-        "country": "Greece",
-        "region": "Europe",
-        "short_description": "Aegean islands, white walls and endless blue",
-        "description": (
-            "Sail between islands catching the light just right, linger in villages "
-            "untouched by time, and let the Aegean set the rhythm. Timeless, unhurried, "
-            "deeply human."
-        ),
-        "hero_image": "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1601581875039-e899893d520c?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "best_time": "May – October",
-        "recommended_duration": "8–12 days",
-        "highlights": ["Aegean sailing", "Island villages", "Santorini", "Ancient heritage"],
-        "things_to_do": [
-            "Sail the caldera at sunset",
-            "Get lost in island villages",
-            "Swim in the bluest water you've seen",
-            "Walk the Acropolis at first light",
-        ],
-        "travel_information": [
-            "Currency: Euro (EUR)",
-            "Language: Greek",
-            "Visa: Schengen area rules apply",
+            "Currency: Indian rupee (INR)",
+            "Language: Tamil, English & Hindi",
+            "Visa: e-Tourist visa available online for most nationalities",
         ],
         "is_featured": False,
     },
@@ -285,458 +287,429 @@ DESTINATIONS = [
 # ---------------------------------------------------------------------------
 PACKAGES = [
     {
-        "name": "Iceland Ring Road",
-        "slug": "iceland-ring-road",
-        "destination_slug": "iceland",
-        "short_description": "A complete lap of the Ring Road in a small group.",
+        "name": "Rajasthan Heritage Trail",
+        "slug": "rajasthan-heritage-trail",
+        "destination_slug": "rajasthan",
+        "short_description": "Jaipur, Udaipur, Jodhpur and Jaisalmer in one royal loop.",
         "description": (
-            "A complete lap of the Ring Road in a small group, with local guides, glacier "
-            "lagoons, and nights in countryside stays away from the tour-bus crowds."
+            "A full royal loop — Jaipur's pink city, Udaipur's lake palaces, Jodhpur's "
+            "blue lanes and a desert night at Jaisalmer — with heritage stays and "
+            "local storytellers at every fort."
         ),
         "duration_days": 8,
         "duration_nights": 7,
-        "starting_price": 4290.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80",
+        "starting_price": 68500.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80",
         ],
-        "highlights": ["Glacier lagoon kayak", "Golden Circle", "Local hot springs", "Coastal hikes"],
+        "highlights": ["Amber Fort", "Lake Pichola", "Mehrangarh Fort", "Thar desert camp"],
         "included": [
-            "7 nights handpicked accommodation",
-            "Small-group transport & expert local guide",
-            "Daily breakfast + 4 dinners",
-            "Glacier lagoon boat excursion",
-            "Natural hot spring entry",
-        ],
-        "excluded": [
-            "International flights",
-            "Travel insurance",
-            "Lunches & drinks",
-        ],
-        "accommodation_summary": "Countryside hotels and guesthouses, most with geothermal pools.",
-        "transportation_summary": "Private minibus with a local driver-guide throughout.",
-        "meal_summary": "Daily breakfast, four dinners, one traditional Icelandic lamb night.",
-        "cancellation_policy": (
-            "Free cancellation up to 60 days before departure. 30% charge within 60–30 days, "
-            "50% within 30–15 days, 100% within 14 days."
-        ),
-        "important_information": [
-            "Weather can change quickly — pack layers",
-            "Minimum age: 10 years",
-            "Pace: gentle, with daily walks of 1–2 hours",
-        ],
-        "is_featured": True,
-        "itinerary": [
-            {"day_number": 1, "title": "Reykjavík arrival", "description": "Welcome dinner and orientation with your local guide.", "activities": ["Welcome dinner", "City orientation walk"], "meals": "Dinner", "accommodation": "Reykjavík city hotel", "transportation": "Airport transfer"},
-            {"day_number": 2, "title": "Golden Circle", "description": "Þingvellir, Geysir, Gullfoss — the classics, done well.", "activities": ["Þingvellir National Park", "Geysir hot springs", "Gullfoss waterfall"], "meals": "Breakfast, dinner", "accommodation": "Selfoss guesthouse", "transportation": "Private minibus"},
-            {"day_number": 3, "title": "South Coast", "description": "Seljalandsfoss, Skógafoss and the black sands of Vík.", "activities": ["Seljalandsfoss hike", "Skógafoss", "Reynisfjara black beach"], "meals": "Breakfast, dinner", "accommodation": "Vík countryside hotel", "transportation": "Private minibus"},
-            {"day_number": 4, "title": "Glacier lagoon", "description": "Jökulsárlón boat trip among drifting icebergs.", "activities": ["Glacier lagoon boat tour", "Diamond Beach"], "meals": "Breakfast, dinner", "accommodation": "Skaftafell lodge", "transportation": "Private minibus"},
-            {"day_number": 5, "title": "East fjords", "description": "Quiet fishing villages and dramatic coastal roads.", "activities": ["East fjord villages", "Seal-spotting stop"], "meals": "Breakfast, dinner", "accommodation": "Egilsstaðir hotel", "transportation": "Private minibus"},
-            {"day_number": 6, "title": "Lake Mývatn", "description": "Geothermal landscapes and a soak in a natural pool.", "activities": ["Mývatn nature baths", "Pseudo-craters walk"], "meals": "Breakfast, dinner", "accommodation": "Mývatn guesthouse", "transportation": "Private minibus"},
-            {"day_number": 7, "title": "North to Akureyri", "description": "Waterfalls, whale watching and city charm.", "activities": ["Goðafoss waterfall", "Whale watching", "Akureyri walk"], "meals": "Breakfast, dinner", "accommodation": "Akureyri hotel", "transportation": "Private minibus"},
-            {"day_number": 8, "title": "Departure", "description": "Morning transfer to Keflavík Airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
-        ],
-        "faqs": [
-            {"question": "Where does the tour start?", "answer": "Reykjavík, with a welcome dinner on day one.", "sort_order": 1},
-            {"question": "Is the Ring Road tour suitable for children?", "answer": "Yes — minimum age is 10 years.", "sort_order": 2},
-        ],
-    },
-    {
-        "name": "Sacred Valley & Machu Picchu",
-        "slug": "peru-sacred-valley",
-        "destination_slug": "peru",
-        "short_description": "The Sacred Valley at a thoughtful pace, ending at Machu Picchu sunrise.",
-        "description": (
-            "Explore the Sacred Valley at a thoughtful pace, meet Andean communities, and "
-            "reach Machu Picchu with a guide who makes the stones come alive."
-        ),
-        "duration_days": 9,
-        "duration_nights": 8,
-        "starting_price": 3890.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "highlights": ["Machu Picchu sunrise", "Sacred Valley", "Cusco old town", "Andean family lunch"],
-        "included": [
-            "8 nights boutique hotels",
-            "Machu Picchu entry + private guide",
-            "Scenic Vistadome train",
-            "Daily breakfast + 3 dinners",
-            "Andean community visit",
-        ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "Boutique hotels in Cusco and the Sacred Valley, one night in Aguas Calientes.",
-        "transportation_summary": "Private van, scenic Vistadome train, and expert local drivers.",
-        "meal_summary": "Daily breakfast, three dinners including a traditional Andean family lunch.",
-        "cancellation_policy": (
-            "Free cancellation up to 60 days before departure. 30% charge within 60–30 days, "
-            "100% within 29 days."
-        ),
-        "important_information": [
-            "Altitude: Cusco is 3,400m — we build in acclimatisation days",
-            "Minimum age: 8 years",
-            "Passport required for the Machu Picchu ticket",
-        ],
-        "is_featured": True,
-        "itinerary": [
-            {"day_number": 1, "title": "Arrive in Cusco", "description": "Altitude acclimatisation and a gentle first evening.", "activities": ["Arrival transfer", "Gentle city walk"], "meals": "Dinner", "accommodation": "Cusco boutique hotel", "transportation": "Private transfer"},
-            {"day_number": 2, "title": "Cusco old town", "description": "Qorikancha, Sacsayhuamán and cobbled streets.", "activities": ["Qorikancha temple", "Sacsayhuamán fortress"], "meals": "Breakfast, dinner", "accommodation": "Cusco boutique hotel", "transportation": "Private van"},
-            {"day_number": 3, "title": "Sacred Valley", "description": "Pisac market and the terraces of Ollantaytambo.", "activities": ["Pisac market", "Ollantaytambo terraces"], "meals": "Breakfast, lunch", "accommodation": "Sacred Valley lodge", "transportation": "Private van"},
-            {"day_number": 4, "title": "Andean family day", "description": "A slow day with a local community and shared lunch.", "activities": ["Weaving collective visit", "Family lunch"], "meals": "Breakfast, lunch", "accommodation": "Sacred Valley lodge", "transportation": "Private van"},
-            {"day_number": 5, "title": "Rail to Aguas Calientes", "description": "Scenic train through the gorge.", "activities": ["Vistadome train"], "meals": "Breakfast, dinner", "accommodation": "Aguas Calientes hotel", "transportation": "Vistadome train"},
-            {"day_number": 6, "title": "Machu Picchu", "description": "Sunrise over the citadel with your private guide.", "activities": ["Machu Picchu tour", "Sunrise viewpoint"], "meals": "Breakfast, dinner", "accommodation": "Aguas Calientes hotel", "transportation": "Shuttle bus"},
-            {"day_number": 7, "title": "Return to Cusco", "description": "Free day for markets or a cooking class.", "activities": ["Cusco market", "Optional cooking class"], "meals": "Breakfast", "accommodation": "Cusco boutique hotel", "transportation": "Vistadome train"},
-            {"day_number": 8, "title": "Moray & Maras", "description": "Inca terraces and the salt pans.", "activities": ["Moray amphitheatre", "Maras salt pans"], "meals": "Breakfast, lunch", "accommodation": "Cusco boutique hotel", "transportation": "Private van"},
-            {"day_number": 9, "title": "Departure", "description": "Transfer to Cusco airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
-        ],
-        "faqs": [
-            {"question": "How do I handle the altitude?", "answer": "We include acclimatisation days and you can take it slowly.", "sort_order": 1},
-            {"question": "Is the Machu Picchu ticket included?", "answer": "Yes, entry plus a private guide is included.", "sort_order": 2},
-        ],
-    },
-    {
-        "name": "Japan Essence",
-        "slug": "japan-essence",
-        "destination_slug": "japan",
-        "short_description": "The essential Japan, balanced between electric cities and serene temples.",
-        "description": (
-            "The essential Japan, balanced between electric cities and serene temples, with "
-            "a ryokan night and a bullet-train glide between two worlds."
-        ),
-        "duration_days": 11,
-        "duration_nights": 10,
-        "starting_price": 5490.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "highlights": ["Kyoto temples", "Tokyo & Mt Fuji", "Bullet train", "Traditional ryokan"],
-        "included": [
-            "10 nights including ryokan",
-            "JR Pass & reserved Shinkansen",
-            "Private Kyoto guide",
-            "Daily breakfast + 3 dinners",
-            "Onsen entry & kimono experience",
-        ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "City hotels plus one traditional ryokan night with kaiseki dinner.",
-        "transportation_summary": "Japan Rail Pass, reserved Shinkansen seats, private transfers.",
-        "meal_summary": "Daily breakfast, three dinners, plus a kaiseki dinner at the ryokan.",
-        "cancellation_policy": (
-            "Free cancellation up to 75 days before departure. 25% charge within 75–45 days, "
-            "100% within 44 days."
-        ),
-        "important_information": [
-            "Shoes off in ryokan and many temples",
-            "Minimum age: 10 years",
-            "Quiet carriages on the Shinkansen",
-        ],
-        "is_featured": True,
-        "itinerary": [
-            {"day_number": 1, "title": "Tokyo arrival", "description": "Settle in and an evening in Shinjuku.", "activities": ["Arrival", "Shinjuku evening"], "meals": "Dinner", "accommodation": "Shinjuku hotel", "transportation": "Airport transfer"},
-            {"day_number": 2, "title": "Tokyo highlights", "description": "Senso-ji, Shibuya, and hidden laneways.", "activities": ["Senso-ji temple", "Shibuya crossing", "Golden Gai laneways"], "meals": "Breakfast", "accommodation": "Shinjuku hotel", "transportation": "Metro & walking"},
-            {"day_number": 3, "title": "Mt Fuji day", "description": "Lake Kawaguchi and framed views of the peak.", "activities": ["Lake Kawaguchi", "Fuji viewpoint"], "meals": "Breakfast, lunch", "accommodation": "Shinjuku hotel", "transportation": "Private van"},
-            {"day_number": 4, "title": "Train to Kyoto", "description": "Shinkansen over the Kansai plains.", "activities": ["Shinkansen ride"], "meals": "Breakfast", "accommodation": "Kyoto machiya", "transportation": "Shinkansen"},
-            {"day_number": 5, "title": "Kyoto temples", "description": "Fushimi Inari and Kiyomizu at quiet hours.", "activities": ["Fushimi Inari", "Kiyomizu-dera"], "meals": "Breakfast", "accommodation": "Kyoto machiya", "transportation": "Bus & walking"},
-            {"day_number": 6, "title": "Arashiyama", "description": "Bamboo grove and a riverside garden.", "activities": ["Bamboo grove", "Riverside garden"], "meals": "Breakfast, dinner", "accommodation": "Kyoto machiya", "transportation": "Train & walking"},
-            {"day_number": 7, "title": "Nara day trip", "description": "The Great Buddha and free-roaming deer.", "activities": ["Tōdai-ji", "Nara deer park"], "meals": "Breakfast", "accommodation": "Kyoto machiya", "transportation": "Local train"},
-            {"day_number": 8, "title": "Ryokan night", "description": "An onsen stay with kaiseki dinner.", "activities": ["Onsen soak", "Kaiseki dinner"], "meals": "Breakfast, dinner", "accommodation": "Hakone ryokan", "transportation": "Private transfer"},
-            {"day_number": 9, "title": "Osaka food walk", "description": "Street food and spirited Dotonbori.", "activities": ["Dotonbori food walk"], "meals": "Breakfast", "accommodation": "Osaka hotel", "transportation": "Local train"},
-            {"day_number": 10, "title": "Hiroshima", "description": "A moving visit to the Peace Park.", "activities": ["Peace Park Museum"], "meals": "Breakfast", "accommodation": "Osaka hotel", "transportation": "Shinkansen"},
-            {"day_number": 11, "title": "Departure", "description": "Return to Tokyo and onward flight.", "activities": ["Return to Tokyo", "Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Shinkansen"},
-        ],
-        "faqs": [
-            {"question": "How much walking is involved?", "answer": "A moderate amount — 2–4 hours per day with plenty of stops.", "sort_order": 1},
-            {"question": "Do I need a tourist visa?", "answer": "Most nationalities get 90 days visa-free.", "sort_order": 2},
-        ],
-    },
-    {
-        "name": "Morocco Unveiled",
-        "slug": "morocco-sahara",
-        "destination_slug": "morocco",
-        "short_description": "From the red city to the dunes of Erg Chebbi.",
-        "description": (
-            "From the red city to the dunes of Erg Chebbi, through the Atlas Mountains and "
-            "into the heart of Berber hospitality."
-        ),
-        "duration_days": 9,
-        "duration_nights": 8,
-        "starting_price": 2890.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1489493585363-d69421e0edd3?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1489493585363-d69421e0edd3?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "highlights": ["Marrakech medina", "Sahara desert camp", "Atlas crossing", "Riad stays"],
-        "included": [
-            "8 nights: riads + desert camp",
-            "Camel trek & desert camp dinner",
-            "Atlas crossing with driver-guide",
+            "7 nights heritage hotels & one desert camp",
+            "Private air-conditioned transport",
+            "Experienced local guides in each city",
             "Daily breakfast + 5 dinners",
-            "Medina walking tour",
+            "Jaisalmer camel safari & desert dinner",
         ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "Traditional riads in medinas, plus one night in a desert camp.",
-        "transportation_summary": "Private 4x4 with an expert local driver-guide.",
-        "meal_summary": "Daily breakfast, five dinners including a berber desert meal.",
+        "excluded": ["International/domestic flights", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "Heritage havelis and palace hotels, plus a night in the Thar under canvas.",
+        "transportation_summary": "Private AC SUV with a professional local driver throughout.",
+        "meal_summary": "Daily breakfast, five dinners including a royal thali and a desert barbecue.",
         "cancellation_policy": (
             "Free cancellation up to 45 days before departure. 25% charge within 45–21 days, "
-            "75% within 20–7 days, 100% within 6 days."
+            "50% within 20–7 days, 100% within 6 days."
         ),
         "important_information": [
-            "Dress modestly outside Marrakech",
-            "Minimum age: 12 years",
-            "Desert nights can be cold — bring a layer",
+            "Summer heat is intense — pack light cottons and sun protection",
+            "Minimum age: 6 years",
+            "Temple visits require modest dress",
         ],
-        "is_featured": False,
+        "is_featured": True,
         "itinerary": [
-            {"day_number": 1, "title": "Marrakech arrival", "description": "Riads, mint tea and an introduction to the medina.", "activities": ["Arrival", "Riad welcome tea"], "meals": "Dinner", "accommodation": "Marrakech riad", "transportation": "Private transfer"},
-            {"day_number": 2, "title": "Medina & souks", "description": "Wander the lanes with your local guide.", "activities": ["Medina walk", "Souk shopping"], "meals": "Breakfast, dinner", "accommodation": "Marrakech riad", "transportation": "Walking"},
-            {"day_number": 3, "title": "Atlas crossing", "description": "High passes and Berber villages.", "activities": ["Tizi n'Tichka pass", "Berber villages"], "meals": "Breakfast, dinner", "accommodation": "Dades valley lodge", "transportation": "Private 4x4"},
-            {"day_number": 4, "title": "Ouarzazate", "description": "Kasbahs and the desert gateways.", "activities": ["Aït Benhaddou kasbah"], "meals": "Breakfast, dinner", "accommodation": "Ouarzazate hotel", "transportation": "Private 4x4"},
-            {"day_number": 5, "title": "Dades Valley", "description": "Dramatic gorges and palm oases.", "activities": ["Dades gorge walk"], "meals": "Breakfast, dinner", "accommodation": "Dades valley lodge", "transportation": "Private 4x4"},
-            {"day_number": 6, "title": "Erg Chebbi dunes", "description": "Camel trek at dusk into the Sahara.", "activities": ["Camel trek", "Dune sunset"], "meals": "Breakfast, dinner", "accommodation": "Desert camp", "transportation": "Private 4x4 + camel"},
-            {"day_number": 7, "title": "Desert camp", "description": "Starlit night, drums and Berber tea.", "activities": ["Dune sunrise", "Berber music night"], "meals": "Breakfast, dinner", "accommodation": "Desert camp", "transportation": "Camel + private 4x4"},
-            {"day_number": 8, "title": "Return to Marrakech", "description": "A final evening in the medina.", "activities": ["Return drive"], "meals": "Breakfast, dinner", "accommodation": "Marrakech riad", "transportation": "Private 4x4"},
-            {"day_number": 9, "title": "Departure", "description": "Transfer to Marrakech airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+            {"day_number": 1, "title": "Jaipur arrival", "description": "Pink city welcome and a rooftop first evening.", "activities": ["Arrival", "Rooftop dinner"], "meals": "Dinner", "accommodation": "Jaipur heritage hotel", "transportation": "Private transfer"},
+            {"day_number": 2, "title": "Amber Fort & City Palace", "description": "Old Jaipur's forts, courtyards and bazaars.", "activities": ["Amber Fort", "City Palace", "Hawa Mahal"], "meals": "Breakfast, dinner", "accommodation": "Jaipur heritage hotel", "transportation": "Private AC SUV"},
+            {"day_number": 3, "title": "Drive to Udaipur", "description": "Over the Aravali hills toward the lakes.", "activities": ["Scenic drive", "Evening lake walk"], "meals": "Breakfast, dinner", "accommodation": "Udaipur lake-side hotel", "transportation": "Private AC SUV"},
+            {"day_number": 4, "title": "Lake city", "description": "City Palace, a boat on Lake Pichola and sunset ghats.", "activities": ["City Palace", "Lake Pichola boat"], "meals": "Breakfast, dinner", "accommodation": "Udaipur lake-side hotel", "transportation": "Boat & walking"},
+            {"day_number": 5, "title": "Jodhpur blue city", "description": "Mehrangarh Fort above cobalt lanes.", "activities": ["Mehrangarh Fort", "Old city walk"], "meals": "Breakfast, dinner", "accommodation": "Jodhpur heritage hotel", "transportation": "Private AC SUV"},
+            {"day_number": 6, "title": "To Jaisalmer", "description": "Desert roads, villages and the golden fort.", "activities": ["Jaisalmer Fort", "Haveli walk"], "meals": "Breakfast, dinner", "accommodation": "Jaisalmer heritage hotel", "transportation": "Private AC SUV"},
+            {"day_number": 7, "title": "Thar desert night", "description": "Camel safari to a dune camp beneath the stars.", "activities": ["Camel safari", "Dune sunset", "Desert dinner"], "meals": "Breakfast, dinner", "accommodation": "Thar desert camp", "transportation": "Private AC SUV + camel"},
+            {"day_number": 8, "title": "Departure", "description": "Return to Jaisalmer and onward connections.", "activities": ["Return drive", "Airport/station transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
         ],
         "faqs": [
-            {"question": "Is the desert camp comfortable?", "answer": "Yes — proper beds in traditional tents with a shared wash facility.", "sort_order": 1},
+            {"question": "Is the desert camp comfortable?", "answer": "Yes — proper beds in sturdy tents with a shared wash facility.", "sort_order": 1},
+            {"question": "How far do we travel each day?", "answer": "The longest driving day is about six hours; most are three to four.", "sort_order": 2},
         ],
     },
     {
-        "name": "South Island Loop",
-        "slug": "new-zealand-south-island",
-        "destination_slug": "new-zealand",
-        "short_description": "A full lap of the South Island's glaciers, fiords and golden plains.",
+        "name": "Kerala Backwaters & Munnar",
+        "slug": "kerala-backwaters-munnar",
+        "destination_slug": "kerala",
+        "short_description": "Tea hills, a houseboat night and Kochi's old port.",
         "description": (
-            "A full lap of the South Island—glaciers, fiords and golden plains—with expert "
-            "local drivers and stays that put the scenery on your doorstep."
+            "Mists over Munnar's tea estates, a private night afloat on the backwaters "
+            "and the spice-scented streets of Kochi — a gentle south-India classic."
         ),
-        "duration_days": 14,
-        "duration_nights": 13,
-        "starting_price": 6290.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1600&q=80",
+        "duration_days": 7,
+        "duration_nights": 6,
+        "starting_price": 45500.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80",
         ],
-        "highlights": ["Milford Sound", "Queenstown", "Glacier country", "Golden high country"],
+        "highlights": ["Munnar tea estates", "Alleppey houseboat", "Kathakali evening", "Kochi fort"],
         "included": [
-            "13 nights handpicked lodges",
-            "Small-group coach with local driver",
-            "Milford Sound cruise",
-            "Daily breakfast + 6 dinners",
-            "Stargazing night at Tekapo",
-        ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "Handpicked lodges and small hotels, most with lake or mountain views.",
-        "transportation_summary": "Small-group coach with an expert local driver-guide.",
-        "meal_summary": "Daily breakfast, six dinners across the best regions.",
-        "cancellation_policy": (
-            "Free cancellation up to 60 days before departure. 30% charge within 60–30 days, "
-            "100% within 29 days."
-        ),
-        "important_information": [
-            "Weather in Fiordland is famously changeable",
-            "Minimum age: 8 years",
-            "Bring sturdy walking shoes",
-        ],
-        "is_featured": False,
-        "itinerary": [
-            {"day_number": 1, "title": "Christchurch arrival", "description": "Garden city welcome and orientation.", "activities": ["Arrival", "Orientation walk"], "meals": "Dinner", "accommodation": "Christchurch hotel", "transportation": "Airport transfer"},
-            {"day_number": 2, "title": "Kaikoura coast", "description": "Whale watching and dramatic shoreline.", "activities": ["Whale watching"], "meals": "Breakfast, dinner", "accommodation": "Kaikoura lodge", "transportation": "Small-group coach"},
-            {"day_number": 3, "title": "Marlborough", "description": "Wine country and the Sounds.", "activities": ["Wine tasting", "Queen Charlotte lookout"], "meals": "Breakfast, dinner", "accommodation": "Blenheim lodge", "transportation": "Small-group coach"},
-            {"day_number": 4, "title": "Nelson & Abel Tasman", "description": "Golden beaches and coastal tracks.", "activities": ["Abel Tasman coastal walk"], "meals": "Breakfast, dinner", "accommodation": "Nelson lodge", "transportation": "Small-group coach"},
-            {"day_number": 5, "title": "West Coast", "description": "Pancake rocks and wild seas.", "activities": ["Punakaiki pancake rocks"], "meals": "Breakfast, dinner", "accommodation": "Hokitika hotel", "transportation": "Small-group coach"},
-            {"day_number": 6, "title": "Fox Glacier", "description": "Valley walks beneath the ice.", "activities": ["Glacier valley walk"], "meals": "Breakfast, dinner", "accommodation": "Fox Glacier lodge", "transportation": "Small-group coach"},
-            {"day_number": 7, "title": "Wanaka", "description": "Lake views and the lonely tree.", "activities": ["Lake Wanaka", "Roys Peak lookout"], "meals": "Breakfast, dinner", "accommodation": "Wanaka lodge", "transportation": "Small-group coach"},
-            {"day_number": 8, "title": "Queenstown", "description": "Adventure capital, at your own pace.", "activities": ["Free day in Queenstown"], "meals": "Breakfast", "accommodation": "Queenstown hotel", "transportation": "Small-group coach"},
-            {"day_number": 9, "title": "Milford Sound", "description": "A cruise through fiordland grandeur.", "activities": ["Milford Sound cruise"], "meals": "Breakfast, lunch", "accommodation": "Te Anau lodge", "transportation": "Small-group coach + cruise"},
-            {"day_number": 10, "title": "Te Anau & Doubtful", "description": "The quieter fiord, wilderness cruise.", "activities": ["Doubtful Sound cruise"], "meals": "Breakfast, lunch", "accommodation": "Te Anau lodge", "transportation": "Small-group coach + cruise"},
-            {"day_number": 11, "title": "Dunedin", "description": "Scottish heritage and Otago coast.", "activities": ["Dunedin heritage walk"], "meals": "Breakfast, dinner", "accommodation": "Dunedin hotel", "transportation": "Small-group coach"},
-            {"day_number": 12, "title": "Aoraki / Mt Cook", "description": "Night skies and alpine hikes.", "activities": ["Hooker Valley track"], "meals": "Breakfast, dinner", "accommodation": "Mt Cook lodge", "transportation": "Small-group coach"},
-            {"day_number": 13, "title": "Lake Tekapo", "description": "Turquoise water and star observatory.", "activities": ["Church of the Good Shepherd", "Stargazing night"], "meals": "Breakfast, dinner", "accommodation": "Tekapo lodge", "transportation": "Small-group coach"},
-            {"day_number": 14, "title": "Return", "description": "Drive back to Christchurch airport.", "activities": ["Return drive"], "meals": "Breakfast", "accommodation": "—", "transportation": "Small-group coach"},
-        ],
-        "faqs": [
-            {"question": "Is this trip high-energy?", "answer": "It's active but flexible — walks are optional each day.", "sort_order": 1},
-        ],
-    },
-    {
-        "name": "Portugal Light & Douro",
-        "slug": "portugal-light",
-        "destination_slug": "portugal",
-        "short_description": "Sun-warmed Lisbon, the Douro valley and a slow Atlantic coast.",
-        "description": (
-            "Sun-warmed Lisbon, the terraced vine country of the Douro, and a slow stretch "
-            "of Atlantic coastline — a gentle, golden introduction to Portugal."
-        ),
-        "duration_days": 8,
-        "duration_nights": 7,
-        "starting_price": 3190.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1600&q=80",
-        "gallery": [
-            "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1533630757306-cbadb934edb9?auto=format&fit=crop&w=1200&q=80",
-        ],
-        "highlights": ["Lisbon", "Douro valley", "Atlantic coast", "Wine tastings"],
-        "included": [
-            "7 nights boutique hotels",
-            "Sintra & Douro excursions",
-            "River cruise & wine tastings",
+            "6 nights including a private houseboat",
+            "All private transport & drivers",
+            "Tea estate walk with a plantation host",
             "Daily breakfast + 4 dinners",
-            "Local guides in Lisbon & Porto",
+            "Kathakali performance & backwater cruise",
         ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "Boutique hotels in Lisbon, Porto and a countryside quinta in the Douro.",
-        "transportation_summary": "Private van with local driver, plus a Douro river cruise.",
-        "meal_summary": "Daily breakfast, four dinners including a wine estate lunch.",
+        "excluded": ["Flights to Kochi", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "A mountain lodge in Munnar, backwater homestay and one night aboard a houseboat.",
+        "transportation_summary": "Private tourist taxi with an experienced local driver.",
+        "meal_summary": "Daily breakfast, four dinners including Kerala seafood and an in-houseboat meal.",
         "cancellation_policy": (
-            "Free cancellation up to 45 days before departure. 25% charge within 45–21 days, "
-            "100% within 20 days."
+            "Free cancellation up to 30 days before departure. 25% charge within 30–15 days, "
+            "50% within 14–7 days, 100% within 6 days."
         ),
         "important_information": [
-            "Lisbon's hills are steep — comfortable shoes essential",
-            "Minimum age: 8 years",
+            "Monsoon timber—pack light rain layers",
+            "Minimum age: 5 years",
+            "Houseboat cabin availability is limited — book early",
         ],
         "booking_mode": "INSTANT_BOOKING",
-        "is_featured": False,
+        "is_featured": True,
         "itinerary": [
-            {"day_number": 1, "title": "Lisbon arrival", "description": "Old town lights and a fado evening.", "activities": ["Arrival", "Fado dinner"], "meals": "Dinner", "accommodation": "Lisbon boutique hotel", "transportation": "Airport transfer"},
-            {"day_number": 2, "title": "Lisbon districts", "description": "Alfama, Belém and the tram-lined hills.", "activities": ["Alfama walk", "Belém tower", "Tram 28"], "meals": "Breakfast", "accommodation": "Lisbon boutique hotel", "transportation": "Tram & walking"},
-            {"day_number": 3, "title": "Sintra", "description": "Fairytale palaces amid forested hills.", "activities": ["Pena Palace", "Quinta da Regaleira"], "meals": "Breakfast, lunch", "accommodation": "Lisbon boutique hotel", "transportation": "Private van"},
-            {"day_number": 4, "title": "Coast road north", "description": "Cascais, Óbidos and fishing towns.", "activities": ["Cascais", "Óbidos walled town"], "meals": "Breakfast, dinner", "accommodation": "Nazaré hotel", "transportation": "Private van"},
-            {"day_number": 5, "title": "Porto", "description": "Riverside Ribeira and azulejo streets.", "activities": ["Ribeira district", "Azulejo tiling tour"], "meals": "Breakfast", "accommodation": "Porto boutique hotel", "transportation": "Private van"},
-            {"day_number": 6, "title": "Douro Valley", "description": "Terraced vines and a river cruise.", "activities": ["Douro river cruise"], "meals": "Breakfast, lunch", "accommodation": "Douro quinta", "transportation": "Private van + cruise"},
-            {"day_number": 7, "title": "Wine estate", "description": "Tastings and a slow countryside lunch.", "activities": ["Wine tastings", "Quinta lunch"], "meals": "Breakfast, lunch, dinner", "accommodation": "Douro quinta", "transportation": "Private van"},
-            {"day_number": 8, "title": "Departure", "description": "Transfer to Porto airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+            {"day_number": 1, "title": "Kochi arrival", "description": "Fort Kochi's colonial lanes and evening breeze.", "activities": ["Arrival", "Fort Kochi walk"], "meals": "Dinner", "accommodation": "Fort Kochi hotel", "transportation": "Private transfer"},
+            {"day_number": 2, "title": "Kochi heritage", "description": "Chinese nets, Dutch houses and a Kathakali night.", "activities": ["Chinese fishing nets", "St Francis Church", "Kathakali evening"], "meals": "Breakfast, dinner", "accommodation": "Fort Kochi hotel", "transportation": "Walking & local ferry"},
+            {"day_number": 3, "title": "To Munnar", "description": "Rise through spice country to the tea hills.", "activities": ["Scenic drive", "Tea garden arrival"], "meals": "Breakfast, dinner", "accommodation": "Munnar mountain lodge", "transportation": "Private taxi"},
+            {"day_number": 4, "title": "Tea estates", "description": "A plantation walk and a waterfall trail.", "activities": ["Tea estate walk", "Eravikulam viewpoint"], "meals": "Breakfast, dinner", "accommodation": "Munnar mountain lodge", "transportation": "Private taxi"},
+            {"day_number": 5, "title": "To Alleppey", "description": "Backwaters unwind beside paddy fields.", "activities": ["Backwater drive", "Village trail"], "meals": "Breakfast, dinner", "accommodation": "Alleppey backwater homestay", "transportation": "Private taxi"},
+            {"day_number": 6, "title": "Houseboat night", "description": "A private boat, canals and a dinner prepared on board.", "activities": ["Houseboat cruise", "Sunset canal"], "meals": "Breakfast, lunch, dinner", "accommodation": "Private houseboat", "transportation": "Houseboat"},
+            {"day_number": 7, "title": "Departure", "description": "Return to Kochi for onward connections.", "activities": ["Return to Kochi", "Transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
         ],
         "faqs": [
-            {"question": "How hilly is Lisbon?", "answer": "Very — but we plan routes with trams and quiet shortcuts.", "sort_order": 1},
+            {"question": "When is the best season?", "answer": "September to March is ideal; November–February is peak.", "sort_order": 1},
         ],
     },
     {
-        "name": "Costa Rica Pura Vida",
-        "slug": "costa-rica-pura-vida",
-        "destination_slug": "costa-rica",
-        "short_description": "Cloud forests, volcanoes and wild Pacific shores.",
+        "name": "Ladakh Expedition",
+        "slug": "ladakh-expedition",
+        "destination_slug": "ladakh",
+        "short_description": "Monasteries, high passes and a night by Pangong Lake.",
         "description": (
-            "Misty cloud forests, steaming volcanoes and wild Pacific shores — a restorative "
-            "journey through Costa Rica's richest landscapes."
+            "An acclimatised high-altitude adventure — Leh's old town, Thiksey and Hemis "
+            "monasteries, the Nubra dunes and a lakeside camp at Pangong."
         ),
-        "duration_days": 10,
-        "duration_nights": 9,
-        "starting_price": 3490.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
+        "duration_days": 8,
+        "duration_nights": 7,
+        "starting_price": 58000.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80",
         ],
-        "highlights": ["Cloud forest", "Volcanoes", "Pacific coast", "Wildlife"],
+        "highlights": ["Pangong camp", "Thiksey monastery", "Nubra dunes", "Khardung La"],
         "included": [
-            "9 nights eco-lodges & beach stay",
-            "All transfers with local drivers",
-            "Cloud forest & volcano entries",
-            "Daily breakfast + 5 dinners",
-            "Turtle conservation morning",
+            "7 nights including a Pangong lakeside camp",
+            "All 4WD transport with local drivers",
+            "Internal Ladakh permits & monastery entries",
+            "Daily breakfast + 6 dinners",
+            "Local high-altitude guide throughout",
         ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "Eco-lodges in the cloud forest and a relaxed beachfront stay.",
-        "transportation_summary": "All transfers included with experienced local drivers.",
-        "meal_summary": "Daily breakfast, five dinners including a beachside barbecue.",
+        "excluded": ["Flights to Leh", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "Guesthouses in Leh and Nubra plus a premium lakeside camp at Pangong.",
+        "transportation_summary": "Tempo-traveller and 4WDs with experienced Ladakhi drivers.",
+        "meal_summary": "Daily breakfast, six dinners with homely Ladakhi cooking.",
         "cancellation_policy": (
             "Free cancellation up to 45 days before departure. 30% charge within 45–21 days, "
             "100% within 20 days."
         ),
         "important_information": [
-            "Light rain is normal in the cloud forest",
-            "Minimum age: 8 years",
-            "Pack insect repellent",
+            "Leh is at 3,500m — we include full acclimatisation days",
+            "Minimum age: 10 years",
+            "Carry a warm layer even in summer",
+        ],
+        "is_featured": True,
+        "itinerary": [
+            {"day_number": 1, "title": "Leh arrival", "description": "Land, rest and let the altitude settle.", "activities": ["Arrival", "Rest day"], "meals": "Dinner", "accommodation": "Leh guesthouse", "transportation": "Airport transfer"},
+            {"day_number": 2, "title": "Leh acclimatise", "description": "Old town lanes and the palace viewpoint.", "activities": ["Leh Palace", "Old town walk"], "meals": "Breakfast, dinner", "accommodation": "Leh guesthouse", "transportation": "Walking"},
+            {"day_number": 3, "title": "Monasteries", "description": "Thiksey and Hemis at morning prayer time.", "activities": ["Thiksey monastery", "Hemis monastery"], "meals": "Breakfast, dinner", "accommodation": "Leh guesthouse", "transportation": "Private 4WD"},
+            {"day_number": 4, "title": "Khardung La & Nubra", "description": "Across the pass to the dune fields of Nubra.", "activities": ["Khardung La", "Nubra dunes"], "meals": "Breakfast, dinner", "accommodation": "Nubra guesthouse", "transportation": "Private 4WD"},
+            {"day_number": 5, "title": "Nubra valleys", "description": "Camel ride and the peaceful Diskit monastery.", "activities": ["Desert camel ride", "Diskit monastery"], "meals": "Breakfast, dinner", "accommodation": "Nubra guesthouse", "transportation": "Private 4WD"},
+            {"day_number": 6, "title": "To Pangong", "description": "Climb Chang La and arrive at the blue lake.", "activities": ["Chang La pass", "Pangong sunset"], "meals": "Breakfast, dinner", "accommodation": "Pangong lakeside camp", "transportation": "Private 4WD"},
+            {"day_number": 7, "title": "Pangong morning", "description": "Sunrise over the lake, then back to Leh.", "activities": ["Lake sunrise", "Return drive"], "meals": "Breakfast, dinner", "accommodation": "Leh guesthouse", "transportation": "Private 4WD"},
+            {"day_number": 8, "title": "Departure", "description": "Fly out from Leh.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+        ],
+        "faqs": [
+            {"question": "Do I need an acclimatisation day?", "answer": "Yes — day two is built for rest to keep everyone safe at altitude.", "sort_order": 1},
+        ],
+    },
+    {
+        "name": "Goa Sunset Escape",
+        "slug": "goa-sunset-escape",
+        "destination_slug": "goa",
+        "short_description": "Beach days, Old Goa and a spice-farm lunch.",
+        "description": (
+            "A laid-back stretch of golden beaches and colonial charm — North Goa's sands, "
+            "Old Goa's churches, palm-shaded spice farms and a Mandovi sunset cruise."
+        ),
+        "duration_days": 6,
+        "duration_nights": 5,
+        "starting_price": 32500.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "highlights": ["North Goa beaches", "Old Goa churches", "Spice farms", "Sunset cruise"],
+        "included": [
+            "5 nights beachfront hotels",
+            "Private transfers & local driver",
+            "Old Goa & Panaji city tour",
+            "Daily breakfast + 3 dinners",
+            "Mandovi river sunset cruise",
+        ],
+        "excluded": ["Flights to Goa", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "Beachfront resorts and boutique shacks favourite in North Goa.",
+        "transportation_summary": "Private AC car with a local driver for excursions.",
+        "meal_summary": "Daily breakfast, three dinners including a beach barbecue.",
+        "cancellation_policy": (
+            "Free cancellation up to 30 days before departure. 25% charge within 30–15 days, "
+            "100% within 14 days."
+        ),
+        "important_information": [
+            "Goa is scorching in May — the Nov–Feb season is best",
+            "Minimum age: 4 years",
         ],
         "booking_mode": "INSTANT_BOOKING",
         "is_featured": False,
         "itinerary": [
-            {"day_number": 1, "title": "San José arrival", "description": "Settle into the capital's green hills.", "activities": ["Arrival", "Orientation"], "meals": "Dinner", "accommodation": "San José hotel", "transportation": "Airport transfer"},
-            {"day_number": 2, "title": "Poás Volcano", "description": "Cloud forest and a steaming crater.", "activities": ["Poás crater hike"], "meals": "Breakfast, dinner", "accommodation": "Arenal lodge", "transportation": "Private van"},
-            {"day_number": 3, "title": "Arenal", "description": "Volcano views and evening hot springs.", "activities": ["Arenal volcano", "Hot springs evening"], "meals": "Breakfast, dinner", "accommodation": "Arenal lodge", "transportation": "Private van"},
-            {"day_number": 4, "title": "Monteverde", "description": "Trek the cloud forest canopy.", "activities": ["Cloud forest trek"], "meals": "Breakfast, dinner", "accommodation": "Monteverde eco-lodge", "transportation": "Private van"},
-            {"day_number": 5, "title": "Hanging bridges", "description": "Wildlife-spotting on forest trails.", "activities": ["Hanging bridges walk"], "meals": "Breakfast, dinner", "accommodation": "Monteverde eco-lodge", "transportation": "Private van"},
-            {"day_number": 6, "title": "Pacific coast", "description": "Cross to the Guanacaste shore.", "activities": ["Coast drive", "Beach arrival"], "meals": "Breakfast, dinner", "accommodation": "Guanacaste beach hotel", "transportation": "Private van"},
-            {"day_number": 7, "title": "Beach days", "description": "Surf, swim or simply unwind.", "activities": ["Beach day"], "meals": "Breakfast", "accommodation": "Guanacaste beach hotel", "transportation": "—"},
-            {"day_number": 8, "title": "Turtle project", "description": "A morning with local conservationists.", "activities": ["Turtle conservation"], "meals": "Breakfast", "accommodation": "Guanacaste beach hotel", "transportation": "Private van"},
-            {"day_number": 9, "title": "Sunset catamaran", "description": "Sail the coast with dinner aboard.", "activities": ["Sunset catamaran"], "meals": "Breakfast", "accommodation": "Guanacaste beach hotel", "transportation": "Catamaran"},
-            {"day_number": 10, "title": "Departure", "description": "Transfer to Liberia airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+            {"day_number": 1, "title": "Goa arrival", "description": "Beach check-in and a golden first sunset.", "activities": ["Arrival", "Beach sunset"], "meals": "Dinner", "accommodation": "North Goa beach hotel", "transportation": "Private transfer"},
+            {"day_number": 2, "title": "Old Goa", "description": "Whitewashed churches and Panaji's Latin quarter.", "activities": ["Basilica of Bom Jesus", "Panaji Latin quarter"], "meals": "Breakfast, dinner", "accommodation": "North Goa beach hotel", "transportation": "Private AC car"},
+            {"day_number": 3, "title": "Spice farm", "description": "Ponda's plantations and a slow local lunch.", "activities": ["Spice farm tour", "Local lunch"], "meals": "Breakfast, lunch", "accommodation": "North Goa beach hotel", "transportation": "Private AC car"},
+            {"day_number": 4, "title": "Beach day", "description": "Seashell hunts, beach shacks and nothing on the clock.", "activities": ["Free beach day"], "meals": "Breakfast", "accommodation": "North Goa beach hotel", "transportation": "—"},
+            {"day_number": 5, "title": "Sunset cruise", "description": "The Mandovi at golden hour with dinner aboard.", "activities": ["Mandovi cruise", "Farewell dinner"], "meals": "Breakfast, dinner", "accommodation": "North Goa beach hotel", "transportation": "Cruise boat"},
+            {"day_number": 6, "title": "Departure", "description": "Transfer to the airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
         ],
         "faqs": [
-            {"question": "Do I need to be fit?", "answer": "Most days are gentle; the cloud forest trek is an easy-to-moderate walk.", "sort_order": 1},
+            {"question": "Which beach do we stay near?", "answer": "North Goa's quieter stretches, close to Palolem-style calm yet reachable to all sights.", "sort_order": 1},
         ],
     },
     {
-        "name": "Aegean Island Sail",
-        "slug": "greece-aegean",
-        "destination_slug": "greece",
-        "short_description": "Sail the Aegean between whitewashed islands at golden hour.",
+        "name": "Kashmir Valley Serenity",
+        "slug": "kashmir-valley-serenity",
+        "destination_slug": "kashmir",
+        "short_description": "Dal Lake, Gulmarg meadows and Pahalgam's pine valleys.",
         "description": (
-            "Sail the Aegean between whitewashed islands, linger in harbour villages, and "
-            "watch the sun set over the caldera from the water."
+            "Houseboat mornings on Dal Lake, a gondola ride above Gulmarg and the slow "
+            "pine trails of Pahalgam — Kashmir at its most restful, with a host who "
+            "welcomes you like family."
         ),
-        "duration_days": 10,
-        "duration_nights": 9,
-        "starting_price": 3890.00,
-        "currency": "USD",
-        "hero_image": "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1600&q=80",
+        "duration_days": 7,
+        "duration_nights": 6,
+        "starting_price": 46000.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1530908295418-12c326d45a24?auto=format&fit=crop&w=1200&q=80",
         ],
-        "highlights": ["Aegean sailing", "Santorini", "Island villages", "Ancient heritage"],
+        "highlights": ["Dal Lake houseboat", "Gulmarg gondola", "Pahalgam trails", "Mughal gardens"],
         "included": [
-            "9 nights hotels + boat nights",
-            "Aegean sailing day with crew",
-            "Ferry & inter-island transport",
-            "Daily breakfast + 4 dinners",
-            "Santorini caldera guide",
+            "6 nights houseboat & valley hotels",
+            "All private transport with experienced drivers",
+            "Gulmarg gondola tickets",
+            "Daily breakfast + 5 dinners",
+            "Shikara ride & garden visits",
         ],
-        "excluded": ["International flights", "Travel insurance", "Lunches & drinks"],
-        "accommodation_summary": "Boutique island hotels and one night aboard a traditional boat.",
-        "transportation_summary": "Ferries, a crewed sailing day, and private transfers.",
-        "meal_summary": "Daily breakfast, four dinners including a sunset taverna feast.",
+        "excluded": ["Flights to Srinagar", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "A classic Dal Lake houseboat plus lakeside and valley hotels.",
+        "transportation_summary": "Private AC cars throughout with vetted local drivers.",
+        "meal_summary": "Daily breakfast, five dinners including a Wazwan-style feast night.",
         "cancellation_policy": (
-            "Free cancellation up to 45 days before departure. 25% charge within 45–21 days, "
+            "Free cancellation up to 45 days before departure. 30% charge within 45–21 days, "
             "100% within 20 days."
         ),
         "important_information": [
-            "Ferry schedules vary by season",
+            "Valley temperatures drop sharply at night — pack warm layers",
             "Minimum age: 6 years",
-            "Swim stops depend on the wind",
         ],
         "is_featured": False,
         "itinerary": [
-            {"day_number": 1, "title": "Athens arrival", "description": "Acropolis views and a rooftop dinner.", "activities": ["Arrival", "Rooftop dinner"], "meals": "Dinner", "accommodation": "Athens hotel", "transportation": "Airport transfer"},
-            {"day_number": 2, "title": "Athens ancient city", "description": "The Acropolis, Plaka and Monastiraki.", "activities": ["Acropolis", "Plaka district"], "meals": "Breakfast", "accommodation": "Athens hotel", "transportation": "Walking"},
-            {"day_number": 3, "title": "Ferry to the islands", "description": "Cross to the Cyclades.", "activities": ["Ferry crossing"], "meals": "Breakfast", "accommodation": "Paros hotel", "transportation": "Ferry"},
-            {"day_number": 4, "title": "Island villages", "description": "White walls, blue domes and slow mornings.", "activities": ["Paros villages walk"], "meals": "Breakfast, dinner", "accommodation": "Paros hotel", "transportation": "Walking"},
-            {"day_number": 5, "title": "Sail day", "description": "A day aboard a traditional boat.", "activities": ["Sailing day"], "meals": "Breakfast, lunch", "accommodation": "Boat night", "transportation": "Sailboat"},
-            {"day_number": 6, "title": "Swim stops", "description": "Secluded coves and clear water.", "activities": ["Swim stops", "Island hopping"], "meals": "Breakfast, lunch", "accommodation": "Ios hotel", "transportation": "Sailboat"},
-            {"day_number": 7, "title": "Santorini", "description": "Caldera-edge walking at golden hour.", "activities": ["Caldera walk"], "meals": "Breakfast", "accommodation": "Santorini hotel", "transportation": "Ferry"},
-            {"day_number": 8, "title": "Oia sunset", "description": "The classic view, from the best cliff.", "activities": ["Oia sunset", "Taverna dinner"], "meals": "Breakfast, dinner", "accommodation": "Santorini hotel", "transportation": "Walking"},
-            {"day_number": 9, "title": "Sailing return", "description": "One last swim and a farewell dinner.", "activities": ["Farewell sail", "Farewell dinner"], "meals": "Breakfast, dinner", "accommodation": "Santorini hotel", "transportation": "Sailboat"},
-            {"day_number": 10, "title": "Departure", "description": "Flight from Santorini.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+            {"day_number": 1, "title": "Srinagar arrival", "description": "Settle onto a Dal Lake houseboat.", "activities": ["Arrival", "Houseboat check-in"], "meals": "Dinner", "accommodation": "Dal Lake houseboat", "transportation": "Private transfer"},
+            {"day_number": 2, "title": "Lake morning", "description": "A shikara glide through the floating gardens.", "activities": ["Shikara ride", "Floating gardens"], "meals": "Breakfast, dinner", "accommodation": "Dal Lake houseboat", "transportation": "Shikara"},
+            {"day_number": 3, "title": "Mughal gardens", "description": "Shalimar, Nishat and Chashme Shahi in blossom.", "activities": ["Shalimar Bagh", "Nishat Bagh"], "meals": "Breakfast, dinner", "accommodation": "Srinagar lake-view hotel", "transportation": "Private AC car"},
+            {"day_number": 4, "title": "Gulmarg", "description": "Ride the gondola into meadows of green and white.", "activities": ["Gulmarg gondola", "Meadow walks"], "meals": "Breakfast, dinner", "accommodation": "Srinagar lake-view hotel", "transportation": "Private AC car"},
+            {"day_number": 5, "title": "Pahalgam", "description": "Pine forests, the Lidder River and village tea.", "activities": ["Pahalgam valley", "Lidder walk"], "meals": "Breakfast, dinner", "accommodation": "Pahalgam resort", "transportation": "Private AC car"},
+            {"day_number": 6, "title": "Valley trails", "description": "An unhurried morning before returning to Srinagar.", "activities": ["Trail walk", "Return to Srinagar"], "meals": "Breakfast, dinner", "accommodation": "Srinagar lake-view hotel", "transportation": "Private AC car"},
+            {"day_number": 7, "title": "Departure", "description": "Transfer to Srinagar airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
         ],
         "faqs": [
-            {"question": "Can I sail even if I'm prone to seasickness?", "answer": "The Aegean is usually calm; we also pick sheltered routes.", "sort_order": 1},
+            {"question": "Is the valley safe to travel?", "answer": "The tourist circuits are open and well-run; we travel with vetted local hosts.", "sort_order": 1},
+        ],
+    },
+    {
+        "name": "Andaman Island Escape",
+        "slug": "andaman-island-escape",
+        "destination_slug": "andaman",
+        "short_description": "Snorkelling, seaplane hops and island-lagoon days.",
+        "description": (
+            "Turquoise shallows, coral gardens and slow ferry hops between Port Blair and "
+            "Swaraj Dweep — India's most dreamlike coastline, taken at island pace."
+        ),
+        "duration_days": 6,
+        "duration_nights": 5,
+        "starting_price": 52000.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "highlights": ["Swaraj Dweep beaches", "Snorkelling trips", "Cellular Jail", "Radhanagar Beach"],
+        "included": [
+            "5 nights island resorts",
+            "Ferry transfers between islands",
+            "Snorkelling gear & boat trips",
+            "Daily breakfast + 4 dinners",
+            "Cellular Jail light-and-sound show",
+        ],
+        "excluded": ["Flights to Port Blair", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "Beachfront resorts on Port Blair and Swaraj Dweep.",
+        "transportation_summary": "Private ferry / speedboat hops plus airport transfers.",
+        "meal_summary": "Daily breakfast, four dinners with fresh catch by the sea.",
+        "cancellation_policy": (
+            "Free cancellation up to 30 days before departure. 30% charge within 30–15 days, "
+            "100% within 14 days."
+        ),
+        "important_information": [
+            "Ferry schedules vary — we hold flexible plans",
+            "Minimum age: 6 years",
+            "Coral-friendly sunscreen is encouraged",
+        ],
+        "is_featured": False,
+        "itinerary": [
+            {"day_number": 1, "title": "Port Blair arrival", "description": "Settle in near the harbour.", "activities": ["Arrival", "Harbour walk"], "meals": "Dinner", "accommodation": "Port Blair resort", "transportation": "Airport transfer"},
+            {"day_number": 2, "title": "Cellular Jail", "description": "History and the night sound-and-light show.", "activities": ["Cellular Jail", "Light-and-sound show"], "meals": "Breakfast, dinner", "accommodation": "Port Blair resort", "transportation": "Private car"},
+            {"day_number": 3, "title": "To Swaraj Dweep", "description": "Ferry across to the island of golden beaches.", "activities": ["Ferry crossing", "Radhanagar sunset"], "meals": "Breakfast, dinner", "accommodation": "Swaraj Dweep resort", "transportation": "Ferry"},
+            {"day_number": 4, "title": "Snorkelling day", "description": "Coral flats and clear-water snorkelling.", "activities": ["Snorkelling trip", "Beach afternoon"], "meals": "Breakfast, dinner", "accommodation": "Swaraj Dweep resort", "transportation": "Speedboat"},
+            {"day_number": 5, "title": "Island mornings", "description": "Slow breakfasts and a final swim before return.", "activities": ["Free morning", "Return ferry"], "meals": "Breakfast, dinner", "accommodation": "Port Blair resort", "transportation": "Ferry"},
+            {"day_number": 6, "title": "Departure", "description": "Transfer to the airport.", "activities": ["Airport transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+        ],
+        "faqs": [
+            {"question": "Can non-swimmers snorkel?", "answer": "Yes — life jackets, guides and very shallow coral flats make it accessible.", "sort_order": 1},
+        ],
+    },
+    {
+        "name": "Himachal Mountain Trails",
+        "slug": "himachal-mountain-trails",
+        "destination_slug": "himachal",
+        "short_description": "Shimla's toy train, Manali's valleys and Solang skies.",
+        "description": (
+            "From the Kalka–Shimla toy train to Manali's apple orchards and a paragliding "
+            "morning in Solang — the classic north-India hill holiday."
+        ),
+        "duration_days": 7,
+        "duration_nights": 6,
+        "starting_price": 38000.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1530189627142-5bec1b282b47?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "highlights": ["Kalka–Shimla toy train", "Manali old town", "Solang valley", "Temple trails"],
+        "included": [
+            "6 nights mountain hotels",
+            "Toy-train tickets & all transfers",
+            "Solang valley activities",
+            "Daily breakfast + 4 dinners",
+            "Local mountain guide on trail days",
+        ],
+        "excluded": ["Flights/rail to Chandigarh", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "Cosy colonial and mountain-view hotels in Shimla and Manali.",
+        "transportation_summary": "Private AC car plus the scenic toy train to Shimla.",
+        "meal_summary": "Daily breakfast, four dinners with Himachali specialities.",
+        "cancellation_policy": (
+            "Free cancellation up to 30 days before departure. 25% charge within 30–15 days, "
+            "100% within 14 days."
+        ),
+        "important_information": [
+            "Roads can be slow in the hills — we build in buffer time",
+            "Minimum age: 5 years",
+        ],
+        "is_featured": False,
+        "itinerary": [
+            {"day_number": 1, "title": "Chandigarh start", "description": "Arrive and enjoy Chandigarh's lake gardens.", "activities": ["Arrival", "Lake garden evening"], "meals": "Dinner", "accommodation": "Chandigarh hotel", "transportation": "Arrival transfer"},
+            {"day_number": 2, "title": "Toy train to Shimla", "description": "The little red train up the Kalka–Shimla line.", "activities": ["Toy train ride", "Mall Road walk"], "meals": "Breakfast, dinner", "accommodation": "Shimla colonial hotel", "transportation": "Toy train"},
+            {"day_number": 3, "title": "Shimla old town", "description": "Christ Church, Ridge walks and cafés.", "activities": ["The Ridge", "Christ Church", "Old bazaar"], "meals": "Breakfast, dinner", "accommodation": "Shimla colonial hotel", "transportation": "Walking"},
+            {"day_number": 4, "title": "To Manali", "description": "Kullu valley drives and riverside stops.", "activities": ["Scenic drive", "Kullu valley"], "meals": "Breakfast, dinner", "accommodation": "Manali mountain hotel", "transportation": "Private AC car"},
+            {"day_number": 5, "title": "Manali old town", "description": "Hadimba temple and apple-orchard walks.", "activities": ["Hadimba temple", "Orchard walk"], "meals": "Breakfast, dinner", "accommodation": "Manali mountain hotel", "transportation": "Private AC car"},
+            {"day_number": 6, "title": "Solang valley", "description": "Paragliding and meadow time above Manali.", "activities": ["Solang valley", "Paragliding"], "meals": "Breakfast, dinner", "accommodation": "Manali mountain hotel", "transportation": "Private AC car"},
+            {"day_number": 7, "title": "Departure", "description": "Return to Chandigarh for onward connections.", "activities": ["Return drive", "Transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+        ],
+        "faqs": [
+            {"question": "Is the toy train journey worth it?", "answer": "Absolutely — the Kalka–Shimla line is a UNESCO heritage route.", "sort_order": 1},
+        ],
+    },
+    {
+        "name": "Tamil Nadu Temple Trail",
+        "slug": "tamil-nadu-temple-trail",
+        "destination_slug": "tamil-nadu",
+        "short_description": "Madurai's towers, Chettinad mansions and Kanyakumari's seas.",
+        "description": (
+            "South India's sacred high roads — Meenakshi's dusk lamps, Rameswaram's long "
+            "corridor and the windswept meeting of three seas at Kanyakumari, on the "
+            "agency's own home ground."
+        ),
+        "duration_days": 6,
+        "duration_nights": 5,
+        "starting_price": 36500.00,
+        "currency": "INR",
+        "hero_image": "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1600&q=80",
+        "gallery": [
+            "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1600100598826-6b4f6ffe5d32?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "highlights": ["Meenakshi temple", "Chettinad mansions", "Rameswaram shore", "Kanyakumari sunrise"],
+        "included": [
+            "5 nights heritage & temple-town hotels",
+            "All private transport with local drivers",
+            "Temple entry & guided visits",
+            "Daily breakfast + 4 dinners",
+            "Chettinad mansion stay",
+        ],
+        "excluded": ["Flights/train to Madurai", "Travel insurance", "Lunches & drinks"],
+        "accommodation_summary": "A restored Chettinad mansion plus comfortable temple-town stays.",
+        "transportation_summary": "Private AC car throughout with knowledgeable local drivers.",
+        "meal_summary": "Daily breakfast, four dinners with pure South Indian fare.",
+        "cancellation_policy": (
+            "Free cancellation up to 30 days before departure. 25% charge within 30–15 days, "
+            "100% within 14 days."
+        ),
+        "important_information": [
+            "Temples require modest dress and footwear removal",
+            "Minimum age: 5 years",
+            "Kanyakumari sunset is a must — we time it well",
+        ],
+        "is_featured": False,
+        "itinerary": [
+            {"day_number": 1, "title": "Madurai arrival", "description": "Arrive and watch Meenakshi at evening lamps.", "activities": ["Arrival", "Temple dusk"], "meals": "Dinner", "accommodation": "Madurai hotel", "transportation": "Private transfer"},
+            {"day_number": 2, "title": "Madurai temples", "description": "The tower city, its market and its famous temple food.", "activities": ["Meenakshi temple", "Local market"], "meals": "Breakfast, dinner", "accommodation": "Madurai hotel", "transportation": "Walking & auto"},
+            {"day_number": 3, "title": "Chettinad", "description": "Palatial mansions, handloom and fiery Chettinad curry.", "activities": ["Mansion tours", "Handloom visit"], "meals": "Breakfast, dinner", "accommodation": "Chettinad heritage mansion", "transportation": "Private AC car"},
+            {"day_number": 4, "title": "Rameswaram", "description": "The southern rails of the Ramanathaswamy temple.", "activities": ["Sea corridor", "Shore temples"], "meals": "Breakfast, dinner", "accommodation": "Rameswaram hotel", "transportation": "Private AC car"},
+            {"day_number": 5, "title": "Kanyakumari", "description": "India's land's-end — sunrise, three seas and sunset rocks.", "activities": ["Vivekananda Rock", "Three-seas viewpoint"], "meals": "Breakfast, dinner", "accommodation": "Kanyakumari hotel", "transportation": "Private AC car"},
+            {"day_number": 6, "title": "Departure", "description": "Return to Kanyakumari/Trivandrum railhead for onward travel.", "activities": ["Return drive", "Transfer"], "meals": "Breakfast", "accommodation": "—", "transportation": "Private transfer"},
+        ],
+        "faqs": [
+            {"question": "Is this a religious-only trip?", "answer": "It's a heritage and culture journey — the food and architecture are highlights too.", "sort_order": 1},
         ],
     },
 ]
@@ -776,7 +749,7 @@ def seed() -> None:
             db.add(package)
 
         db.commit()
-        print("✅ Seed complete")
+        print("Seed complete")
         print(f"   Destinations: {db.query(Destination).count()}")
         print(f"   Packages:     {db.query(Package).count()}")
         print(f"   Itinerary:    {db.query(ItineraryDay).count()}")
