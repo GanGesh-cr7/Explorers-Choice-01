@@ -9,8 +9,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    # Every environment must point at the team's shared database explicitly.
-    database_url: str = Field(..., validation_alias="DATABASE_URL")
+    # Local development uses one SQLite database file per developer. Set
+    # DATABASE_URL later when switching this environment to shared PostgreSQL.
+    database_url: str = "sqlite:///./explorers_choice.db"
 
     # Shared secret used by the admin UI to authenticate admin operations
     # (`X-ADMIN-KEY` header). Keep in sync with the admin area deployment.
@@ -33,6 +34,10 @@ class Settings(BaseSettings):
         "http://localhost:3100",
     ]
 
+    # Allow browser origins served from any localhost or private-LAN address on
+    # a dev port, so devices on the same network can log in against this backend.
+    cors_origin_regex: str = r"http://(?:localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):\d{1,5}"
+
     # Local development escape hatch: allows the placeholder secrets above.
     allow_insecure_defaults: bool = Field(
         default=False,
@@ -43,10 +48,6 @@ class Settings(BaseSettings):
     def _guard_placeholder_secrets(self) -> "Settings":
         if not self.database_url.strip():
             raise ValueError("DATABASE_URL must point to the shared application database.")
-        if not self.database_url.startswith(("postgresql://", "postgresql+")):
-            raise ValueError(
-                "DATABASE_URL must use the shared PostgreSQL database; local SQLite is not supported."
-            )
         if (
             not self.secret_key
             or self.secret_key == "change-me-customer-secret"

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "server:dev": "cd backend && .venv/bin/python -m uvicorn app.main:app --reload --port 8000",
+    "server:dev": "cd backend && EXPLORERS_ALLOW_INSECURE=true COOKIE_SECURE=false .venv/bin/python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
