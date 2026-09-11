@@ -21,16 +21,18 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
         <span className="absolute left-4 top-4 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-forest">
           {hotel.location}
         </span>
-        <span className="absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold text-forest">
-          <svg
-            className="h-3.5 w-3.5 text-terracotta"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-          </svg>
-          {hotel.rating.toFixed(1)}
-        </span>
+        {hotel.rating > 0 && (
+          <span className="absolute bottom-4 left-4 flex items-center gap-1 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold text-forest">
+            <svg
+              className="h-3.5 w-3.5 text-terracotta"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+            </svg>
+            {hotel.rating.toFixed(1)}
+          </span>
+        )}
       </Link>
 
       <div className="flex flex-1 flex-col p-6">
