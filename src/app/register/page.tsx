@@ -16,7 +16,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
-  const [requestedRole, setRequestedRole] = useState<"CUSTOMER" | "TRAVEL_AGENT">("CUSTOMER");
+  const [requestedRole, setRequestedRole] = useState<"CUSTOMER" | "TRAVEL_AGENT" | "HOTEL_OWNER">("CUSTOMER");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,9 +49,10 @@ export default function RegisterPage() {
           <label className="block text-sm font-semibold text-forest">Phone <span className="font-normal text-charcoal-soft">(optional)</span><input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Include country code" className={`${fieldClasses} mt-2`} /></label>
           <label className="block text-sm font-semibold text-forest">Country <span className="font-normal text-charcoal-soft">(optional)</span><input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Your country" className={`${fieldClasses} mt-2`} /></label>
           <label className="block text-sm font-semibold text-forest">Account type
-            <select value={requestedRole} onChange={(e) => setRequestedRole(e.target.value as "CUSTOMER" | "TRAVEL_AGENT")} className={`${fieldClasses} mt-2`}>
+            <select value={requestedRole} onChange={(e) => setRequestedRole(e.target.value as "CUSTOMER" | "TRAVEL_AGENT" | "HOTEL_OWNER")} className={`${fieldClasses} mt-2`}>
               <option value="CUSTOMER">Traveller</option>
               <option value="TRAVEL_AGENT">Travel agent (requires approval)</option>
+              <option value="HOTEL_OWNER">Hotel owner</option>
             </select>
           </label>
           <label className="block text-sm font-semibold text-forest">Password<input required type="password" minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className={`${fieldClasses} mt-2`} /></label>

@@ -155,3 +155,19 @@ def require_roles(*roles: str):
         return user
 
     return dependency
+
+
+def require_hotel_owner(request: Request, db: Session = Depends(get_db)) -> models.User:
+    """Hotel-owner only dependency (self-registered, not part of staff)."""
+    user = _resolve_token_user(request, db)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You need to log in to continue.",
+        )
+    if user.role != "HOTEL_OWNER":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to manage hotels.",
+        )
+    return user

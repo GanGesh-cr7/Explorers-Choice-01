@@ -15,7 +15,7 @@ export type RegisterPayload = {
   full_name: string;
   phone: string;
   country: string;
-  requested_role?: "CUSTOMER" | "TRAVEL_AGENT";
+  requested_role?: "CUSTOMER" | "TRAVEL_AGENT" | "HOTEL_OWNER";
 };
 
 export type LoginPayload = {

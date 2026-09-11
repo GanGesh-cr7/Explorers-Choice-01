@@ -60,6 +60,9 @@ class User(Base):
     reset_tokens: Mapped[list["PasswordResetToken"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    hotels: Mapped[list["Hotel"]] = relationship(
+        back_populates="owner", cascade="all, delete-orphan"
+    )
 
 
 class PasswordResetToken(Base):
@@ -405,3 +408,32 @@ class Setting(Base):
     value: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class Hotel(Base):
+    """A hotel listing submitted by a self-registered hotel owner."""
+
+    __tablename__ = "hotels"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    owner_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    slug: Mapped[str] = mapped_column(String(220), unique=True, index=True, nullable=False)
+    location: Mapped[str] = mapped_column(String(160), nullable=False, default="")
+    destination: Mapped[str] = mapped_column(String(160), default="")
+    tagline: Mapped[str] = mapped_column(String(240), default="")
+    description: Mapped[str] = mapped_column(Text, default="")
+    image: Mapped[str] = mapped_column(String(500), default="")
+    price_per_night: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+    currency: Mapped[str] = mapped_column(String(3), default="INR")
+    amenities: Mapped[list] = json_column(list)
+    highlights: Mapped[list] = json_column(list)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+    owner: Mapped["User"] = relationship(back_populates="hotels")
