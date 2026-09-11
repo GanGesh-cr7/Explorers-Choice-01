@@ -91,7 +91,8 @@ export function BookingFlow({
         setPackages(list);
         const initial =
           (packageSlug && list.find((p) => p.slug === packageSlug)) ||
-          (destinationSlug && list.find((p) => p.destination_name === destinationSlug)) ||
+          (destinationSlug &&
+            list.find((p) => p.destination_name.toLowerCase() === destinationSlug.toLowerCase())) ||
           undefined;
         if (initial) setValues((old) => ({ ...old, packageSlug: initial.slug }));
       })
@@ -165,13 +166,11 @@ export function BookingFlow({
       return;
     }
     setCurrent((step) => Math.min(4, step + 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function back() {
     setError("");
     setCurrent((step) => Math.max(1, step - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function submit() {
@@ -202,8 +201,10 @@ export function BookingFlow({
       submittedRef.current = created.booking_reference;
       setBooking(created);
       setCurrent(5);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      router.replace(`/book/confirmation?ref=${encodeURIComponent(created.booking_reference)}`, { scroll: false });
+      document.getElementById("trip")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => {
+        router.replace(`/book/confirmation?ref=${encodeURIComponent(created.booking_reference)}`, { scroll: false });
+      }, 2400);
     } catch (reason) {
       if (reason instanceof BookingError) {
         const duplicate = /already exist|duplicate/i.test(reason.message);
@@ -275,7 +276,7 @@ export function BookingFlow({
         </ol>
 
         {current === 1 && (
-          <section>
+          <section className="step-enter">
             <p className="text-xs font-bold uppercase tracking-[.2em] text-terracotta">1. Trip</p>
             <h2 className="mt-2 font-display text-3xl text-forest">Choose your journey</h2>
             <label className="mt-7 block">
@@ -322,7 +323,7 @@ export function BookingFlow({
         )}
 
         {current === 2 && (
-          <section>
+          <section className="step-enter">
             <p className="text-xs font-bold uppercase tracking-[.2em] text-terracotta">2. Travellers</p>
             <h2 className="mt-2 font-display text-3xl text-forest">When and who is travelling?</h2>
             <div className="mt-7 grid gap-5 sm:grid-cols-2">
@@ -376,7 +377,7 @@ export function BookingFlow({
         )}
 
         {current === 3 && (
-          <section>
+          <section className="step-enter">
             <p className="text-xs font-bold uppercase tracking-[.2em] text-terracotta">3. Details</p>
             <h2 className="mt-2 font-display text-3xl text-forest">Your contact details</h2>
             <div className="mt-7 grid gap-5 sm:grid-cols-2">
@@ -435,7 +436,7 @@ export function BookingFlow({
         )}
 
         {current === 4 && pkg && (
-          <section>
+          <section className="step-enter">
             <p className="text-xs font-bold uppercase tracking-[.2em] text-terracotta">4. Summary</p>
             <h2 className="mt-2 font-display text-3xl text-forest">Review before you book</h2>
 
@@ -521,7 +522,9 @@ export function BookingFlow({
         )}
 
         {current === 5 && booking && (
-          <BookingConfirmationView booking={booking} onReset={resetFlow} embedded />
+          <div className="step-enter">
+            <BookingConfirmationView booking={booking} onReset={resetFlow} embedded />
+          </div>
         )}
 
         {error && (

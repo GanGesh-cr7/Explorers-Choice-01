@@ -32,7 +32,7 @@ export function Hero() {
               <Button href="/packages" variant="primary" size="lg">
                 Explore Packages
               </Button>
-              <Button href="/book" variant="onImage" size="lg">
+              <Button href="/book#trip" variant="onImage" size="lg">
                 Book Now
               </Button>
             </div>

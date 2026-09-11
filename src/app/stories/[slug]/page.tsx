@@ -72,7 +72,7 @@ export default async function StoryDetail({ params }: { params: Promise<{ slug: 
         </div>
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Button href="/book" variant="primary" size="md">
+          <Button href="/book#trip" variant="primary" size="md">
             Book Now
           </Button>
           <Button href="/packages" variant="outline" size="md">

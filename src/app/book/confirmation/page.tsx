@@ -68,7 +68,7 @@ function ConfirmationContent() {
                   : "A booking reference is required to view a confirmation."}
               </p>
               <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                <Button href="/book" variant="primary">
+                <Button href="/book#trip" variant="primary">
                   Start a new booking
                 </Button>
                 <Button href="/packages" variant="outline">
@@ -85,7 +85,7 @@ function ConfirmationContent() {
                 Please check your connection and try again in a moment. Your booking is safe.
               </p>
               <div className="mt-6">
-                <Button href="/book" variant="primary">
+                <Button href="/book#trip" variant="primary">
                   Start a new booking
                 </Button>
               </div>

@@ -77,7 +77,7 @@ export function Header() {
             <Link href="/hotel-owner" className="text-sm font-semibold text-charcoal-soft transition-colors hover:text-forest">My Hotels</Link>
           )}
           {user ? <Link href="/account" className="text-sm font-semibold text-charcoal-soft transition-colors hover:text-forest">{user.full_name || user.email}</Link> : <Link href="/login" className="text-sm font-semibold text-charcoal-soft transition-colors hover:text-forest">Login</Link>}
-          <Button href="/book" variant="primary" size="sm">
+          <Button href="/book#trip" variant="primary" size="sm">
             Book Now
           </Button>
         </div>
@@ -123,7 +123,7 @@ export function Header() {
                 <Link href="/hotel-owner" onClick={() => setOpen(false)} className="rounded-full border border-forest/25 py-2.5 text-center text-sm font-semibold text-forest">My Hotels</Link>
               )}
               {user ? <Link href="/account" onClick={() => setOpen(false)} className="rounded-full border border-forest/25 py-2.5 text-center text-sm font-semibold text-forest">My Trips</Link> : <Link href="/login" onClick={() => setOpen(false)} className="rounded-full border border-forest/25 py-2.5 text-center text-sm font-semibold text-forest">Login</Link>}
-              <Button href="/book" variant="primary" size="md" className="w-full" onClick={() => setOpen(false)}>
+              <Button href="/book#trip" variant="primary" size="md" className="w-full" onClick={() => setOpen(false)}>
                 Book Now
               </Button>
             </div>

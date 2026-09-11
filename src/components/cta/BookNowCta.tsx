@@ -37,7 +37,7 @@ export function BookNowCta({
               <p className="mt-5 text-lg leading-relaxed text-ivory/80">{subtext}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button href="/book" variant="primary" size="lg">
+              <Button href="/book#trip" variant="primary" size="lg">
                 Book Now
               </Button>
               <Button href="/packages" variant="onImage" size="lg">

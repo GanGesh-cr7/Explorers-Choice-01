@@ -9,9 +9,22 @@ The app is a Next.js frontend + a FastAPI backend on a shared PostgreSQL databas
 ```bash
 cd backend
 python -m venv .venv
-.venv/bin/pip install -r requirements.txt
+```
+
+Activate the virtual environment, then install the backend dependencies:
+
+```bash
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+```bash
+python -m pip install -r requirements.txt
 cp .env.example .env            # fill in DATABASE_URL / SECRET_KEY / ADMIN_API_KEY
-.venv/bin/python -m alembic upgrade head
+python -m alembic upgrade head
 ```
 
 `DATABASE_URL` is required and must be the same shared PostgreSQL connection

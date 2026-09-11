@@ -92,7 +92,7 @@ export function Footer() {
               Talk to a real travel planner about your next journey.
             </p>
             <Link
-              href="/book"
+              href="/book#trip"
               className="mt-5 inline-flex items-center justify-center rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:bg-terracotta-dark"
             >
               Book Now
