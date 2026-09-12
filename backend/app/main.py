@@ -1,8 +1,12 @@
 """Main FastAPI application for Explorers Choice."""
+from contextlib import asynccontextmanager
 import logging
+from pathlib import Path
 import time
 import uuid
 
+from alembic import command
+from alembic.config import Config
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,7 +15,7 @@ from sqlalchemy.exc import IntegrityError
 
 from .config import settings
 from .database import Base, engine, SessionLocal
-from . import models
+from . import models, security
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("explorers")
@@ -24,14 +28,42 @@ from .routes import hotels as hotels_router
 from .routes import oauth as oauth_router
 from .routes import packages as packages_router
 
+
+def run_startup_migrations():
+    """Ensure database schema is up-to-date with Alembic migrations on startup."""
+    try:
+        backend_dir = Path(__file__).resolve().parent.parent
+        alembic_ini = backend_dir / "alembic.ini"
+        if alembic_ini.exists():
+            alembic_cfg = Config(str(alembic_ini))
+            alembic_cfg.set_main_option("script_location", str(backend_dir / "app" / "migrations"))
+            alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
+            command.upgrade(alembic_cfg, "head")
+            logger.info("Database schema verified / upgraded to head successfully.")
+    except Exception as exc:
+        logger.warning("Could not auto-apply migrations on startup: %s", exc)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: ensure migrations are applied
+    if settings.database_url.startswith("sqlite"):
+        Base.metadata.create_all(bind=engine)
+    else:
+        run_startup_migrations()
+    yield
+    # Shutdown
+
+
 app = FastAPI(
     title="Explorers Choice API",
     description="Destination, package, itinerary, booking and account management for Explorers Choice.",
     version="2.0.0",
+    lifespan=lifespan,
+    docs_url="/docs" if settings.docs_enabled else None,
+    redoc_url="/redoc" if settings.docs_enabled else None,
+    openapi_url="/openapi.json" if settings.docs_enabled else None,
 )
-
-if settings.database_url.startswith("sqlite"):
-    Base.metadata.create_all(bind=engine)
 
 
 @app.exception_handler(IntegrityError)
@@ -56,6 +88,32 @@ async def request_middleware(request: Request, call_next):
     )
     response.headers["X-Request-ID"] = request_id
     return response
+
+
+@app.middleware("http")
+async def csrf_protection_middleware(request: Request, call_next):
+    """CSRF guard for cookie-authenticated state-changing requests.
+
+    If a request carries a session cookie and uses an unsafe method
+    (POST, PUT, PATCH, DELETE), verify that Origin (or Referer)
+    matches an allowed frontend origin.
+    """
+    if request.method in ("POST", "PUT", "PATCH", "DELETE"):
+        has_session = security.COOKIE_NAME in request.cookies
+        if has_session:
+            origin = request.headers.get("origin") or request.headers.get("referer")
+            if not security.is_allowed_origin(origin):
+                logger.warning(
+                    "CSRF blocked: %s %s with Origin=%s, Referer=%s",
+                    request.method, request.url.path,
+                    request.headers.get("origin"), request.headers.get("referer"),
+                )
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "CSRF check failed: invalid or missing request origin."},
+                )
+    return await call_next(request)
+
 
 app.add_middleware(
     CORSMiddleware,

@@ -20,6 +20,27 @@ from . import crud, models
 COOKIE_NAME = "ec_session"
 ALGORITHM = "HS256"
 
+import re
+from urllib.parse import urlparse
+
+
+def is_allowed_origin(origin_or_referer: str | None) -> bool:
+    """Verify an Origin or Referer matches allowed CORS origins or regex."""
+    if not origin_or_referer:
+        return False
+    # Normalize: extract scheme + host + optional port
+    parsed = urlparse(origin_or_referer)
+    if not parsed.scheme or not parsed.netloc:
+        return False
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+
+    if origin in settings.cors_origins:
+        return True
+    if settings.cors_origin_regex and re.match(settings.cors_origin_regex, origin):
+        return True
+    return False
+
+
 # Simple in-memory sliding-window rate limiter. Sufficient for a single
 # process deployment; swap for a shared store (Redis) when running multiple
 # workers. Buckets are keyed by client IP + label.

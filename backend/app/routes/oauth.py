@@ -200,10 +200,21 @@ def google_login_callback(
     # 1. Check if user with this Google identity already exists
     user = crud.get_user_by_provider(db, provider="GOOGLE", provider_account_id=google_sub)
 
-    # 2. Auto-link: if no match, look up by email
+    # 2. If no direct provider match, check if email is registered
     if user is None:
         user = crud.get_user(db, email=email)
         if user is not None:
+            # If the account was created with a password (EMAIL provider), refuse to auto-link
+            # silently to prevent account takeover via Google email matching.
+            if user.password_hash and user.auth_provider != "GOOGLE":
+                logger.warning(
+                    "Refusing auto-link for existing password user %s with Google sub %s",
+                    email, google_sub,
+                )
+                return RedirectResponse(
+                    url=f"{base_return}/login?google_auth=account_exists_with_password",
+                    status_code=status.HTTP_302_FOUND,
+                )
             user = crud.link_google_account(db, user, google_sub)
             logger.info("Linked Google identity to existing account: %s", email)
         else:

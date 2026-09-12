@@ -16,6 +16,7 @@ def create_booking(
     data: schemas.BookingCreate,
     db: Session = Depends(get_db),
     user=Depends(security.optional_current_user),
+    _rl: None = Depends(security.rate_limit("create-booking", limit=15, window_seconds=600)),
 ):
     """Create a booking request using an authoritative package quote.
 
@@ -38,7 +39,11 @@ def create_booking(
 
 
 @router.get("/reference/{reference}", response_model=schemas.BookingConfirmationRead)
-def get_booking_confirmation(reference: str, db: Session = Depends(get_db)):
+def get_booking_confirmation(
+    reference: str,
+    db: Session = Depends(get_db),
+    _rl: None = Depends(security.rate_limit("lookup-booking", limit=30, window_seconds=300)),
+):
     """Public confirmation lookup by booking reference.
 
     Returns only a safe, non-sensitive subset (no contact details / PII) so

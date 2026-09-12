@@ -14,6 +14,9 @@ const fieldClasses =
 function googleAuthErrorMessage(code: string): string {
   if (code === "email_unverified") return "Google could not verify this email address. Please use a different account.";
   if (code === "state_error") return "Your Google sign-in session expired. Please try again.";
+  if (code === "account_exists_with_password") {
+    return "An account with this email already exists with a password. Please sign in with your email and password instead.";
+  }
   return "Google sign-in could not be completed. Please try again or sign in with your email.";
 }
 

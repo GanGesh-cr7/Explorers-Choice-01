@@ -35,6 +35,19 @@ class Settings(BaseSettings):
     # Where the browser lands after a successful (or failed) Google sign-in.
     google_return_url: str = "http://localhost:3000"
 
+    # Environment name: "development" | "production" | "staging"
+    environment: str = Field(
+        default="development",
+        validation_alias=AliasChoices("ENVIRONMENT", "EXPLORERS_ENV"),
+    )
+
+    # API Documentation (Swagger UI /docs, ReDoc /redoc, OpenAPI /openapi.json)
+    # Defaults to enabled in development, disabled in production unless DOCS_ENABLED=true.
+    docs_enabled: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("DOCS_ENABLED", "ENABLE_DOCS"),
+    )
+
     # CORS origins — include both local hostnames used during development.
     cors_origins: list[str] = [
         "http://localhost:3000",
@@ -46,7 +59,10 @@ class Settings(BaseSettings):
 
     # Allow browser origins served from any localhost or private-LAN address on
     # a dev port, so devices on the same network can log in against this backend.
-    cors_origin_regex: str = r"http://(?:localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):\d{1,5}"
+    # Automatically disabled in production environment.
+    cors_origin_regex: str | None = (
+        r"http://(?:localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):\d{1,5}"
+    )
 
     # Local development escape hatch: allows the placeholder secrets above.
     allow_insecure_defaults: bool = Field(
@@ -73,6 +89,18 @@ class Settings(BaseSettings):
                 raise ValueError(
                     "ADMIN_API_KEY must be set to a strong random value. "
                     "For local development only, set EXPLORERS_ALLOW_INSECURE=true."
+                )
+
+        # Default docs_enabled based on environment if not explicitly configured
+        if self.docs_enabled is None:
+            self.docs_enabled = self.environment.lower() not in ("production", "prod")
+
+        # In production, disable LAN regex matching for CORS and enforce secure cookies
+        if self.environment.lower() in ("production", "prod"):
+            self.cors_origin_regex = None
+            if not self.cookie_secure:
+                raise ValueError(
+                    "COOKIE_SECURE must be true in production to prevent cleartext session cookies."
                 )
         return self
 

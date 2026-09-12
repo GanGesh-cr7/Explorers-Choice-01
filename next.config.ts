@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const externalApi = process.env.NEXT_PUBLIC_EXPLORERS_API_URL ? ` ${process.env.NEXT_PUBLIC_EXPLORERS_API_URL}` : "";
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -15,9 +17,9 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' https://images.unsplash.com http://localhost:8000 data: blob:",
+      `img-src 'self' https://images.unsplash.com http://localhost:8000${externalApi} data: blob:`,
       "font-src 'self'",
-      `connect-src 'self' http://localhost:8000`,
+      `connect-src 'self' http://localhost:8000${externalApi}`,
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
