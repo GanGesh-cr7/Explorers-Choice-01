@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" fill="none">
+  <rect width="900" height="600" fill="#eee5d5"/>
+  <circle cx="710" cy="130" r="55" fill="#d9b17b"/>
+  <path d="M0 390 170 250 340 390 570 240 900 420V600H0Z" fill="#bbc5b1"/>
+  <path d="M0 475Q220 420 450 475T900 475V600H0Z" fill="#8caa99"/>
+  <rect x="260" y="240" width="380" height="260" rx="8" fill="#fcf6e9"/>
+  <path d="m235 245 215-110 215 110Z" fill="#a65f46"/>
+  <rect x="414" y="388" width="72" height="112" rx="36" fill="#36594b"/>
+  <g fill="#77998b">
+    <rect x="305" y="285" width="50" height="60" rx="6"/>
+    <rect x="425" y="285" width="50" height="60" rx="6"/>
+    <rect x="545" y="285" width="50" height="60" rx="6"/>
+    <rect x="305" y="390" width="50" height="60" rx="6"/>
+    <rect x="545" y="390" width="50" height="60" rx="6"/>
+  </g>
+  <path d="M405 500h90l50 100H355Z" fill="#d6c7ab"/>
+  <g fill="#36594b">
+    <ellipse cx="195" cy="409" rx="40" ry="70"/>
+    <ellipse cx="705" cy="409" rx="40" ry="70"/>
+  </g>
+  <path d="M195 430v70m510-70v70" stroke="#765d46" stroke-width="12"/>
+</svg>

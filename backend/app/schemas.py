@@ -740,6 +740,12 @@ class HotelCreate(HotelBase):
     pass
 
 
+class AdminHotelCreate(HotelCreate):
+    """Hotel creation by staff — includes the publish flag and optional owner."""
+    is_published: bool = True
+    owner_id: int | None = None
+
+
 class HotelUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=2, max_length=200)
     location: str | None = Field(default=None, min_length=1, max_length=160)

@@ -12,6 +12,7 @@ from ..database import get_db
 
 router = APIRouter()
 owner_router = APIRouter()
+admin_router = APIRouter()
 
 
 # ---------------------------------------------------------------------------
@@ -79,5 +80,81 @@ def delete_my_hotel(
 ):
     hotel = crud.get_hotel(db, hotel_id)
     if hotel is None or hotel.owner_id != owner.id:
+        raise HTTPException(status_code=404, detail="Hotel not found")
+    crud.delete_hotel(db, hotel)
+
+
+# ---------------------------------------------------------------------------
+# Admin hotel management (staff)
+# ---------------------------------------------------------------------------
+@admin_router.get(
+    "/hotels",
+    response_model=list[schemas.HotelOwnerRead],
+    dependencies=[Depends(security.require_roles("MANAGER", "ADMIN"))],
+)
+def admin_list_hotels(db: Session = Depends(get_db)):
+    return crud.list_all_hotels(db)
+
+
+@admin_router.get(
+    "/hotels/{hotel_id}",
+    response_model=schemas.HotelOwnerRead,
+    dependencies=[Depends(security.require_roles("MANAGER", "ADMIN"))],
+)
+def admin_get_hotel(hotel_id: int, db: Session = Depends(get_db)):
+    hotel = crud.get_hotel(db, hotel_id)
+    if hotel is None:
+        raise HTTPException(status_code=404, detail="Hotel not found")
+    return hotel
+
+
+@admin_router.post(
+    "/hotels",
+    response_model=schemas.HotelOwnerRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def admin_create_hotel(
+    data: schemas.AdminHotelCreate,
+    db: Session = Depends(get_db),
+    user=Depends(security.require_roles("MANAGER", "ADMIN")),
+):
+    try:
+        return crud.create_admin_hotel(db, user.id, data)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="A hotel with that name already exists.")
+
+
+@admin_router.patch(
+    "/hotels/{hotel_id}",
+    response_model=schemas.HotelOwnerRead,
+    dependencies=[Depends(security.require_roles("MANAGER", "ADMIN"))],
+)
+def admin_update_hotel(
+    hotel_id: int,
+    data: schemas.HotelUpdate,
+    db: Session = Depends(get_db),
+):
+    hotel = crud.get_hotel(db, hotel_id)
+    if hotel is None:
+        raise HTTPException(status_code=404, detail="Hotel not found")
+    try:
+        return crud.update_hotel(db, hotel, data)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="A hotel with that name already exists.")
+
+
+@admin_router.delete(
+    "/hotels/{hotel_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(security.require_roles("MANAGER", "ADMIN"))],
+)
+def admin_delete_hotel(
+    hotel_id: int,
+    db: Session = Depends(get_db),
+):
+    hotel = crud.get_hotel(db, hotel_id)
+    if hotel is None:
         raise HTTPException(status_code=404, detail="Hotel not found")
     crud.delete_hotel(db, hotel)

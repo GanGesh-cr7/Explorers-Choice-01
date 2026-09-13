@@ -923,6 +923,12 @@ def list_published_hotels(db: Session) -> list[models.Hotel]:
     ).all()
 
 
+def list_all_hotels(db: Session) -> list[models.Hotel]:
+    return db.scalars(
+        select(models.Hotel).order_by(models.Hotel.created_at.desc())
+    ).all()
+
+
 def create_hotel(db: Session, owner_id: int, data: schemas.HotelCreate) -> models.Hotel:
     hotel = models.Hotel(
         owner_id=owner_id,
@@ -937,6 +943,31 @@ def create_hotel(db: Session, owner_id: int, data: schemas.HotelCreate) -> model
         currency=data.currency.strip().upper() or "INR",
         amenities=[a.strip() for a in data.amenities if a.strip()],
         highlights=[h.strip() for h in data.highlights if h.strip()],
+    )
+    db.add(hotel)
+    db.commit()
+    db.refresh(hotel)
+    return hotel
+
+
+def create_admin_hotel(
+    db: Session, actor_id: int, data: schemas.AdminHotelCreate
+) -> models.Hotel:
+    """Create a hotel on behalf of an admin; assigns an explicit owner when given."""
+    hotel = models.Hotel(
+        owner_id=data.owner_id or actor_id,
+        slug=_unique_hotel_slug(db, data.name),
+        name=data.name.strip(),
+        location=data.location.strip(),
+        destination=data.destination.strip(),
+        tagline=data.tagline.strip(),
+        description=data.description.strip(),
+        image=data.image.strip(),
+        price_per_night=data.price_per_night,
+        currency=data.currency.strip().upper() or "INR",
+        amenities=[a.strip() for a in data.amenities if a.strip()],
+        highlights=[h.strip() for h in data.highlights if h.strip()],
+        is_published=data.is_published,
     )
     db.add(hotel)
     db.commit()

@@ -19,6 +19,38 @@ const companyLinks = [
   { label: "Login", href: "/login" },
 ];
 
+function InstagramIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function GmailIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-line bg-ivory-warm">
@@ -30,20 +62,26 @@ export function Footer() {
               Carefully chosen journeys, memorable places, and a travel team that
               handles the details.
             </p>
-            <div className="mt-6 flex gap-3">
+            <div className="mt-6 flex items-center gap-3">
               <a
                 href="https://www.instagram.com/explorerschoice_tours?stkn=NHRqYmdxdDNqajNp"
-                className="rounded-full border border-forest/20 px-4 py-1.5 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-forest/20 text-forest transition-colors hover:bg-forest hover:text-ivory"
                 aria-label="Instagram"
+                title="Instagram"
               >
-                Instagram
+                <InstagramIcon className="h-5 w-5" />
               </a>
               <a
                 href="https://mail.google.com/mail/?view=cm&fs=1&to=infoexplorerschoice@gmail.com"
-                className="rounded-full border border-forest/20 px-4 py-1.5 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-forest/20 text-forest transition-colors hover:bg-forest hover:text-ivory"
                 aria-label="Gmail"
+                title="Gmail"
               >
-                Gmail
+                <GmailIcon className="h-5 w-5" />
               </a>
             </div>
           </div>

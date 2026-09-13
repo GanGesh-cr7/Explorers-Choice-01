@@ -29,7 +29,9 @@ function LoginContent() {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(googleAuthError ? googleAuthErrorMessage(googleAuthError) : "");
+  const [error, setError] = useState(
+    googleAuthError ? googleAuthErrorMessage(googleAuthError) : ""
+  );
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -75,6 +77,7 @@ function LoginContent() {
           <span className="h-px flex-1 bg-line" />
         </div>
         <GoogleSignInButton next={redirect} />
+
         <p className="mt-6 text-center text-sm text-charcoal-soft">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="font-semibold text-terracotta hover:underline">Create one</Link>

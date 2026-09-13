@@ -191,6 +191,32 @@ export type DestinationOption = {
   country: string;
 };
 
+export type DestinationAdmin = {
+  id: number;
+  name: string;
+  slug: string;
+  country: string;
+  region: string;
+  short_description: string;
+  description: string;
+  hero_image: string;
+  gallery: string[];
+  best_time: string;
+  recommended_duration: string;
+  highlights: string[];
+  things_to_do: string[];
+  travel_information: string[];
+  is_featured: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DestinationFormPayload = Omit<
+  DestinationAdmin,
+  "id" | "created_at" | "updated_at"
+>;
+
 export type Package = {
   id: number;
   destination_id: number;
@@ -275,6 +301,39 @@ export type AuditLogEntry = {
 
 export type Setting = { key: string; value: Record<string, unknown>; updated_at: string };
 
+export type HotelAdmin = {
+  id: number;
+  owner_id: number;
+  slug: string;
+  name: string;
+  location: string;
+  destination: string;
+  tagline: string;
+  description: string;
+  image: string;
+  price_per_night: number;
+  currency: string;
+  amenities: string[];
+  highlights: string[];
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type HotelFormPayload = {
+  name: string;
+  location: string;
+  destination: string;
+  tagline: string;
+  description: string;
+  image: string;
+  price_per_night: number;
+  currency: string;
+  amenities: string[];
+  highlights: string[];
+  is_published: boolean;
+};
+
 export type Dashboard = {
   new_enquiries: number;
   pending_bookings: number;
@@ -330,6 +389,14 @@ export const adminApi = {
   updateStory: (id: number, data: Partial<CustomerStory>) => request<CustomerStory>(`/admin/customer-stories/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteStory: (id: number) => request<void>(`/admin/customer-stories/${id}`, { method: "DELETE" }),
 
+  adminHotels: () => request<HotelAdmin[]>("/admin/hotels"),
+  createHotel: (data: HotelFormPayload) =>
+    request<HotelAdmin>("/admin/hotels", { method: "POST", body: JSON.stringify(data) }),
+  updateHotel: (id: number, data: Partial<HotelFormPayload>) =>
+    request<HotelAdmin>(`/admin/hotels/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteHotel: (id: number) =>
+    request<void>(`/admin/hotels/${id}`, { method: "DELETE" }),
+
   packages: () => request<Package[]>("/admin/packages"),
   package: (id: number) => request<Package>(`/admin/packages/${id}`),
   createPackage: (data: PackageFormPayload) => request<Package>("/admin/packages", { method: "POST", body: JSON.stringify(data) }),
@@ -338,6 +405,13 @@ export const adminApi = {
     request<void>(`/admin/packages/${id}${hard ? "?hard=true" : ""}`, { method: "DELETE" }),
 
   destinations: () => request<DestinationOption[]>("/destinations"),
+  adminDestinations: () => request<DestinationAdmin[]>("/admin/destinations"),
+  createDestination: (data: DestinationFormPayload) =>
+    request<DestinationAdmin>("/admin/destinations", { method: "POST", body: JSON.stringify(data) }),
+  updateDestination: (id: number, data: Partial<DestinationFormPayload>) =>
+    request<DestinationAdmin>(`/admin/destinations/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteDestination: (id: number, hard = false) =>
+    request<void>(`/admin/destinations/${id}${hard ? "?hard=true" : ""}`, { method: "DELETE" }),
 
   staff: () => request<StaffMember[]>("/admin/staff"),
   createStaff: (data: { email: string; password: string; full_name: string; phone?: string; country?: string; role: Role }) =>

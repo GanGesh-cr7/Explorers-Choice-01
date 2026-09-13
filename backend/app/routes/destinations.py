@@ -37,6 +37,28 @@ def get_destination(slug: str, db: Session = Depends(get_db)):
 # ---------------------------------------------------------------------------
 # Admin (protected)
 # ---------------------------------------------------------------------------
+@admin_router.get(
+    "/destinations",
+    response_model=list[schemas.DestinationRead],
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
+)
+def admin_list_destinations(db: Session = Depends(get_db)):
+    """List every destination (active and archived) for the admin workspace."""
+    return crud.list_destinations(db, active_only=False)
+
+
+@admin_router.get(
+    "/destinations/{destination_id}",
+    response_model=schemas.DestinationRead,
+    dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
+)
+def admin_get_destination(destination_id: int, db: Session = Depends(get_db)):
+    destination = crud.get_destination(db, destination_id=destination_id)
+    if not destination:
+        raise HTTPException(status_code=404, detail="Destination not found")
+    return destination
+
+
 @admin_router.post(
     "/destinations",
     response_model=schemas.DestinationRead,
