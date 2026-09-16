@@ -44,6 +44,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return true;
   });
 
+  const activeLinkRef = (el: HTMLAnchorElement | null) => {
+    if (el) {
+      el.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+    }
+  };
+
   if (loading || !user || !user.is_staff) {
     return (
       <div className="min-h-full flex items-center justify-center bg-ivory px-6">
@@ -76,21 +82,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
 
       <nav aria-label="Workspace navigation" className="sticky top-0 z-10 border-b border-line bg-ivory">
-        <Container className="flex gap-2 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {visibleNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive(pathname, item.href) ? "page" : undefined}
-              className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
-                isActive(pathname, item.href)
-                  ? "border-forest bg-forest text-ivory"
-                  : "border-line bg-ivory text-charcoal-soft hover:text-forest"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <Container className="flex gap-2 overflow-x-auto py-3 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {visibleNav.map((item) => {
+            const active = isActive(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                ref={active ? activeLinkRef : undefined}
+                aria-current={active ? "page" : undefined}
+                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                  active
+                    ? "border-forest bg-forest text-ivory"
+                    : "border-line bg-ivory text-charcoal-soft hover:text-forest"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </Container>
       </nav>
 

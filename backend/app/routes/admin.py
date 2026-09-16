@@ -7,6 +7,7 @@ itinerary and booking management live in their own routers.
 """
 import os
 import re
+import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
@@ -83,7 +84,7 @@ def promote_customer(customer_id: int, data: schemas.StaffUpdate, db: Session = 
     return crud.update_staff(db, customer, data)
 
 
-@router.delete("/customers/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/customers/{customer_id}")
 def admin_delete_customer(
     customer_id: int,
     db: Session = Depends(get_db),
@@ -101,6 +102,7 @@ def admin_delete_customer(
         details=customer.email,
     )
     crud.delete_user(db, customer)
+    return {"detail": "Customer deleted successfully"}
 
 
 # ---------------------------------------------------------------------------
@@ -137,13 +139,13 @@ def admin_update_enquiry(enquiry_id: int, data: schemas.EnquiryUpdate, db: Sessi
     return crud.update_enquiry(db, enquiry, data, actor=user)
 
 
-@router.delete("/enquiries/{enquiry_id}", status_code=status.HTTP_204_NO_CONTENT,
-               dependencies=[Depends(require_roles(*CONTENT))])
+@router.delete("/enquiries/{enquiry_id}", dependencies=[Depends(require_roles(*CONTENT))])
 def admin_delete_enquiry(enquiry_id: int, db: Session = Depends(get_db)):
     enquiry = crud.get_enquiry(db, enquiry_id)
     if enquiry is None:
         raise HTTPException(status_code=404, detail="Enquiry not found")
     crud.delete_enquiry(db, enquiry)
+    return {"detail": "Enquiry deleted successfully"}
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +191,12 @@ def record_payment(
     db: Session = Depends(get_db),
     user=Depends(require_roles(*FINANCE)),
 ):
-    return crud.add_payment(db, data, actor=user)
+    if crud.get_booking(db, data.booking_id) is None:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    try:
+        return crud.add_payment(db, data, actor=user)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @router.patch("/payments/{payment_id}", response_model=schemas.PaymentRead,
@@ -220,17 +227,30 @@ def booking_attach_document(
     if document_type not in ALLOWED_DOC_TYPES:
         raise HTTPException(status_code=400, detail="Unsupported document type")
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    safe_name = _safe_stem(file.filename or "document")
-    dest = UPLOAD_DIR / f"{booking_id}_{safe_name}"
+    original_name = file.filename or "document"
+    safe_ext = re.sub(r"[^A-Za-z0-9]", "", Path(original_name).suffix.lstrip("."))[:8]
+    # BUG-03: use a UUID-based storage name to prevent same-name overwrites.
+    stored_stem = f"{booking_id}_{uuid.uuid4().hex}"
+    stored_name = f"{stored_stem}.{safe_ext}" if safe_ext else stored_stem
+    dest = UPLOAD_DIR / stored_name
     MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20 MB
-    content = file.file.read()
-    if len(content) > MAX_UPLOAD_SIZE:
-        raise HTTPException(status_code=413, detail="File too large. Maximum size is 20 MB.")
-    with dest.open("wb") as out:
-        out.write(content)
-    document = crud.add_document(
-        db, booking_id, document_type, title, file.filename or safe_name, str(dest), actor=user
-    )
+    # BUG-19: read in bounded chunks so oversized uploads never fill memory.
+    content_parts: list[bytes] = []
+    total = 0
+    for chunk in iter(lambda: file.file.read(65536), b""):
+        total += len(chunk)
+        if total > MAX_UPLOAD_SIZE:
+            raise HTTPException(status_code=413, detail="File too large. Maximum size is 20 MB.")
+        content_parts.append(chunk)
+    content = b"".join(content_parts)
+    dest.write_bytes(content)
+    try:
+        document = crud.add_document(
+            db, booking_id, document_type, title, original_name, str(dest), actor=user
+        )
+    except Exception:
+        dest.unlink(missing_ok=True)
+        raise
     return document
 
 
@@ -266,28 +286,29 @@ def admin_offers(db: Session = Depends(get_db), user=Depends(require_admin)):
     return crud.list_offers(db)
 
 
-@router.post("/offers", response_model=schemas.OfferRead, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(require_roles(*CONTENT))])
-def admin_create_offer(data: schemas.OfferCreate, db: Session = Depends(get_db)):
-    return crud.create_offer(db, data)
+@router.post("/offers", response_model=schemas.OfferRead, status_code=status.HTTP_201_CREATED)
+def admin_create_offer(data: schemas.OfferCreate, db: Session = Depends(get_db),
+                       user: models.User = Depends(require_roles(*CONTENT))):
+    return crud.create_offer(db, data, actor=user)
 
 
-@router.patch("/offers/{offer_id}", response_model=schemas.OfferRead,
-              dependencies=[Depends(require_roles(*CONTENT))])
-def admin_update_offer(offer_id: int, data: schemas.OfferUpdate, db: Session = Depends(get_db)):
+@router.patch("/offers/{offer_id}", response_model=schemas.OfferRead)
+def admin_update_offer(offer_id: int, data: schemas.OfferUpdate, db: Session = Depends(get_db),
+                       user: models.User = Depends(require_roles(*CONTENT))):
     offer = crud.get_offer(db, offer_id)
     if offer is None:
         raise HTTPException(status_code=404, detail="Offer not found")
-    return crud.update_offer(db, offer, data)
+    return crud.update_offer(db, offer, data, actor=user)
 
 
-@router.delete("/offers/{offer_id}", status_code=status.HTTP_204_NO_CONTENT,
-               dependencies=[Depends(require_roles(*CONTENT))])
-def admin_delete_offer(offer_id: int, db: Session = Depends(get_db)):
+@router.delete("/offers/{offer_id}")
+def admin_delete_offer(offer_id: int, db: Session = Depends(get_db),
+                       user: models.User = Depends(require_roles(*CONTENT))):
     offer = crud.get_offer(db, offer_id)
     if offer is None:
         raise HTTPException(status_code=404, detail="Offer not found")
-    crud.delete_offer(db, offer)
+    crud.delete_offer(db, offer, actor=user)
+    return {"detail": "Offer deleted successfully"}
 
 
 @router.get("/customer-stories", response_model=list[schemas.CustomerStoryRead])
@@ -295,28 +316,29 @@ def admin_stories(db: Session = Depends(get_db), user=Depends(require_admin)):
     return crud.list_customer_stories(db)
 
 
-@router.post("/customer-stories", response_model=schemas.CustomerStoryRead, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(require_roles(*CONTENT))])
-def admin_create_story(data: schemas.CustomerStoryCreate, db: Session = Depends(get_db)):
-    return crud.create_customer_story(db, data)
+@router.post("/customer-stories", response_model=schemas.CustomerStoryRead, status_code=status.HTTP_201_CREATED)
+def admin_create_story(data: schemas.CustomerStoryCreate, db: Session = Depends(get_db),
+                       user: models.User = Depends(require_roles(*CONTENT))):
+    return crud.create_customer_story(db, data, actor=user)
 
 
-@router.patch("/customer-stories/{story_id}", response_model=schemas.CustomerStoryRead,
-              dependencies=[Depends(require_roles(*CONTENT))])
-def admin_update_story(story_id: int, data: schemas.CustomerStoryUpdate, db: Session = Depends(get_db)):
+@router.patch("/customer-stories/{story_id}", response_model=schemas.CustomerStoryRead)
+def admin_update_story(story_id: int, data: schemas.CustomerStoryUpdate, db: Session = Depends(get_db),
+                       user: models.User = Depends(require_roles(*CONTENT))):
     story = crud.get_customer_story(db, story_id)
     if story is None:
         raise HTTPException(status_code=404, detail="Story not found")
-    return crud.update_customer_story(db, story, data)
+    return crud.update_customer_story(db, story, data, actor=user)
 
 
-@router.delete("/customer-stories/{story_id}", status_code=status.HTTP_204_NO_CONTENT,
-               dependencies=[Depends(require_roles(*CONTENT))])
-def admin_delete_story(story_id: int, db: Session = Depends(get_db)):
+@router.delete("/customer-stories/{story_id}")
+def admin_delete_story(story_id: int, db: Session = Depends(get_db),
+                       user: models.User = Depends(require_roles(*CONTENT))):
     story = crud.get_customer_story(db, story_id)
     if story is None:
         raise HTTPException(status_code=404, detail="Story not found")
-    crud.delete_customer_story(db, story)
+    crud.delete_customer_story(db, story, actor=user)
+    return {"detail": "Story deleted successfully"}
 
 
 # ---------------------------------------------------------------------------
@@ -339,16 +361,26 @@ def create_staff(data: schemas.StaffCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=409, detail="A user with that email already exists")
 
 
-@router.patch("/staff/{staff_id}", response_model=schemas.StaffRead,
-              dependencies=[Depends(require_roles("ADMIN"))])
-def update_staff(staff_id: int, data: schemas.StaffUpdate, db: Session = Depends(get_db)):
+@router.patch("/staff/{staff_id}", response_model=schemas.StaffRead)
+def update_staff(
+    staff_id: int,
+    data: schemas.StaffUpdate,
+    db: Session = Depends(get_db),
+    current: models.User = Depends(require_roles("ADMIN")),
+):
     staff = crud.get_user(db, user_id=staff_id)
     if staff is None or not staff.is_staff:
         raise HTTPException(status_code=404, detail="Staff member not found")
+    if data.is_active is False and staff.id == current.id:
+        raise HTTPException(status_code=400, detail="You cannot deactivate your own account")
+    if (data.role is not None and data.role != "ADMIN" and staff.role == "ADMIN") or (data.is_active is False and staff.role == "ADMIN"):
+        active_admins = [u for u in crud.list_staff(db) if u.is_active and u.role == "ADMIN" and u.id != staff.id]
+        if not active_admins:
+            raise HTTPException(status_code=400, detail="Cannot deactivate or demote the last active administrator")
     return crud.update_staff(db, staff, data)
 
 
-@router.delete("/staff/{staff_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/staff/{staff_id}")
 def delete_staff(
     staff_id: int,
     db: Session = Depends(get_db),
@@ -368,6 +400,7 @@ def delete_staff(
         details=f"{staff.email} ({staff.role})",
     )
     crud.delete_user(db, staff)
+    return {"detail": "Staff member deleted successfully"}
 
 
 # ---------------------------------------------------------------------------
@@ -387,11 +420,14 @@ def list_settings(db: Session = Depends(get_db)):
     return crud.list_settings(db)
 
 
-@router.put("/settings/{key}", response_model=schemas.SettingRead, dependencies=[Depends(require_roles("ADMIN"))])
-def update_setting(key: str, data: schemas.SettingUpdate, db: Session = Depends(get_db)):
+@router.put("/settings/{key}", response_model=schemas.SettingRead)
+def update_setting(key: str, data: schemas.SettingUpdate, db: Session = Depends(get_db),
+                   user: models.User = Depends(require_roles("ADMIN"))):
     if not re.match(r"^[a-z0-9_.-]{1,120}$", key):
         raise HTTPException(status_code=400, detail="Invalid setting key")
-    return crud.set_setting(db, key, data.value)
+    record = crud.set_setting(db, key, data.value, actor=user)
+    crud.audit(db, user=user, action="updated setting", entity="setting", entity_id=key)
+    return record
 
 
 # ---------------------------------------------------------------------------

@@ -33,6 +33,7 @@ function toHotel(api: ApiHotel): Hotel {
     image: api.image || FALLBACK_IMAGE,
     rating: 0,
     pricePerNight: api.price_per_night,
+    currency: api.currency || "INR", // BUG-14: preserve API currency
     amenities: api.amenities ?? [],
     highlights: api.highlights ?? [],
   };

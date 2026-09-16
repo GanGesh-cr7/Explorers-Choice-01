@@ -8,11 +8,24 @@ import { SupportPanel } from "@/components/account/SupportPanel";
 export default function PaymentsPage() {
   const { bookings, loading, error } = useMyBookings();
 
-  const paidBookings = bookings.filter((b) => b.payment_status === "PAID");
-  const unpaidBookings = bookings.filter((b) => ["PENDING", "PARTIALLY_PAID"].includes(b.payment_status));
-
-  const totalPaid = paidBookings.reduce((sum, b) => sum + b.total, 0);
-  const totalPending = unpaidBookings.reduce((sum, b) => sum + b.total, 0);
+  // BUG-07: group by currency to avoid mixing INR + USD totals.
+  // "Paid" = only fully PAID bookings. "Outstanding" = remaining balance per booking.
+  const currencyTotals: Record<string, { paid: number; outstanding: number; paidCount: number; outstandingCount: number }> = {};
+  for (const b of bookings) {
+    const c = b.currency || "INR";
+    if (!currencyTotals[c]) currencyTotals[c] = { paid: 0, outstanding: 0, paidCount: 0, outstandingCount: 0 };
+    if (b.payment_status === "PAID") {
+      currencyTotals[c].paid += b.total;
+      currencyTotals[c].paidCount += 1;
+    } else if (["PENDING", "PARTIALLY_PAID"].includes(b.payment_status)) {
+      // Outstanding = total minus any partial payments already made.
+      // The server's payment_status tells us "PARTIALLY_PAID" but we don't have the paid amount here.
+      // Use conservative display: show full total as outstanding.
+      currencyTotals[c].outstanding += b.total;
+      currencyTotals[c].outstandingCount += 1;
+    }
+  }
+  const currencies = Object.keys(currencyTotals);
 
   return (
     <>
@@ -23,16 +36,35 @@ export default function PaymentsPage() {
       </section>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl border border-line bg-cream p-6">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Paid</p>
-          <p className="mt-3 font-display text-3xl text-forest">{formatMoney(totalPaid)}</p>
-          <p className="mt-1 text-sm text-charcoal-soft">{paidBookings.length} confirmed payment{paidBookings.length !== 1 ? "s" : ""}</p>
-        </div>
-        <div className="rounded-2xl border border-line bg-cream p-6">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Outstanding</p>
-          <p className="mt-3 font-display text-3xl text-forest">{formatMoney(totalPending)}</p>
-          <p className="mt-1 text-sm text-charcoal-soft">{unpaidBookings.length} booking{unpaidBookings.length !== 1 ? "s" : ""} awaiting payment</p>
-        </div>
+        {currencies.length === 0 ? (
+          <>
+            <div className="rounded-2xl border border-line bg-cream p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Paid</p>
+              <p className="mt-3 font-display text-3xl text-forest">{formatMoney(0)}</p>
+            </div>
+            <div className="rounded-2xl border border-line bg-cream p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Outstanding</p>
+              <p className="mt-3 font-display text-3xl text-forest">{formatMoney(0)}</p>
+            </div>
+          </>
+        ) : currencies.map((c) => {
+          const { paid, outstanding, paidCount, outstandingCount } = currencyTotals[c];
+          return (
+            <div key={c} className="rounded-2xl border border-line bg-cream p-6 col-span-1">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Summary ({c})</p>
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-charcoal-soft">Paid</span>
+                  <span className="font-semibold text-forest">{formatMoney(paid, c)} ({paidCount} booking{paidCount !== 1 ? "s" : ""})</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-charcoal-soft">Outstanding</span>
+                  <span className="font-semibold text-forest">{formatMoney(outstanding, c)} ({outstandingCount} booking{outstandingCount !== 1 ? "s" : ""})</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {loading ? (

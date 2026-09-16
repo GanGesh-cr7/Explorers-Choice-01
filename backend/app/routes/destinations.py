@@ -89,7 +89,6 @@ def admin_update_destination(
 
 @admin_router.delete(
     "/destinations/{destination_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_delete_destination(
@@ -102,3 +101,4 @@ def admin_delete_destination(
     if not destination:
         raise HTTPException(status_code=404, detail="Destination not found")
     crud.delete_destination(db, destination, hard=hard)
+    return {"detail": "Destination deleted successfully"}

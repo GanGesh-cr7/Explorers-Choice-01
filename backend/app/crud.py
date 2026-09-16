@@ -312,6 +312,16 @@ def generate_booking_reference(db: Session) -> str:
 def create_booking(
     db: Session, data: schemas.BookingCreate, user_id: int | None = None
 ) -> models.Booking | None:
+    # BUG-18: if an idempotency key was supplied and a booking already exists
+    # for it, return that booking instead of creating a duplicate.
+    idem_key = getattr(data, "idempotency_key", None)
+    if idem_key:
+        existing = db.scalars(
+            select(models.Booking).where(models.Booking.idempotency_key == idem_key)
+        ).first()
+        if existing is not None:
+            return existing
+
     package = get_package(db, slug=data.package_slug)
     if package is None or not package.is_active or not package.destination.is_active:
         return None
@@ -346,6 +356,7 @@ def create_booking(
         destination_name=package.destination.name,
         duration_days=package.duration_days,
         booking_mode=booking_mode,
+        idempotency_key=idem_key,
     )
     booking.travellers = [
         models.BookingTraveller(traveller_type="ADULT", quantity=data.adults),
@@ -356,9 +367,17 @@ def create_booking(
     try:
         db.commit()
     except IntegrityError:
-        # Reference collision under concurrent creation; retry with a fresh one.
-        # This is extremely unlikely (48 bits of entropy per reference).
         db.rollback()
+        # BUG-18: a concurrent retry with the same idempotency key won the race.
+        # Return the already-created booking rather than creating a duplicate.
+        if idem_key:
+            existing = db.scalars(
+                select(models.Booking).where(models.Booking.idempotency_key == idem_key)
+            ).first()
+            if existing is not None:
+                return existing
+        # Otherwise this is a reference collision under concurrent creation;
+        # retry with a fresh reference (extremely unlikely: 48 bits of entropy).
         booking.booking_reference = generate_booking_reference(db)
         db.add(booking)
         db.commit()
@@ -392,12 +411,13 @@ def update_booking_status(
     db: Session, booking: models.Booking, data: schemas.BookingStatusUpdate, actor: models.User | None = None
 ) -> models.Booking:
     booking.status = data.status
-    if data.payment_status is not None:
-        booking.payment_status = data.payment_status
+    # BUG-05: the general booking PATCH must NOT accept payment_status changes.
+    # Only the dedicated /payment endpoint (restricted to FINANCE roles) may do that.
+    # data.payment_status is intentionally ignored here.
     db.commit()
     db.refresh(booking)
     audit(db, user=actor, action="updated booking", entity="booking", entity_id=booking.booking_reference,
-          details=f"status → {booking.status}" + (f", payment → {booking.payment_status}" if data.payment_status else ""))
+          details=f"status → {booking.status}")
     return booking
 
 
@@ -609,9 +629,11 @@ def update_customer_story(db: Session, story: models.CustomerStory, data: schema
     return story
 
 
-def delete_customer_story(db: Session, story: models.CustomerStory) -> None:
+def delete_customer_story(db: Session, story: models.CustomerStory, actor: models.User | None = None) -> None:
+    story_id = story.id
     db.delete(story)
     db.commit()
+    audit(db, user=actor, action="deleted customer story", entity="customer_story", entity_id=str(story_id))
 
 
 # ---------------------------------------------------------------------------
@@ -657,9 +679,11 @@ def update_offer(db: Session, offer: models.Offer, data: schemas.OfferUpdate, ac
     return offer
 
 
-def delete_offer(db: Session, offer: models.Offer) -> None:
+def delete_offer(db: Session, offer: models.Offer, actor: models.User | None = None) -> None:
+    offer_id = offer.id
     db.delete(offer)
     db.commit()
+    audit(db, user=actor, action="deleted offer", entity="offer", entity_id=str(offer_id))
 
 
 # ---------------------------------------------------------------------------
@@ -685,19 +709,63 @@ def add_booking_note(db: Session, booking_id: int, body: str, actor: models.User
     return note
 
 
+def _reconcile_payment_status(db: Session, booking: models.Booking) -> None:
+    """BUG-06: Derive and apply booking.payment_status from its payment ledger.
+
+    Rules:
+    - If any payment row is PAID and covers the full booking total → PAID.
+    - If some amount is paid but not the full total → PARTIALLY_PAID.
+    - If all payments failed or were refunded → FAILED / REFUNDED.
+    - Otherwise → PENDING.
+    Does not change bookings that have payment_status NOT_REQUIRED.
+    """
+    if booking.payment_status == "NOT_REQUIRED":
+        return
+    payments = db.scalars(
+        select(models.Payment).where(models.Payment.booking_id == booking.id)
+    ).all()
+    paid_total = sum(float(p.amount) for p in payments if p.status == "PAID")
+    booking_total = float(booking.total or 0)
+    has_refunded = any(p.status == "REFUNDED" for p in payments)
+    has_failed = any(p.status == "FAILED" for p in payments)
+    if booking_total > 0 and paid_total >= booking_total:
+        booking.payment_status = "PAID"
+    elif paid_total > 0:
+        booking.payment_status = "PARTIALLY_PAID"
+    elif has_refunded and paid_total == 0:
+        booking.payment_status = "REFUNDED"
+    elif has_failed and paid_total == 0:
+        booking.payment_status = "FAILED"
+    else:
+        booking.payment_status = "PENDING"
+    # Commit is handled by the caller.
+
+
 def add_payment(db: Session, data: schemas.ManualPaymentCreate, actor: models.User | None = None) -> models.Payment:
+    booking = get_booking(db, data.booking_id)
+    if booking is None:
+        raise ValueError(f"Booking {data.booking_id} not found")
+    # BUG-02: always inherit currency from the booking; reject mismatches.
+    currency = booking.currency.upper()
+    if data.currency is not None and data.currency.upper() != currency:
+        raise ValueError(
+            f"Payment currency {data.currency.upper()} does not match booking currency {currency}."
+        )
     payment = models.Payment(
         booking_id=data.booking_id,
         amount=data.amount,
-        currency=data.currency.upper(),
+        currency=currency,
         status=data.status,
         provider=data.provider,
         provider_reference=data.provider_reference,
     )
     db.add(payment)
+    db.flush()  # get payment.id without committing yet
+    # BUG-06: reconcile booking payment status inside the same transaction.
+    _reconcile_payment_status(db, booking)
     db.commit()
     db.refresh(payment)
-    audit(db, user=actor, action="recorded payment", entity="booking", entity_id=str(data.booking_id), details=f"{data.amount} {data.currency}")
+    audit(db, user=actor, action="recorded payment", entity="booking", entity_id=str(data.booking_id), details=f"{data.amount} {currency}")
     return payment
 
 
@@ -705,6 +773,10 @@ def update_payment_status(db: Session, payment: models.Payment, data: schemas.Pa
     payment.status = data.status
     if data.provider_reference is not None:
         payment.provider_reference = data.provider_reference
+    # BUG-06: reconcile booking payment status inside the same transaction.
+    booking = get_booking(db, payment.booking_id)
+    if booking is not None:
+        _reconcile_payment_status(db, booking)
     db.commit()
     db.refresh(payment)
     audit(db, user=actor, action="updated payment", entity="booking", entity_id=str(payment.booking_id), details=f"payment {payment.id} → {payment.status}")

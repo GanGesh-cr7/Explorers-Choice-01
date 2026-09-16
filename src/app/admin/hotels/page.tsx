@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { adminApi, type HotelAdmin, type HotelFormPayload } from "@/lib/admin";
+import { imageUrlError } from "@/lib/images";
+import { CLIENT_API_URL as API_URL } from "@/lib/api";
 
 const listToText = (list: string[] | undefined): string => (list ?? []).join("\n");
 const textToList = (text: string): string[] =>
@@ -96,6 +98,12 @@ export default function AdminHotelsPage() {
 
   async function save() {
     setFlash("");
+    // BUG-16: reject image URLs that next/image would refuse to render.
+    const imgError = imageUrlError(form.image, [API_URL]);
+    if (imgError) {
+      setFlash(imgError);
+      return;
+    }
     const payload: HotelFormPayload = {
       name: form.name.trim(),
       location: form.location.trim(),

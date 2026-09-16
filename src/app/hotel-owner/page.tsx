@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers";
 import { Container } from "@/components/ui/Container";
@@ -300,7 +299,7 @@ export default function HotelOwnerPage() {
       ) : hotels.length === 0 && !creating ? (
         <div className="mt-8 rounded-2xl border border-dashed border-line bg-cream p-10 text-center">
           <p className="font-display text-2xl text-forest">No hotels listed yet.</p>
-          <p className="mt-2 text-sm text-charcoal-soft">Click "Add hotel" to submit your first listing.</p>
+          <p className="mt-2 text-sm text-charcoal-soft">Click &quot;Add hotel&quot; to submit your first listing.</p>
         </div>
       ) : (
         <div className="mt-8 space-y-3">

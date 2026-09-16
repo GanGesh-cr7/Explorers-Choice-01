@@ -108,7 +108,6 @@ def admin_update_package(
 
 @admin_router.delete(
     "/packages/{package_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(require_roles("MANAGER", "ADMIN"))],
 )
 def admin_delete_package(
@@ -121,6 +120,7 @@ def admin_delete_package(
     if not package:
         raise HTTPException(status_code=404, detail="Package not found")
     crud.delete_package(db, package, hard=hard)
+    return {"detail": "Package deleted successfully"}
 
 
 # ---------------------------------------------------------------------------

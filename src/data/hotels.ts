@@ -8,6 +8,7 @@ export type Hotel = {
   image: string;
   rating: number;
   pricePerNight: number;
+  currency?: string; // BUG-14: carry currency through the type
   amenities: string[];
   highlights: string[];
   featured?: boolean;

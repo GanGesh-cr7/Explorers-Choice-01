@@ -58,11 +58,28 @@ export default function AdminBookingDetailPage({ params }: { params: Promise<{ i
     setSaving(true);
     setFlash("");
     try {
-      await adminApi.updateBookingStatus(booking.id, status, paymentStatus);
-      setFlash("Booking updated.");
+      // BUG-05: booking status and payment status are updated by separate endpoints
+      // with different role restrictions. Only send booking status here.
+      await adminApi.updateBookingStatus(booking.id, status);
+      setFlash("Booking status updated.");
       load();
     } catch (err) {
       setFlash(err instanceof Error ? err.message : "Could not save changes.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function savePaymentStatus() {
+    if (!booking) return;
+    setSaving(true);
+    setFlash("");
+    try {
+      await adminApi.updatePaymentStatus(booking.id, booking.status, paymentStatus);
+      setFlash("Payment status updated.");
+      load();
+    } catch (err) {
+      setFlash(err instanceof Error ? err.message : "Could not update payment status.");
     } finally {
       setSaving(false);
     }
@@ -87,7 +104,8 @@ export default function AdminBookingDetailPage({ params }: { params: Promise<{ i
       return;
     }
     try {
-      await adminApi.recordPayment({ booking_id: booking.id, amount, provider_reference: pmtRef, provider: "manual", status: "PAID" });
+      // BUG-02: always send the booking's currency so the server never re-defaults to USD.
+      await adminApi.recordPayment({ booking_id: booking.id, amount, currency: booking.currency, provider_reference: pmtRef, provider: "manual", status: "PAID" });
       setPmtAmount("");
       setPmtRef("");
       setFlash("Payment recorded.");
@@ -156,20 +174,15 @@ export default function AdminBookingDetailPage({ params }: { params: Promise<{ i
             </dl>
           </section>
 
-          {/* Settings */}
+          {/* Settings — BUG-05: booking status and payment status use separate endpoints */}
           <section className="rounded-2xl border border-line bg-cream p-6">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Update booking</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Update booking status</p>
+            <p className="mt-1 text-xs text-charcoal-soft">Travel agents and managers can update the booking status.</p>
+            <div className="mt-4">
               <label className="block text-sm font-semibold text-forest">
                 Status
                 <select value={status} onChange={(e) => setStatus(e.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-charcoal focus:border-terracotta focus:outline-none">
                   {BOOKING_STATUSES.map((s) => <option key={s} value={s}>{statusLabel(s)}</option>)}
-                </select>
-              </label>
-              <label className="block text-sm font-semibold text-forest">
-                Payment status
-                <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-charcoal focus:border-terracotta focus:outline-none">
-                  {PAYMENT_STATUSES.map((s) => <option key={s} value={s}>{paymentStatusLabel(s)}</option>)}
                 </select>
               </label>
             </div>
@@ -179,7 +192,28 @@ export default function AdminBookingDetailPage({ params }: { params: Promise<{ i
               disabled={saving}
               className="mt-4 rounded-full bg-forest px-6 py-2.5 text-sm font-semibold text-ivory transition-colors hover:bg-forest-dark disabled:opacity-50"
             >
-              {saving ? "Saving…" : "Save changes"}
+              {saving ? "Saving…" : "Save booking status"}
+            </button>
+          </section>
+
+          <section className="rounded-2xl border border-line bg-cream p-6">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-terracotta">Update payment status</p>
+            <p className="mt-1 text-xs text-charcoal-soft">Accountants, managers and admins can update the payment status.</p>
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-forest">
+                Payment status
+                <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)} className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-charcoal focus:border-terracotta focus:outline-none">
+                  {PAYMENT_STATUSES.map((s) => <option key={s} value={s}>{paymentStatusLabel(s)}</option>)}
+                </select>
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={savePaymentStatus}
+              disabled={saving}
+              className="mt-4 rounded-full bg-forest px-6 py-2.5 text-sm font-semibold text-ivory transition-colors hover:bg-forest-dark disabled:opacity-50"
+            >
+              {saving ? "Saving…" : "Save payment status"}
             </button>
           </section>
 

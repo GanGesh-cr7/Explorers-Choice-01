@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { adminApi, formatMoneyAmount, packageImageUrl, uploadPackageImage, type Package, type DestinationOption } from "@/lib/admin";
+import { imageUrlError } from "@/lib/images";
+import { CLIENT_API_URL as API_URL } from "@/lib/api";
 
 const toLines = (list: string[] | undefined): string[] => (list ?? []).filter((s) => s.trim());
 
@@ -131,6 +133,13 @@ export default function AdminPackagesPage() {
 
   async function save() {
     setFlash("");
+    // BUG-16: reject image URLs that next/image would refuse to render.
+    const heroError = imageUrlError(form.hero_image, [API_URL]);
+    const galleryError = form.gallery.map((g) => imageUrlError(g, [API_URL])).find(Boolean) ?? "";
+    if (heroError || galleryError) {
+      setFlash(heroError || galleryError);
+      return;
+    }
     const payload = {
       destination_id: Number(form.destination_id),
       name: form.name.trim(),

@@ -230,6 +230,9 @@ class Booking(Base):
     destination_name: Mapped[str] = mapped_column(String(160), nullable=False)
     duration_days: Mapped[int] = mapped_column(Integer, nullable=False)
     booking_mode: Mapped[str] = mapped_column(String(32), nullable=False)
+    # BUG-18: optional client-supplied idempotency key to prevent duplicate
+    # bookings when a successful response is lost and the client retries.
+    idempotency_key: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 

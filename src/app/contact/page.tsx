@@ -3,16 +3,51 @@
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { CLIENT_API_URL } from "@/lib/api";
 
 const fieldClasses =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    setError("");
+    setLoading(true);
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const payload = {
+      customer_name: String(data.get("name") || "").trim(),
+      email: String(data.get("email") || "").trim(),
+      destination_interest: String(data.get("topic") || "").trim(),
+      message: String(data.get("message") || "").trim(),
+    };
+    if (!payload.customer_name || !payload.email || !payload.message) {
+      setError("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch(`${CLIENT_API_URL}/enquiries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.detail || "Something went wrong.");
+      }
+      setSubmitted(true);
+      form.reset();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "We couldn't send your message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -46,13 +81,14 @@ export default function ContactPage() {
                   variant="outline"
                   size="md"
                   className="mt-6"
-                  onClick={() => setSubmitted(false)}
+                  onClick={() => { setSubmitted(false); setError(""); }}
                 >
                   Send another message
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="grid gap-6 sm:grid-cols-2">
+                {error && <div className="sm:col-span-2 rounded-xl border border-terracotta/30 bg-terracotta/10 p-4 text-sm text-charcoal">{error}</div>}
                 <div>
                   <label htmlFor="name" className="mb-2 block text-sm font-semibold text-forest">
                     Full name
@@ -90,8 +126,8 @@ export default function ContactPage() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto">
-                    Send message
+                  <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto" disabled={loading}>
+                    {loading ? "Sending…" : "Send message"}
                   </Button>
                 </div>
               </form>

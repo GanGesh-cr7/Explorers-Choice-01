@@ -24,13 +24,17 @@ from .routes import admin as admin_router
 from .routes import auth as auth_router
 from .routes import bookings as bookings_router
 from .routes import destinations as destinations_router
+from .routes import enquiries as enquiries_router
 from .routes import hotels as hotels_router
 from .routes import oauth as oauth_router
 from .routes import packages as packages_router
 
-
 def run_startup_migrations():
-    """Ensure database schema is up-to-date with Alembic migrations on startup."""
+    """Ensure database schema is up-to-date with Alembic migrations on startup.
+
+    BUG-09: migration failures now raise SystemExit so startup cannot continue
+    against an outdated schema.
+    """
     try:
         backend_dir = Path(__file__).resolve().parent.parent
         alembic_ini = backend_dir / "alembic.ini"
@@ -40,8 +44,11 @@ def run_startup_migrations():
             alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
             command.upgrade(alembic_cfg, "head")
             logger.info("Database schema verified / upgraded to head successfully.")
+        else:
+            logger.warning("alembic.ini not found; cannot verify schema.")
     except Exception as exc:
-        logger.warning("Could not auto-apply migrations on startup: %s", exc)
+        logger.critical("Database migration failed, refusing to start: %s", exc)
+        raise SystemExit(1) from exc
 
 
 @asynccontextmanager
@@ -82,6 +89,10 @@ async def request_middleware(request: Request, call_next):
     start = time.monotonic()
     response = await call_next(request)
     elapsed_ms = round((time.monotonic() - start) * 1000, 1)
+    if request.url.path.startswith("/api"):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
     logger.info(
         "%s %s -> %s (%sms, id=%s)",
         request.method, request.url.path, response.status_code, elapsed_ms, request_id,
@@ -137,7 +148,7 @@ app.include_router(destinations_router.admin_router, prefix="/api/admin", tags=[
 app.include_router(packages_router.admin_router, prefix="/api/admin", tags=["admin packages"])
 app.include_router(bookings_router.admin_router, prefix="/api/admin", tags=["admin bookings"])
 app.include_router(admin_router.router, prefix="/api/admin", tags=["admin operations"])
-
+app.include_router(enquiries_router.router, prefix="/api/enquiries", tags=["public enquiries"])
 
 @app.get("/api/health", tags=["system"])
 def health():

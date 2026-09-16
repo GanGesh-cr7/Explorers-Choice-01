@@ -7,15 +7,18 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { PackageCard } from "@/components/cards/PackageCard";
 import { BookNowCta } from "@/components/cta/BookNowCta";
-import { packages, getPackageBySlug, getPackagesByDestination } from "@/data/packages";
+import { getPackageFromApi, getPackagesFromApi } from "@/lib/catalog";
+import { packages as fallbackPackages } from "@/data/packages";
 
-export function generateStaticParams() {
-  return packages.map((p) => ({ slug: p.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return fallbackPackages.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const pkg = getPackageBySlug(slug);
+  const pkg = await getPackageFromApi(slug);
   if (!pkg) return { title: "Package not found" };
   return {
     title: pkg.name,
@@ -25,11 +28,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PackageDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const pkg = getPackageBySlug(slug);
+  const pkg = await getPackageFromApi(slug);
   if (!pkg) notFound();
 
-  const related = getPackagesByDestination(pkg.destinationSlug)
-    .filter((p) => p.slug !== slug)
+  const allPackages = await getPackagesFromApi();
+  const related = allPackages
+    .filter((p) => p.destinationSlug === pkg.destinationSlug && p.slug !== slug)
     .slice(0, 2);
 
   return (

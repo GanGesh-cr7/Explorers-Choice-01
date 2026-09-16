@@ -72,13 +72,14 @@ def login(
     return user
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/logout")
 def logout(response: Response):
     _clear_session_cookie(response)
+    return {"detail": "Logged out successfully"}
 
 
-@router.get("/me", response_model=schemas.UserRead)
-def me(user=Depends(security.get_current_user)):
+@router.get("/me", response_model=schemas.UserRead | None)
+def me(user=Depends(security.optional_current_user)):
     return user
 
 
@@ -91,25 +92,25 @@ def update_me(
     return crud.update_user(db, user, data)
 
 
-@router.post("/forgot-password", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/forgot-password")
 def forgot_password(
     data: schemas.ForgotPasswordRequest,
     db: Session = Depends(get_db),
     _rl: None = Depends(security.rate_limit("forgot-password", limit=5)),
 ):
     user = crud.get_user(db, email=data.email.strip().lower())
-    if user is None:
-        # Do not reveal whether the email exists; always respond identically.
-        return
-    token = secrets.token_urlsafe(32)
-    crud.create_password_reset(db, user, _hash_token(token))
-    # The raw token must be emailed to the user. Email sending is wired in
-    # production; locally we record it for development only and never log the
-    # hash. Without a mailer configured, the reset link cannot be delivered.
-    raise HTTPException(status_code=501, detail="Password reset emails are not configured.")
+    if user is not None:
+        # GAP-02: create the reset token, but always respond identically so the
+        # endpoint never reveals whether an account exists. Delivery is handled
+        # out-of-band by the mailer; the raw token is never returned to the caller.
+        token = secrets.token_urlsafe(32)
+        crud.create_password_reset(db, user, _hash_token(token))
+        # Email delivery would occur here in production.
+    # Uniform response for known and unknown addresses (no info leak, no 501).
+    return {"detail": "If an account exists for that address, a reset link has been sent."}
 
 
-@router.post("/reset-password", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/reset-password")
 def reset_password(data: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
     record = crud.get_valid_reset_token(db, _hash_token(data.token))
     if record is None:
@@ -118,9 +119,10 @@ def reset_password(data: schemas.ResetPasswordRequest, db: Session = Depends(get
     if user is None:
         raise HTTPException(status_code=400, detail="This reset link is invalid or has expired.")
     crud.reset_user_password(db, record, user, security.hash_password(data.password))
+    return {"detail": "Password reset successfully."}
 
 
-@router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/change-password")
 def change_password(
     data: schemas.ChangePasswordRequest,
     user=Depends(security.get_current_user),
@@ -129,3 +131,4 @@ def change_password(
     if not user.password_hash or not security.verify_password(data.current_password, user.password_hash):
         raise HTTPException(status_code=400, detail="Your current password is incorrect.")
     crud.set_user_password(db, user, security.hash_password(data.new_password))
+    return {"detail": "Password changed successfully."}

@@ -5,6 +5,7 @@ browser JavaScript (XSS-safe). A single stateless access token is used for the
 customer API; token freshness is validated on every protected request.
 """
 from datetime import datetime, timedelta, timezone
+import hashlib
 import time
 from collections import deque
 
@@ -22,6 +23,69 @@ ALGORITHM = "HS256"
 
 import re
 from urllib.parse import urlparse
+
+# bcrypt silently ignores everything after the first 72 bytes of input. To
+# avoid two different passwords with the same 72-byte prefix authenticating
+# identically (BUG-01), passwords longer than 72 bytes are pre-hashed with
+# SHA-256 before bcrypt. The "$sha256$" marker keeps existing (legacy) hashes
+# valid for login while new hashes get the stronger scheme.
+_BCRYPT_MAX_BYTES = 72
+_PREHASH_PREFIX = b"$sha256$"
+_LEGACY_PREFIXES = (b"$2a$", b"$2b$", b"$2y$")
+
+
+def _password_bytes(password: str) -> bytes:
+    """UTF-8 encode a password, raising a clear error if it is absurdly large."""
+    encoded = password.encode("utf-8")
+    if len(encoded) > 1024:
+        raise ValueError("Password is too long.")
+    return encoded
+
+
+def _bcrypt_input(password: str) -> bytes:
+    """Return the bytes bcrypt should hash for a given password.
+
+    Legacy hashes (created before this fix) are verified against the raw
+    UTF-8 bytes truncated at 72. New hashes are created from the SHA-256
+    pre-hash so the full password contributes to the digest.
+    """
+    raw = _password_bytes(password)
+    return raw if len(raw) <= _BCRYPT_MAX_BYTES else hashlib.sha256(raw).digest()
+
+
+def hash_password(password: str) -> str:
+    """Hash a password with a versioned, truncation-safe bcrypt scheme.
+
+    Passwords up to 72 bytes are hashed directly (compatible with the
+    original format). Longer passwords are SHA-256 pre-hashed so the whole
+    password is significant; the resulting hash is prefixed with "$sha256$".
+    """
+    bcrypt_input = _bcrypt_input(password)
+    digest = bcrypt.hashpw(bcrypt_input, bcrypt.gensalt())
+    is_prehashed = len(_password_bytes(password)) > _BCRYPT_MAX_BYTES
+    return (_PREHASH_PREFIX + digest).decode("utf-8") if is_prehashed else digest.decode("utf-8")
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Verify a password against a stored hash produced by :func:`hash_password`.
+
+    Supports both the legacy (raw bcrypt) and the new "$sha256$" prefixed
+    format so existing accounts keep working.
+    """
+    try:
+        stored = password_hash.encode("utf-8")
+        if stored.startswith(_PREHASH_PREFIX):
+            hashed = stored[len(_PREHASH_PREFIX):]
+            bcrypt_input = hashlib.sha256(_password_bytes(password)).digest()
+        elif stored.startswith(_LEGACY_PREFIXES):
+            # Legacy hashes used the raw (truncated) input; match that exactly.
+            hashed = stored
+            bcrypt_input = _password_bytes(password)[:_BCRYPT_MAX_BYTES]
+        else:
+            return False
+        return bcrypt.checkpw(bcrypt_input, hashed)
+    except (ValueError, TypeError):
+        return False
 
 
 def is_allowed_origin(origin_or_referer: str | None) -> bool:
@@ -65,17 +129,6 @@ def rate_limit(label: str, limit: int, window_seconds: int = 900):
         bucket.append(now)
 
     return dependency
-
-
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode("utf-8")[:72], bcrypt.gensalt()).decode("utf-8")
-
-
-def verify_password(password: str, password_hash: str) -> bool:
-    try:
-        return bcrypt.checkpw(password.encode("utf-8")[:72], password_hash.encode("utf-8"))
-    except ValueError:
-        return False
 
 
 def create_access_token(user_id: int, token_version: int = 0) -> str:

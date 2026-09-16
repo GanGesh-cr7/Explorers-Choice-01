@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { DestinationCard } from "@/components/cards/DestinationCard";
-import { destinations } from "@/data/destinations";
+import { getDestinationsFromApi } from "@/lib/catalog";
+
+// BUG-08: revalidate so admin catalog edits publish to the public site.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Destinations",
@@ -9,7 +12,10 @@ export const metadata: Metadata = {
     "Explore the destinations we know, love and keep returning to. Every place on our list has been travelled, refined and recommended by the Explorers Choice team.",
 };
 
-export default function DestinationsPage() {
+export default async function DestinationsPage() {
+  // BUG-08: prefer the live API catalog; fall back to static data when offline.
+  const destinations = await getDestinationsFromApi();
+
   return (
     <>
       <section className="border-b border-line bg-ivory-warm">

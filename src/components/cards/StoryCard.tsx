@@ -1,8 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Story } from "@/data/stories";
 
-export function StoryCard({ story, featured = false }: { story: Story; featured?: boolean }) {
+type StoryInput = {
+  id?: number | string;
+  slug?: string;
+  image?: string;
+  photos?: string[];
+  title?: string;
+  customerName?: string;
+  packageName?: string;
+  destination?: string;
+};
+
+export function StoryCard({ story, featured = false }: { story: StoryInput; featured?: boolean }) {
+  const url = `/stories/${story.slug || story.id}`;
   return (
     <article
       className={`group flex flex-col overflow-hidden rounded-2xl border border-line bg-cream shadow-card ${
@@ -10,14 +21,14 @@ export function StoryCard({ story, featured = false }: { story: Story; featured?
       }`}
     >
       <Link
-        href={`/stories/${story.slug}`}
+        href={url}
         className={`relative block overflow-hidden bg-sand ${
-          featured ? "aspect-[4/3] md:aspect-auto md:w-1/2" : "aspect-[3/2]"
+          featured ? "aspect-[4/3] md:flex-none md:w-1/2" : "aspect-[3/2]"
         }`}
       >
         <Image
-          src={story.image}
-          alt={story.title}
+          src={story.image || (story.photos && story.photos[0]) || "https://images.unsplash.com/photo-1501785888041-af3ef285b470"}
+          alt={story.title || "Customer story"}
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -27,25 +38,23 @@ export function StoryCard({ story, featured = false }: { story: Story; featured?
 
       <div className={`flex flex-1 flex-col p-6 ${featured ? "md:p-10 md:justify-center" : ""}`}>
         <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-charcoal-soft">
-          <span className="text-terracotta">{story.trip}</span>
-          <span aria-hidden="true">·</span>
-          <span>{story.date}</span>
+          <span className="text-terracotta">{story.packageName || story.destination || "Explorers Choice"}</span>
         </div>
-        <Link href={`/stories/${story.slug}`}>
+        <Link href={url}>
           <h3
             className={`font-display text-forest transition-colors group-hover:text-forest-light ${
               featured ? "mt-4 text-3xl leading-tight sm:text-4xl" : "mt-3 text-xl leading-snug"
             }`}
           >
-            {story.title}
+            {story.title || `${story.customerName}'s Story`}
           </h3>
         </Link>
         <p className="mt-3 text-sm leading-relaxed text-charcoal-soft line-clamp-3">
-          {story.excerpt}
+          {story.customerName ? `"${story.customerName}"` : "Read more"}
         </p>
-        <p className="mt-5 text-sm font-semibold text-charcoal">— {story.author}</p>
+        <p className="mt-5 text-sm font-semibold text-charcoal">{story.customerName ? `— ${story.customerName}` : ""}</p>
         <Link
-          href={`/stories/${story.slug}`}
+          href={url}
           className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-forest"
         >
           Read the story

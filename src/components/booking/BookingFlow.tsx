@@ -8,6 +8,7 @@ import { useAuth } from "@/components/providers";
 import {
   submitBooking,
   fetchBookingPackages,
+  generateIdempotencyKey,
   BookingError,
   type BookingOptionPackage,
   type BookingConfirmation,
@@ -81,6 +82,8 @@ export function BookingFlow({
   const [submitting, setSubmitting] = useState(false);
   const [booking, setBooking] = useState<BookingConfirmation | null>(null);
   const submittedRef = useRef<string | null>(null);
+  // BUG-18: stable per-attempt idempotency key so retries don't duplicate.
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   // Load live package catalog (so booking_mode, price and availability reflect the server).
   useEffect(() => {
@@ -184,6 +187,8 @@ export function BookingFlow({
     setSubmitting(true);
     setError("");
     try {
+      // BUG-18: reuse one idempotency key across retries of the same submission.
+      if (!idempotencyKeyRef.current) idempotencyKeyRef.current = generateIdempotencyKey();
       const created = await submitBooking({
         package_slug: pkg.slug,
         travel_date: values.travelDate,
@@ -197,6 +202,7 @@ export function BookingFlow({
         country: values.country.trim(),
         special_requirements: values.requirements.trim(),
         notes: values.notes.trim(),
+        idempotency_key: idempotencyKeyRef.current,
       });
       submittedRef.current = created.booking_reference;
       setBooking(created);
@@ -504,8 +510,8 @@ export function BookingFlow({
               {instant ? (
                 <>
                   <p className="mt-2">
-                    This package supports instant booking. On confirmation you&apos;ll be directed to complete
-                    payment to secure your space. Availability is checked at the time of booking.
+                    This package supports instant booking. On confirmation we&apos;ll share secure
+                    payment details — your space is held once the payment clears.
                   </p>
                   <p className="mt-2 text-xs">
                     {pkg.highlights.length ? "Holding a space does not guarantee it until payment clears." : ""}
@@ -551,7 +557,7 @@ export function BookingFlow({
                     ? "Creating booking…"
                     : "Sending request…"
                   : instant
-                  ? "Continue to payment"
+                  ? "Submit booking — payment details follow"
                   : "Submit booking request"}
               </Button>
             )}
@@ -605,6 +611,7 @@ export function BookingFlow({
     setBooking(null);
     setCurrent(1);
     submittedRef.current = null;
+    idempotencyKeyRef.current = null;
     router.push("/book", { scroll: false });
   }
 }

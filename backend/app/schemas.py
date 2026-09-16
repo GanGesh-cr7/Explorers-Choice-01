@@ -211,6 +211,8 @@ class BookingCreate(BaseModel):
     country: str = Field(min_length=2, max_length=120)
     special_requirements: str = Field(default="", max_length=4000)
     notes: str = Field(default="", max_length=4000)
+    # BUG-18: optional idempotency key so a retried request returns the same booking.
+    idempotency_key: Optional[str] = Field(default=None, min_length=8, max_length=64)
 
 
 class BookingRead(BaseModel):
@@ -339,6 +341,8 @@ class UserCreate(BaseModel):
             raise ValueError("Password must contain at least one lowercase letter")
         if not any(c.isdigit() for c in v):
             raise ValueError("Password must contain at least one digit")
+        if len(v.encode("utf-8")) > 1024:
+            raise ValueError("Password is too long.")
         return v
 
 
@@ -469,7 +473,7 @@ class PaymentUpdate(BaseModel):
 class ManualPaymentCreate(BaseModel):
     booking_id: int
     amount: float = Field(gt=0)
-    currency: str = Field(default="USD", max_length=3)
+    currency: Optional[str] = Field(default=None, max_length=3)  # derived from booking if omitted
     status: str = Field(default="PAID", pattern=r"^(PENDING|PARTIALLY_PAID|PAID|FAILED|REFUNDED)$")
     provider: str = Field(default="manual", max_length=64)
     provider_reference: str = Field(default="", max_length=160)
@@ -499,6 +503,23 @@ class EnquiryCreate(BaseModel):
     assigned_staff_id: Optional[int] = None
     next_action: str = ""
     next_action_at: Optional[date] = None
+
+
+class PublicEnquiryCreate(BaseModel):
+    """GAP-01: restricted schema for the public contact form.
+
+    Excludes staff-only fields (status, assignment, internal notes) so a public
+    submission cannot set them.
+    """
+
+    customer_name: str = Field(min_length=1, max_length=160)
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    phone: str = Field(default="", max_length=60)
+    country: str = Field(default="", max_length=120)
+    destination_interest: str = Field(default="", max_length=160)
+    travellers: int = Field(default=2, ge=1, le=50)
+    budget: str = Field(default="", max_length=120)
+    message: str = Field(default="", max_length=4000)
 
 
 class EnquiryUpdate(BaseModel):

@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { adminApi, type DestinationAdmin, type DestinationFormPayload } from "@/lib/admin";
+import { imageUrlError } from "@/lib/images";
+import { CLIENT_API_URL as API_URL } from "@/lib/api";
 
 const listToText = (list: string[] | undefined): string => (list ?? []).join("\n");
 const textToList = (text: string): string[] =>
@@ -112,6 +114,13 @@ export default function AdminDestinationsPage() {
 
   async function save() {
     setFlash("");
+    // BUG-16: reject image URLs that next/image would refuse to render.
+    const urlError = imageUrlError(form.hero_image, [API_URL]);
+    const galleryErrors = form.gallery.map((g) => imageUrlError(g, [API_URL])).filter(Boolean);
+    if (urlError || galleryErrors.length > 0) {
+      setFlash(urlError || galleryErrors[0]);
+      return;
+    }
     const payload: DestinationFormPayload = {
       name: form.name.trim(),
       slug: form.slug.trim() || slugify(form.name.trim()),

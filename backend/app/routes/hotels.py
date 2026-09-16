@@ -72,7 +72,7 @@ def update_my_hotel(
         raise HTTPException(status_code=409, detail="A hotel with that name already exists.")
 
 
-@owner_router.delete("/hotels/{hotel_id}", status_code=status.HTTP_204_NO_CONTENT)
+@owner_router.delete("/hotels/{hotel_id}")
 def delete_my_hotel(
     hotel_id: int,
     db: Session = Depends(get_db),
@@ -82,6 +82,7 @@ def delete_my_hotel(
     if hotel is None or hotel.owner_id != owner.id:
         raise HTTPException(status_code=404, detail="Hotel not found")
     crud.delete_hotel(db, hotel)
+    return {"detail": "Hotel deleted successfully"}
 
 
 # ---------------------------------------------------------------------------
@@ -147,7 +148,6 @@ def admin_update_hotel(
 
 @admin_router.delete(
     "/hotels/{hotel_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(security.require_roles("MANAGER", "ADMIN"))],
 )
 def admin_delete_hotel(
@@ -158,3 +158,4 @@ def admin_delete_hotel(
     if hotel is None:
         raise HTTPException(status_code=404, detail="Hotel not found")
     crud.delete_hotel(db, hotel)
+    return {"detail": "Hotel deleted successfully"}

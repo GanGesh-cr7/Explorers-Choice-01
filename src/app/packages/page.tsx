@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
-import { PackageCard } from "@/components/cards/PackageCard";
 import { BookNowCta } from "@/components/cta/BookNowCta";
-import { packages } from "@/data/packages";
+import { getPackagesFromApi } from "@/lib/catalog";
+import { PackageFilterGrid } from "@/components/packages/PackageFilterGrid";
+
+// BUG-08: revalidate so admin catalog edits publish to the public site.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Packages",
@@ -10,7 +13,10 @@ export const metadata: Metadata = {
     "Browse our curated travel packages. Every journey is planned, priced and perfected with local guides, handpicked stays and a dedicated travel planner.",
 };
 
-export default function PackagesPage() {
+export default async function PackagesPage() {
+  // BUG-08: prefer the live API catalog; fall back to static data when offline.
+  const packages = await getPackagesFromApi();
+
   return (
     <>
       <section className="border-b border-line bg-ivory-warm">
@@ -30,11 +36,7 @@ export default function PackagesPage() {
 
       <section className="py-16 sm:py-20">
         <Container>
-          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {packages.map((pkg) => (
-              <PackageCard key={pkg.slug} pkg={pkg} />
-            ))}
-          </div>
+          <PackageFilterGrid initialPackages={packages} />
         </Container>
       </section>
 

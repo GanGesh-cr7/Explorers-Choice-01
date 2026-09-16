@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { adminApi, ENQUIRY_STAGES, type Enquiry } from "@/lib/admin";
 
 export default function AdminEnquiriesPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
@@ -9,6 +9,8 @@ export default function AdminEnquiriesPage({ searchParams }: { searchParams: Pro
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  // BUG-12: sequence counter to discard stale responses.
+  const seqRef = useRef(0);
 
   useEffect(() => {
     (async () => {
@@ -18,14 +20,27 @@ export default function AdminEnquiriesPage({ searchParams }: { searchParams: Pro
   }, [searchParams]);
 
   useEffect(() => {
+    const seq = ++seqRef.current;
     adminApi
       .enquiries(filter || undefined)
-      .then(setEnquiries)
-      .catch((err) => setError(err instanceof Error ? err.message : "Could not load enquiries."))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        // BUG-12: ignore out-of-order responses.
+        if (seq !== seqRef.current) return;
+        setEnquiries(data);
+      })
+      .catch((err) => {
+        if (seq !== seqRef.current) return;
+        setError(err instanceof Error ? err.message : "Could not load enquiries.");
+      })
+      .finally(() => {
+        if (seq !== seqRef.current) return;
+        setLoading(false);
+      });
   }, [filter]);
 
   function changeFilter(next: string) {
+    // BUG-11: if the filter hasn't changed, don't set loading=true and re-fetch.
+    if (next === filter) return;
     setLoading(true);
     setError("");
     setFilter(next);

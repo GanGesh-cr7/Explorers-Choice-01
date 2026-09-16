@@ -2,12 +2,14 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { adminApi, type StaffMember } from "@/lib/admin";
+import { useAuth } from "@/components/providers";
 
 const ROLES = ["TRAVEL_AGENT", "MANAGER", "ACCOUNTANT", "ADMIN"] as const;
 
 const EMPTY_FORM = { email: "", password: "", full_name: "", phone: "", country: "", role: "TRAVEL_AGENT" as StaffMember["role"] };
 
 export default function AdminStaffPage() {
+  const { user: currentUser } = useAuth();
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -133,48 +135,70 @@ export default function AdminStaffPage() {
       )}
 
       <div className="mt-8 space-y-3">
-        {staff.map((m) => (
-          <div key={m.id} className="flex flex-col gap-3 rounded-2xl border border-line bg-cream p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="font-semibold text-forest">{m.full_name}</p>
-                <span className="rounded-full bg-ivory px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-forest">{m.role.replace(/_/g, " ").toLowerCase()}</span>
-                {!m.is_active && <span className="rounded-full bg-terracotta/15 px-2.5 py-0.5 text-[11px] font-semibold text-terracotta">deactivated</span>}
+        {staff.map((m) => {
+          const isSelf = currentUser ? m.id === currentUser.id : false;
+          const activeAdminsCount = staff.filter((s) => s.is_active && s.role === "ADMIN").length;
+          const isLastActiveAdmin = m.is_active && m.role === "ADMIN" && activeAdminsCount <= 1;
+
+          return (
+            <div key={m.id} className="flex flex-col gap-3 rounded-2xl border border-line bg-cream p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-semibold text-forest">{m.full_name}</p>
+                  {isSelf && (
+                    <span className="rounded-full bg-forest/10 px-2 py-0.5 text-[11px] font-bold text-forest">You</span>
+                  )}
+                  <span className="rounded-full bg-ivory px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-forest">{m.role.replace(/_/g, " ").toLowerCase()}</span>
+                  {!m.is_active && <span className="rounded-full bg-terracotta/15 px-2.5 py-0.5 text-[11px] font-semibold text-terracotta">deactivated</span>}
+                </div>
+                <p className="mt-0.5 text-sm text-charcoal-soft">{m.email}{m.phone ? ` · ${m.phone}` : ""}</p>
               </div>
-              <p className="mt-0.5 text-sm text-charcoal-soft">{m.email}{m.phone ? ` · ${m.phone}` : ""}</p>
+              <div className="flex shrink-0 flex-wrap items-center gap-3">
+                <select
+                  value={m.role}
+                  disabled={isLastActiveAdmin}
+                  onChange={(e) => update(m, { role: e.target.value as StaffMember["role"] })}
+                  aria-label={`Role for ${m.full_name}`}
+                  title={isLastActiveAdmin ? "Cannot demote the last active administrator" : `Role for ${m.full_name}`}
+                  className="rounded-xl border border-line bg-white px-3 py-2 text-sm text-charcoal focus:border-terracotta focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {ROLES.map((r) => <option key={r} value={r}>{r.replace(/_/g, " ").toLowerCase()}</option>)}
+                </select>
+                <button
+                  type="button"
+                  disabled={isSelf || (isLastActiveAdmin && m.is_active)}
+                  onClick={() => toggleActive(m)}
+                  title={
+                    isSelf
+                      ? "You cannot deactivate your own account"
+                      : isLastActiveAdmin
+                      ? "Cannot deactivate the last active administrator"
+                      : m.is_active
+                      ? "Deactivate member"
+                      : "Activate member"
+                  }
+                  className={`rounded-full border px-5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                    m.is_active ? "border-terracotta/30 text-terracotta hover:bg-terracotta hover:text-ivory" : "border-forest/30 text-forest hover:bg-forest hover:text-ivory"
+                  }`}
+                >
+                  {m.is_active ? "Deactivate" : "Activate"}
+                </button>
+                <button
+                  type="button"
+                  disabled={isSelf}
+                  onClick={() => remove(m)}
+                  aria-label={`Delete ${m.full_name}`}
+                  title={isSelf ? "You cannot delete your own account" : "Delete member"}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-terracotta/30 text-terracotta transition-colors hover:bg-terracotta hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M10 11v6M14 11v6" />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div className="flex shrink-0 flex-wrap items-center gap-3">
-              <select
-                value={m.role}
-                onChange={(e) => update(m, { role: e.target.value as StaffMember["role"] })}
-                aria-label={`Role for ${m.full_name}`}
-                className="rounded-xl border border-line bg-white px-3 py-2 text-sm text-charcoal focus:border-terracotta focus:outline-none"
-              >
-                {ROLES.map((r) => <option key={r} value={r}>{r.replace(/_/g, " ").toLowerCase()}</option>)}
-              </select>
-              <button
-                type="button"
-                onClick={() => toggleActive(m)}
-                className={`rounded-full border px-5 py-2 text-sm font-semibold transition-colors ${
-                  m.is_active ? "border-terracotta/30 text-terracotta hover:bg-terracotta hover:text-ivory" : "border-forest/30 text-forest hover:bg-forest hover:text-ivory"
-                }`}
-              >
-                {m.is_active ? "Deactivate" : "Activate"}
-              </button>
-              <button
-                type="button"
-                onClick={() => remove(m)}
-                aria-label={`Delete ${m.full_name}`}
-                title="Delete member"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-terracotta/30 text-terracotta transition-colors hover:bg-terracotta hover:text-ivory"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M10 11v6M14 11v6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

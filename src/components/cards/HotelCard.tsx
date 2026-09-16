@@ -1,10 +1,7 @@
 import { HotelImage } from "./HotelImage";
 import Link from "next/link";
 import type { Hotel } from "@/data/hotels";
-
-export function formatPrice(price: number) {
-  return price.toLocaleString("en-IN");
-}
+import { formatMoney } from "@/lib/bookingMeta";
 
 export function HotelCard({ hotel }: { hotel: Hotel }) {
   return (
@@ -63,7 +60,8 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
           <p className="text-sm text-charcoal-soft">
             From{" "}
             <span className="font-display text-2xl text-forest">
-              ₹{formatPrice(hotel.pricePerNight)}
+              {/* BUG-14: use hotel.currency instead of hardcoded ₹ */}
+              {formatMoney(hotel.pricePerNight, hotel.currency ?? "INR")}
             </span>{" "}
             <span className="text-xs">/ night</span>
           </p>

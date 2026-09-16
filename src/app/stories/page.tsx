@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { StoryCard } from "@/components/cards/StoryCard";
-import { stories } from "@/data/stories";
+import { SERVER_API_URL } from "@/lib/api";
+import { stories as fallbackStories } from "@/data/stories";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Customer Stories",
@@ -9,7 +12,39 @@ export const metadata: Metadata = {
     "Real travellers, real memories. Honest stories from people who explored the world with Explorers Choice.",
 };
 
-export default function StoriesPage() {
+type StoryOutput = {
+  id?: number | string;
+  slug?: string;
+  customerName?: string;
+  packageName?: string;
+  destination?: string;
+  travelDate?: string;
+  title?: string;
+  excerpt?: string;
+  story?: string;
+  image?: string;
+  photos?: string[];
+};
+
+async function getStories(): Promise<StoryOutput[]> {
+  try {
+    const res = await fetch(`${SERVER_API_URL}/customer-stories`, { next: { revalidate: 60 } });
+    if (!res.ok) return fallbackStories as unknown as StoryOutput[];
+    const data = await res.json();
+    return data.map((d: Record<string, unknown>) => ({
+      ...d,
+      customerName: String(d.customer_name || ""),
+      packageName: String(d.package_name || ""),
+      destination: String(d.destination || ""),
+      travelDate: d.travel_date ? new Date(String(d.travel_date)).toLocaleDateString(undefined, { month: "long", year: "numeric" }) : "",
+    }));
+  } catch {
+    return fallbackStories as unknown as StoryOutput[];
+  }
+}
+
+export default async function StoriesPage() {
+  const stories = await getStories();
   const [featured, ...rest] = stories;
 
   return (

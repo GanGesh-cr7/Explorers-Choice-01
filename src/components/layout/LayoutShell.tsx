@@ -7,13 +7,17 @@ import { Footer } from "@/components/layout/Footer";
 
 export function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAccount = pathname.startsWith("/account");
+  const isPortal = pathname.startsWith("/account") || pathname.startsWith("/admin");
+
+  if (isPortal) {
+    return <AuthProvider>{children}</AuthProvider>;
+  }
 
   return (
     <AuthProvider>
-      {!isAccount && <Header />}
+      <Header />
       <main className="flex-1">{children}</main>
-      {!isAccount && <Footer />}
+      <Footer />
     </AuthProvider>
   );
 }

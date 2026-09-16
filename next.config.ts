@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const externalApi = process.env.NEXT_PUBLIC_EXPLORERS_API_URL ? ` ${process.env.NEXT_PUBLIC_EXPLORERS_API_URL}` : "";
 
+// BUG-15: src/lib/api.ts falls back to {protocol}//{hostname}:8000 when served
+// over the LAN so other devices can reach the backend. In non-production builds
+// we must include that LAN port in connect-src/img-src or requests are blocked
+// by CSP. Production environments should always set NEXT_PUBLIC_EXPLORERS_API_URL.
+const isProd = process.env.NODE_ENV === "production";
+const lanApiSource = isProd
+  ? ""
+  : " http://*.localhost:8000 http://192.168.*.*:8000 http://10.*.*.*:8000 http://172.16.*.*:8000 http://172.17.*.*:8000 http://172.18.*.*:8000 http://172.19.*.*:8000 http://172.2*.*.*:8000 http://172.30.*.*:8000 http://172.31.*.*:8000";
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -17,9 +26,9 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline'",
-      `img-src 'self' https://images.unsplash.com http://localhost:8000${externalApi} data: blob:`,
+      `img-src 'self' https://images.unsplash.com http://localhost:8000${externalApi}${lanApiSource} data: blob:`,
       "font-src 'self'",
-      `connect-src 'self' http://localhost:8000${externalApi}`,
+      `connect-src 'self' http://localhost:8000${externalApi}${lanApiSource}`,
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
