@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers";
 import { Container } from "@/components/ui/Container";
@@ -30,6 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || !user.is_staff)) {
@@ -59,30 +60,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-full flex flex-col bg-ivory text-charcoal">
-      <header className="border-b border-line bg-forest text-ivory">
-        <Container className="flex h-16 items-center justify-between">
-          <Link href="/admin" className="inline-flex items-baseline gap-0.5" aria-label="Explorers Choice workspace">
-            <span className="font-display text-xl tracking-tight text-ivory">Explorers</span>
-            <span className="font-display text-xl text-terracotta-light">Choice</span>
-            <span className="ml-2 rounded-full border border-ivory/25 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-ivory/80">
+    <div className="min-h-full bg-ivory text-charcoal">
+      {navOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-charcoal/40 backdrop-blur-sm"
+          onClick={() => setNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-line bg-forest text-ivory shadow-xl transition-transform duration-200 ${
+          navOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex h-16 items-center gap-3 border-b border-ivory/10 pl-6 pr-3">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <Link href="/admin" className="inline-flex items-baseline gap-0.5 self-start leading-none" aria-label="Explorers Choice workspace">
+              <span className="font-display text-xl tracking-tight text-ivory">Explorers</span>
+              <span className="font-display text-xl text-terracotta-light">Choice</span>
+            </Link>
+            <span className="mt-1.5 w-fit rounded-full border border-ivory/25 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-ivory/80">
               Workspace
             </span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/" className="hidden text-sm text-ivory/80 transition-colors hover:text-ivory sm:block">
-              View site
-            </Link>
-            <span className="truncate text-sm text-ivory/80 hidden md:block">{user.full_name || user.email}</span>
-            <span className="rounded-full border border-terracotta-light/40 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-terracotta-light">
-              {user.role}
-            </span>
           </div>
-        </Container>
-      </header>
+          <button
+            type="button"
+            onClick={() => setNavOpen(false)}
+            aria-label="Close navigation"
+            className="shrink-0 rounded-full p-2 text-ivory/70 transition-colors hover:bg-ivory/10 hover:text-ivory"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
 
-      <nav aria-label="Workspace navigation" className="sticky top-0 z-10 border-b border-line bg-ivory">
-        <Container className="flex gap-2 overflow-x-auto py-3 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav aria-label="Workspace navigation" className="flex-1 space-y-1 overflow-y-auto px-3 py-6">
           {visibleNav.map((item) => {
             const active = isActive(pathname, item.href);
             return (
@@ -90,21 +105,59 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={item.href}
                 href={item.href}
                 ref={active ? activeLinkRef : undefined}
+                onClick={() => setNavOpen(false)}
                 aria-current={active ? "page" : undefined}
-                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`flex items-center rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
                   active
-                    ? "border-forest bg-forest text-ivory"
-                    : "border-line bg-ivory text-charcoal-soft hover:text-forest"
+                    ? "bg-ivory text-forest"
+                    : "text-ivory/75 hover:bg-ivory/10 hover:text-ivory"
                 }`}
               >
                 {item.label}
               </Link>
             );
           })}
-        </Container>
-      </nav>
+        </nav>
 
-      <main className="flex-1">
+        <div className="border-t border-ivory/10 px-6 py-4">
+          <Link href="/" className="block text-sm text-ivory/80 transition-colors hover:text-ivory">
+            View site
+          </Link>
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate text-sm font-semibold text-ivory">{user.full_name || user.email}</span>
+              <span className="truncate text-xs text-ivory/60">{user.email}</span>
+            </div>
+            <span className="rounded-full border border-terracotta-light/40 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-terracotta-light">
+              {user.role}
+            </span>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <header className="flex h-16 items-center justify-between border-b border-line bg-forest px-4 text-ivory sm:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setNavOpen(true)}
+              aria-label="Open navigation"
+              className="rounded-full p-2 text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M3 6h18" />
+                <path d="M3 12h18" />
+                <path d="M3 18h18" />
+              </svg>
+            </button>
+            <Link href="/admin" className="inline-flex items-baseline gap-0.5" aria-label="Explorers Choice workspace">
+              <span className="font-display text-xl tracking-tight text-ivory">Explorers</span>
+              <span className="font-display text-xl text-terracotta-light">Choice</span>
+            </Link>
+          </div>
+          <span className="truncate text-sm text-ivory/80">{user.full_name || user.email}</span>
+        </header>
+
         <Container className="py-10 sm:py-12">{children}</Container>
       </main>
     </div>

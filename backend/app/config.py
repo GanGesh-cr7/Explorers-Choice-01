@@ -3,11 +3,19 @@
 Secrets fail closed: the app refuses to start with the placeholder values
 unless `EXPLORERS_ALLOW_INSECURE=true` is explicitly set for local development.
 """
+from pathlib import Path
+
 from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=PROJECT_ROOT / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     # Local development uses one SQLite database file per developer. Set
     # DATABASE_URL later when switching this environment to shared PostgreSQL.
