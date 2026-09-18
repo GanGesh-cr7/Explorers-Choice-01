@@ -28,6 +28,7 @@ from .routes import enquiries as enquiries_router
 from .routes import hotels as hotels_router
 from .routes import oauth as oauth_router
 from .routes import packages as packages_router
+from .routes import trains as trains_router
 
 def run_startup_migrations():
     """Ensure database schema is up-to-date with Alembic migrations on startup.
@@ -142,6 +143,7 @@ app.include_router(auth_router.router, prefix="/api/auth", tags=["auth"])
 app.include_router(oauth_router.router, prefix="/api/auth", tags=["auth"])
 app.include_router(account_router.router, prefix="/api/account", tags=["account"])
 app.include_router(hotels_router.router, prefix="/api/hotels", tags=["hotels"])
+app.include_router(trains_router.router, prefix="/api/trains", tags=["trains"])
 app.include_router(hotels_router.owner_router, prefix="/api/hotel-owner", tags=["hotel owner"])
 app.include_router(hotels_router.admin_router, prefix="/api/admin", tags=["admin hotels"])
 app.include_router(destinations_router.admin_router, prefix="/api/admin", tags=["admin destinations"])

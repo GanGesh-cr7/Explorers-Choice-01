@@ -805,7 +805,124 @@ class HotelOwnerRead(HotelRead):
     is_published: bool
 
 
+# ---------------------------------------------------------------------------
+# Train ticket booking & search
+# ---------------------------------------------------------------------------
+class StationInfo(BaseModel):
+    code: str
+    name: str
+    city: str
+    state: str
+
+
+class TrainClassAvailability(BaseModel):
+    travel_class: str
+    class_name: str
+    fare: float
+    status: str
+    status_type: str  # AVAILABLE | RAC | WL
+
+
+class TrainScheduleItem(BaseModel):
+    train_number: str
+    train_name: str
+    train_type: str
+    from_station_code: str
+    from_station_name: str
+    to_station_code: str
+    to_station_name: str
+    departure_time: str
+    arrival_time: str
+    duration: str
+    running_days: list[str]
+    classes: list[TrainClassAvailability]
+    has_pantry: bool = True
+
+
+class PassengerInput(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+    age: int = Field(ge=1, le=120)
+    gender: str = Field(pattern=r"^(M|F|O|Male|Female|Other)$")
+    berth_preference: Optional[str] = "No Preference"
+
+
+class TrainBookingCreate(BaseModel):
+    train_number: str = Field(min_length=3, max_length=10)
+    train_name: str = Field(min_length=1, max_length=160)
+    from_station_code: str = Field(min_length=2, max_length=10)
+    from_station_name: str = Field(min_length=1, max_length=120)
+    to_station_code: str = Field(min_length=2, max_length=10)
+    to_station_name: str = Field(min_length=1, max_length=120)
+    journey_date: date
+    departure_time: str = Field(min_length=3, max_length=10)
+    arrival_time: str = Field(min_length=3, max_length=10)
+    duration: str = Field(default="", max_length=30)
+    travel_class: str = Field(min_length=1, max_length=10)
+    quota: str = Field(default="GENERAL", max_length=30)
+    passengers: list[PassengerInput] = Field(min_length=1, max_length=6)
+    contact_name: str = Field(min_length=2, max_length=160)
+    contact_email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    contact_phone: str = Field(min_length=5, max_length=60)
+    idempotency_key: Optional[str] = Field(default=None, max_length=64)
+
+
+class TrainBookingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    booking_reference: str
+    pnr_number: str
+    train_number: str
+    train_name: str
+    from_station_code: str
+    from_station_name: str
+    to_station_code: str
+    to_station_name: str
+    journey_date: date
+    departure_time: str
+    arrival_time: str
+    duration: str
+    travel_class: str
+    quota: str
+    passengers: list[dict]
+    contact_name: str
+    contact_email: str
+    contact_phone: str
+    base_fare: float
+    convenience_fee: float
+    gst: float
+    total_amount: float
+    currency: str
+    status: str
+    created_at: datetime
+
+
+class PnrStatusRead(BaseModel):
+    pnr_number: str
+    train_number: str
+    train_name: str
+    from_station: str
+    to_station: str
+    journey_date: str
+    travel_class: str
+    chart_prepared: bool
+    status: str
+    passengers: list[dict]
+
+
+class LiveTrainStatusRead(BaseModel):
+    train_number: str
+    train_name: str
+    current_station: str
+    status_message: str
+    delay_minutes: int
+    last_updated: str
+    next_station: str
+    estimated_arrival: str
+
+
 BookingDetail.model_rebuild()
 BookingAdminDetail.model_rebuild()
 CustomerAdminDetail.model_rebuild()
 HotelOwnerRead.model_rebuild()
+TrainBookingRead.model_rebuild()

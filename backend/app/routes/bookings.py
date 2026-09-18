@@ -1,11 +1,12 @@
 """Customer booking request and protected booking management endpoints."""
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from .. import crud, schemas, security
 from ..database import get_db
+from ..email_service import send_booking_notification_email
 
 router = APIRouter()
 admin_router = APIRouter()
@@ -14,6 +15,7 @@ admin_router = APIRouter()
 @router.post("", response_model=schemas.BookingRead, status_code=status.HTTP_201_CREATED)
 def create_booking(
     data: schemas.BookingCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     user=Depends(security.optional_current_user),
     _rl: None = Depends(security.rate_limit("create-booking", limit=15, window_seconds=600)),
@@ -35,6 +37,34 @@ def create_booking(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This package is unavailable. Please choose another journey.",
         )
+
+    booking_data = {
+        "booking_reference": booking.booking_reference,
+        "package_name": booking.package_name,
+        "destination_name": booking.destination_name,
+        "duration_days": booking.duration_days,
+        "travel_date": booking.travel_date,
+        "adults": booking.adults,
+        "children": booking.children,
+        "infants": booking.infants,
+        "full_name": booking.full_name,
+        "email": booking.email,
+        "phone": booking.phone,
+        "country": booking.country,
+        "departure_information": booking.departure_information,
+        "special_requirements": booking.special_requirements,
+        "notes": booking.notes,
+        "subtotal": float(booking.subtotal),
+        "taxes": float(booking.taxes),
+        "total": float(booking.total),
+        "currency": booking.currency,
+        "status": booking.status,
+        "payment_status": booking.payment_status,
+        "booking_mode": booking.booking_mode,
+        "created_at": booking.created_at,
+    }
+    background_tasks.add_task(send_booking_notification_email, booking_data)
+
     return booking
 
 

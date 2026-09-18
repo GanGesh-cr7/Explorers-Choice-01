@@ -78,6 +78,58 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("EXPLORERS_ALLOW_INSECURE", "ALLOW_INSECURE_DEFAULTS"),
     )
 
+    # Email notification configuration
+    admin_notification_email: str = Field(
+        default="infoexplorerschoice@gmail.com",
+        validation_alias=AliasChoices("ADMIN_NOTIFICATION_EMAIL", "NOTIFICATION_EMAIL", "SMTP_TO_EMAIL"),
+    )
+    smtp_host: str = Field(
+        default="",
+        validation_alias=AliasChoices("SMTP_HOST", "MAIL_HOST"),
+    )
+    smtp_port: int = Field(
+        default=587,
+        validation_alias=AliasChoices("SMTP_PORT", "MAIL_PORT"),
+    )
+    smtp_username: str = Field(
+        default="",
+        validation_alias=AliasChoices("SMTP_USERNAME", "SMTP_USER", "MAIL_USERNAME", "MAIL_USER"),
+    )
+    smtp_password: str = Field(
+        default="",
+        validation_alias=AliasChoices("SMTP_PASSWORD", "SMTP_PASS", "MAIL_PASSWORD", "MAIL_PASS"),
+    )
+    smtp_from_email: str = Field(
+        default="",
+        validation_alias=AliasChoices("SMTP_FROM_EMAIL", "MAIL_FROM_EMAIL", "MAIL_FROM"),
+    )
+    smtp_from_name: str = Field(
+        default="Explorers Choice",
+        validation_alias=AliasChoices("SMTP_FROM_NAME", "MAIL_FROM_NAME"),
+    )
+    smtp_use_tls: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("SMTP_USE_TLS", "SMTP_TLS", "MAIL_TLS"),
+    )
+    smtp_use_ssl: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("SMTP_USE_SSL", "SMTP_SSL", "MAIL_SSL"),
+    )
+
+    # Railway / Train API configuration
+    railway_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("RAILWAY_API_KEY", "RAPIDAPI_KEY", "TRAIN_API_KEY"),
+    )
+    railway_api_host: str = Field(
+        default="irctc1.p.rapidapi.com",
+        validation_alias=AliasChoices("RAILWAY_API_HOST", "RAPIDAPI_HOST"),
+    )
+    railway_api_url: str = Field(
+        default="https://irctc1.p.rapidapi.com",
+        validation_alias=AliasChoices("RAILWAY_API_URL", "TRAIN_API_BASE_URL"),
+    )
+
     @model_validator(mode="after")
     def _guard_placeholder_secrets(self) -> "Settings":
         if not self.database_url.strip():
