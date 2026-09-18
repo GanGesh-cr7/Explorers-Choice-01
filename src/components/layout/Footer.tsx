@@ -5,6 +5,8 @@ import { Logo } from "@/components/layout/Header";
 const exploreLinks = [
   { label: "Destinations", href: "/destinations" },
   { label: "Packages", href: "/packages" },
+  { label: "Hotels", href: "/hotels" },
+  { label: "Train Booking", href: "/trains" },
   { label: "Rajasthan", href: "/destinations/rajasthan" },
   { label: "Kerala", href: "/destinations/kerala" },
   { label: "Ladakh", href: "/destinations/ladakh" },

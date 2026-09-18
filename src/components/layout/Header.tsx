@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Destinations", href: "/destinations" },
   { label: "Packages", href: "/packages" },
   { label: "Hotels", href: "/hotels" },
+  { label: "Trains", href: "/trains" },
   { label: "About", href: "/about" },
   { label: "Customer Stories", href: "/stories" },
   { label: "Contact", href: "/contact" },
