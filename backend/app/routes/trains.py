@@ -231,7 +231,7 @@ def get_train_booking_by_reference(
 @router.get("/my-bookings", response_model=list[schemas.TrainBookingRead])
 def get_my_train_bookings(
     db: Session = Depends(get_db),
-    user=Depends(security.require_current_user),
+    user=Depends(security.get_current_user),
 ):
     """List all train bookings belonging to the currently authenticated user."""
     return (
