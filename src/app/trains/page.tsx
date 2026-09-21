@@ -121,8 +121,8 @@ export default function TrainsPage() {
     try {
       const results = await searchTrains(fromStation.code, toStation.code, journeyDate);
       setTrains(results);
-    } catch (err: any) {
-      setSearchError(err.message || "Could not retrieve train schedules. Please try again.");
+    } catch (err) {
+      setSearchError(err instanceof Error ? err.message : "Could not retrieve train schedules. Please try again.");
     } finally {
       setIsSearching(false);
     }
@@ -155,7 +155,7 @@ export default function TrainsPage() {
     setPassengers(passengers.filter((_, i) => i !== index));
   };
 
-  const updatePassenger = (index: number, field: keyof PassengerInput, value: any) => {
+  const updatePassenger = (index: number, field: keyof PassengerInput, value: PassengerInput[keyof PassengerInput]) => {
     const updated = [...passengers];
     updated[index] = { ...updated[index], [field]: value };
     setPassengers(updated);
@@ -220,8 +220,8 @@ export default function TrainsPage() {
 
       const result = await createTrainBooking(payload);
       setConfirmedBooking(result);
-    } catch (err: any) {
-      setBookingError(err.message || "Failed to complete ticket booking. Please try again.");
+    } catch (err) {
+      setBookingError(err instanceof Error ? err.message : "Failed to complete ticket booking. Please try again.");
     } finally {
       setIsSubmittingBooking(false);
     }
@@ -241,8 +241,8 @@ export default function TrainsPage() {
     try {
       const res = await getPnrStatus(clean);
       setPnrResult(res);
-    } catch (err: any) {
-      setPnrError(err.message || "Could not retrieve PNR status.");
+    } catch (err) {
+      setPnrError(err instanceof Error ? err.message : "Could not retrieve PNR status.");
     } finally {
       setIsCheckingPnr(false);
     }
@@ -262,8 +262,8 @@ export default function TrainsPage() {
     try {
       const res = await getLiveTrainStatus(clean);
       setLiveResult(res);
-    } catch (err: any) {
-      setLiveError(err.message || "Could not retrieve train running status.");
+    } catch (err) {
+      setLiveError(err instanceof Error ? err.message : "Could not retrieve train running status.");
     } finally {
       setIsCheckingLive(false);
     }
