@@ -134,8 +134,8 @@ class Settings(BaseSettings):
     def _guard_placeholder_secrets(self) -> "Settings":
         if not self.database_url.strip():
             raise ValueError("DATABASE_URL must point to the shared application database.")
-        if self.environment.lower() in ("production", "prod") and self.database_url.startswith("sqlite"):
-            raise ValueError("Production deployments must use PostgreSQL, not SQLite.")
+        if self.database_url.startswith("sqlite"):
+            raise ValueError("SQLite is no longer supported. Please use the shared PostgreSQL database URL.")
         if (
             not self.secret_key
             or self.secret_key == "change-me-customer-secret"

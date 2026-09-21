@@ -56,10 +56,7 @@ def run_startup_migrations():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: ensure migrations are applied
-    if settings.database_url.startswith("sqlite"):
-        Base.metadata.create_all(bind=engine)
-    else:
-        run_startup_migrations()
+    run_startup_migrations()
     yield
     # Shutdown
 
