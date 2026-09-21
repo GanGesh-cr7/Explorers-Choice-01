@@ -38,8 +38,20 @@ function LoginContent() {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      await login(email, password);
-      router.push(redirect);
+      const loggedInUser = await login(email, password);
+      
+      // Auto-route users based on their role if they didn't come from a specific protected page
+      if (!searchParams.has("redirect")) {
+        if (loggedInUser.is_staff) {
+          router.push("/admin");
+        } else if (loggedInUser.role === "HOTEL_OWNER") {
+          router.push("/hotel-owner");
+        } else {
+          router.push("/account");
+        }
+      } else {
+        router.push(redirect);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed. Please try again.");
     } finally {

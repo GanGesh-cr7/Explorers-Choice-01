@@ -13,7 +13,7 @@ import {
 type AuthContextType = {
   user: UserProfile | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<UserProfile>;
   register: (data: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -38,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     const current = await loginUser({ email, password });
     setUser(current);
+    return current;
   }, []);
 
   const register = useCallback(async (data: RegisterPayload) => {

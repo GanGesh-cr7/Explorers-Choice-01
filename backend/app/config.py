@@ -12,14 +12,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=PROJECT_ROOT / ".env",
+        env_file=PROJECT_ROOT / "backend" / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
 
-    # Local development uses one SQLite database file per developer. Set
-    # DATABASE_URL later when switching this environment to shared PostgreSQL.
-    database_url: str = "sqlite:///./explorers_choice.db"
+    # PostgreSQL is the deployment database. Set DATABASE_URL in backend/.env
+    # for local development or in the hosting provider's environment settings.
+    database_url: str = ""
 
     # Shared secret used by the admin UI to authenticate admin operations
     # (`X-ADMIN-KEY` header). Keep in sync with the admin area deployment.
@@ -134,6 +134,8 @@ class Settings(BaseSettings):
     def _guard_placeholder_secrets(self) -> "Settings":
         if not self.database_url.strip():
             raise ValueError("DATABASE_URL must point to the shared application database.")
+        if self.environment.lower() in ("production", "prod") and self.database_url.startswith("sqlite"):
+            raise ValueError("Production deployments must use PostgreSQL, not SQLite.")
         if (
             not self.secret_key
             or self.secret_key == "change-me-customer-secret"

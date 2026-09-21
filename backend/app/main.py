@@ -42,7 +42,8 @@ def run_startup_migrations():
         if alembic_ini.exists():
             alembic_cfg = Config(str(alembic_ini))
             alembic_cfg.set_main_option("script_location", str(backend_dir / "app" / "migrations"))
-            alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
+            escaped_url = settings.database_url.replace("%", "%%")
+            alembic_cfg.set_main_option("sqlalchemy.url", escaped_url)
             command.upgrade(alembic_cfg, "head")
             logger.info("Database schema verified / upgraded to head successfully.")
         else:
