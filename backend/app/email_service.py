@@ -641,3 +641,300 @@ def send_train_booking_notification_email(data: dict[str, Any]) -> bool:
         )
 
     return True
+
+
+def build_cab_booking_notification_content(data: dict[str, Any]) -> tuple[str, str, str]:
+    """Generate subject, plain text, and HTML body for a new cab booking."""
+    booking_ref = data.get("booking_reference", "N/A")
+    trip_type = data.get("trip_type", "LOCAL")
+    cab_type = data.get("cab_type", "Sedan")
+    pickup_location = data.get("pickup_location", "")
+    drop_location = data.get("drop_location", "")
+    pickup_date = str(data.get("pickup_date", "N/A"))
+    pickup_time = data.get("pickup_time", "")
+    distance_kms = float(data.get("distance_kms", 0) or 0)
+    passengers = data.get("passengers", 1)
+    full_name = data.get("full_name", "")
+    customer_email = data.get("email", "")
+    phone = data.get("phone", "")
+    special_reqs = data.get("special_requirements", "")
+    base_fare = float(data.get("base_fare", 0) or 0)
+    convenience_fee = float(data.get("convenience_fee", 0) or 0)
+    gst = float(data.get("gst", 0) or 0)
+    total = float(data.get("total_amount", 0) or 0)
+    currency = data.get("currency", "INR")
+    status_str = data.get("status", "PENDING_CONFIRMATION")
+
+    trip_labels = {
+        "LOCAL": "Local / City Rental",
+        "AIRPORT_TRANSFER": "Airport Transfer",
+        "OUTSTATION": "Outstation / One Way",
+    }
+    trip_label = trip_labels.get(trip_type, trip_type)
+
+    subject = f"New Cab Booking Request: {cab_type} - {pickup_location} to {drop_location} ({booking_ref})"
+
+    text_content = f"""
+=====================================================
+NEW CAB BOOKING REQUEST - EXPLORERS CHOICE
+=====================================================
+
+A new cab booking request has been placed and needs confirmation.
+
+BOOKING DETAILS:
+----------------
+Reference Code   : {booking_ref}
+Trip Type        : {trip_label}
+Cab Type         : {cab_type}
+Pickup Location  : {pickup_location}
+Drop Location    : {drop_location}
+Pickup Date      : {pickup_date}
+Pickup Time      : {pickup_time}
+Approx. Distance : {distance_kms:,.0f} km
+Passengers       : {passengers}
+Estimated Fare   : {currency} {base_fare:,.2f}
+Convenience Fee  : {currency} {convenience_fee:,.2f}
+GST              : {currency} {gst:,.2f}
+Total (Estimate) : {currency} {total:,.2f}
+Status           : {status_str}
+
+CUSTOMER CONTACT:
+-----------------
+Full Name        : {full_name}
+Email            : {customer_email}
+Phone            : {phone}
+
+ADDITIONAL INFORMATION:
+----------------------
+Special Requests : {special_reqs or 'None'}
+
+=====================================================
+Confirm the cab with the customer and dispatch the driver.
+"""
+
+    html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>New Cab Booking: {booking_ref}</title>
+  <style>
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f7f6f2;
+      color: #2b2d2f;
+      margin: 0;
+      padding: 24px;
+      line-height: 1.6;
+    }}
+    .container {{
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e3dc;
+    }}
+    .header {{
+      background: linear-gradient(135deg, #1c3b2b 0%, #29553f 100%);
+      color: #f7f6f2;
+      padding: 28px 24px;
+      text-align: center;
+    }}
+    .header h1 {{
+      margin: 0;
+      font-size: 24px;
+    }}
+    .badge {{
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      background-color: #c97a56;
+      color: #ffffff;
+    }}
+    .content {{
+      padding: 24px;
+    }}
+    .route-box {{
+      background-color: #faf9f6;
+      border: 1px solid #e5e3dc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }}
+    .location-name {{
+      font-size: 16px;
+      font-weight: 700;
+      color: #1c3b2b;
+    }}
+    .section-title {{
+      font-size: 15px;
+      font-weight: 700;
+      color: #1c3b2b;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #e5e3dc;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }}
+    .details-table {{
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }}
+    .details-table td {{
+      padding: 8px 6px;
+      vertical-align: top;
+      font-size: 14px;
+    }}
+    .details-table td.label {{
+      color: #5d6166;
+      width: 38%;
+      font-weight: 500;
+    }}
+    .details-table td.value {{
+      color: #1c3b2b;
+      font-weight: 600;
+    }}
+    .total-box {{
+      background-color: #f1ede4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }}
+    .total-label {{
+      font-size: 15px;
+      font-weight: 700;
+      color: #1c3b2b;
+    }}
+    .total-amount {{
+      font-size: 20px;
+      font-weight: 800;
+      color: #c97a56;
+    }}
+    .notes-box {{
+      background-color: #faf9f6;
+      border-left: 4px solid #c97a56;
+      padding: 10px 14px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #4b5563;
+    }}
+    .footer {{
+      background-color: #f7f6f2;
+      padding: 18px 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #83888e;
+      border-top: 1px solid #e5e3dc;
+    }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>New Cab Booking Request</h1>
+      <p style="margin: 4px 0 0 0; color: #d1d5db;">A customer cab request needs confirmation</p>
+      <div class="badge">{booking_ref}</div>
+    </div>
+
+    <div class="content">
+      <div class="route-box">
+        <div style="font-size: 18px; font-weight: 800; color: #1c3b2b;">{cab_type} &bull; {trip_label}</div>
+        <div style="margin-top: 12px; display: flex; justify-content: space-around; align-items: center;">
+          <div>
+            <div class="location-name">{pickup_location}</div>
+            <div style="font-size: 12px; color: #6b7280;">Pickup</div>
+          </div>
+          <div style="font-size: 20px; color: #c97a56;">&rarr;</div>
+          <div>
+            <div class="location-name">{drop_location}</div>
+            <div style="font-size: 12px; color: #6b7280;">Drop</div>
+          </div>
+        </div>
+        <div style="margin-top: 10px; font-size: 13px; color: #6b7280;">Pickup: <strong>{pickup_date} at {pickup_time}</strong> &bull; Approx. Distance: <strong>{distance_kms:,.0f} km</strong> &bull; Passengers: <strong>{passengers}</strong></div>
+      </div>
+
+      <div class="section-title">Estimated Fare</div>
+      <table class="details-table">
+        <tr>
+          <td class="label">Base Fare:</td>
+          <td class="value">{currency} {base_fare:,.2f}</td>
+        </tr>
+        <tr>
+          <td class="label">Convenience Fee:</td>
+          <td class="value">{currency} {convenience_fee:,.2f}</td>
+        </tr>
+        <tr>
+          <td class="label">GST:</td>
+          <td class="value">{currency} {gst:,.2f}</td>
+        </tr>
+      </table>
+      <div class="total-box">
+        <span class="total-label">Estimated Total</span>
+        <span class="total-amount">{currency} {total:,.2f}</span>
+      </div>
+
+      <div class="section-title">Customer Contact Details</div>
+      <table class="details-table">
+        <tr>
+          <td class="label">Customer Name:</td>
+          <td class="value">{full_name}</td>
+        </tr>
+        <tr>
+          <td class="label">Email Address:</td>
+          <td class="value"><a href="mailto:{customer_email}" style="color: #1c3b2b; text-decoration: underline;">{customer_email}</a></td>
+        </tr>
+        <tr>
+          <td class="label">Phone Number:</td>
+          <td class="value"><a href="tel:{phone}" style="color: #1c3b2b; text-decoration: underline;">{phone}</a></td>
+        </tr>
+      </table>
+
+      {f'''<div class="section-title">Special Requirements</div>
+      <div class="notes-box">{special_reqs}</div>''' if special_reqs else ''}
+    </div>
+
+    <div class="footer">
+      <p style="margin: 0;">Explorers Choice &bull; Cab &amp; Car Rental Notifications</p>
+      <p style="margin: 4px 0 0 0;">Recipient: {settings.admin_notification_email}</p>
+    </div>
+  </div>
+</body>
+</html>
+"""
+    return subject, text_content, html_content
+
+
+def send_cab_booking_notification_email(data: dict[str, Any]) -> bool:
+    """Send a cab booking request notification to the admin and to the customer."""
+    subject, text_content, html_content = build_cab_booking_notification_content(data)
+    admin_email = settings.admin_notification_email or "infoexplorerschoice@gmail.com"
+
+    # 1. Send to Admin immediately
+    send_email(
+        to_email=admin_email,
+        subject=subject,
+        text_content=text_content,
+        html_content=html_content,
+    )
+
+    # 2. Send a copy to the customer if different
+    cust_email = (data.get("email") or "").strip().lower()
+    if cust_email and cust_email != admin_email.lower() and "@" in cust_email:
+        send_email(
+            to_email=cust_email,
+            subject=f"Your Cab Booking Request {data.get('booking_reference', '')} Received (Explorers Choice)",
+            text_content=text_content,
+            html_content=html_content,
+        )
+
+    return True

@@ -14,7 +14,7 @@ from app.database import Base  # noqa: E402
 import app.models  # noqa: E402, F401 — registers models with Base.metadata
 
 config = context.config
-# alembic uses configparser under the hood, which treats % as an interpolation 
+# alembic uses configparser under the hood, which treats % as an interpolation
 # token unless escaped as %%. We must escape url-encoded passwords to prevent errors.
 escaped_url = settings.database_url.replace("%", "%%")
 config.set_main_option("sqlalchemy.url", escaped_url)

@@ -98,7 +98,10 @@ export default async function StoryDetail({ params }: { params: Promise<{ slug: 
         </div>
 
         <article className="mt-10 space-y-6">
-          {story.story.split("\n\n").map((paragraph, index) => (
+          {(Array.isArray((story as unknown as { body?: unknown }).body)
+            ? ((story as unknown as { body: string[] }).body)
+            : String(story.story || "").split("\n\n")
+          ).map((paragraph, index) => (
             <p key={index} className="text-lg leading-relaxed text-charcoal-soft">
               {paragraph}
             </p>

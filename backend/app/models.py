@@ -66,6 +66,9 @@ class User(Base):
     train_bookings: Mapped[list["TrainBooking"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    cab_bookings: Mapped[list["CabBooking"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
     reset_tokens: Mapped[list["PasswordResetToken"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
@@ -491,4 +494,47 @@ class TrainBooking(Base):
     )
 
     user: Mapped[Optional["User"]] = relationship(back_populates="train_bookings")
+
+
+class CabBooking(Base):
+    """A cab / car rental booking request placed by a customer.
+
+    Bookings are stored as requests with an estimated fare; the Explorers
+    Choice team confirms the final price and dispatches a driver. The admin
+    receives an immediate email notification when a booking is placed.
+    """
+
+    __tablename__ = "cab_bookings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    booking_reference: Mapped[str] = mapped_column(String(32), unique=True, index=True, nullable=False)
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    # LOCAL | AIRPORT_TRANSFER | OUTSTATION
+    trip_type: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
+    cab_type: Mapped[str] = mapped_column(String(40), nullable=False)  # e.g. Hatchback, Sedan, SUV
+    pickup_location: Mapped[str] = mapped_column(String(300), nullable=False)
+    drop_location: Mapped[str] = mapped_column(String(300), nullable=False)
+    pickup_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    pickup_time: Mapped[str] = mapped_column(String(5), nullable=False)  # HH:MM
+    distance_kms: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False, default=0)
+    passengers: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    full_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    email: Mapped[str] = mapped_column(String(254), nullable=False, index=True)
+    phone: Mapped[str] = mapped_column(String(60), nullable=False)
+    special_requirements: Mapped[str] = mapped_column(Text, default="")
+    base_fare: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False, default=0)
+    convenience_fee: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False, default=0)
+    gst: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False, default=0)
+    total_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="INR")
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING_CONFIRMATION", index=True)
+    idempotency_key: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+    user: Mapped[Optional["User"]] = relationship(back_populates="cab_bookings")
 

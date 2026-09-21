@@ -921,6 +921,51 @@ class LiveTrainStatusRead(BaseModel):
     estimated_arrival: str
 
 
+# ---------------------------------------------------------------------------
+# Cab / car rental booking
+# ---------------------------------------------------------------------------
+class CabBookingCreate(BaseModel):
+    trip_type: str = Field(pattern=r"^(LOCAL|AIRPORT_TRANSFER|OUTSTATION)$")
+    cab_type: str = Field(min_length=1, max_length=40)
+    pickup_location: str = Field(min_length=2, max_length=300)
+    drop_location: str = Field(min_length=2, max_length=300)
+    pickup_date: date
+    pickup_time: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    distance_kms: float = Field(default=0, ge=0, le=5000)
+    passengers: int = Field(default=1, ge=1, le=12)
+    full_name: str = Field(min_length=2, max_length=160)
+    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$", max_length=254)
+    phone: str = Field(min_length=5, max_length=60)
+    special_requirements: str = Field(default="", max_length=4000)
+    idempotency_key: Optional[str] = Field(default=None, min_length=8, max_length=64)
+
+
+class CabBookingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    booking_reference: str
+    trip_type: str
+    cab_type: str
+    pickup_location: str
+    drop_location: str
+    pickup_date: date
+    pickup_time: str
+    distance_kms: float
+    passengers: int
+    full_name: str
+    email: str
+    phone: str
+    special_requirements: str
+    base_fare: float
+    convenience_fee: float
+    gst: float
+    total_amount: float
+    currency: str
+    status: str
+    created_at: datetime
+
+
 BookingDetail.model_rebuild()
 BookingAdminDetail.model_rebuild()
 CustomerAdminDetail.model_rebuild()

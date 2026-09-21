@@ -23,6 +23,7 @@ from .routes import account as account_router
 from .routes import admin as admin_router
 from .routes import auth as auth_router
 from .routes import bookings as bookings_router
+from .routes import cabs as cabs_router
 from .routes import destinations as destinations_router
 from .routes import enquiries as enquiries_router
 from .routes import hotels as hotels_router
@@ -42,6 +43,7 @@ def run_startup_migrations():
         if alembic_ini.exists():
             alembic_cfg = Config(str(alembic_ini))
             alembic_cfg.set_main_option("script_location", str(backend_dir / "app" / "migrations"))
+            # alembic uses configparser, which treats % as interpolation unless escaped.
             escaped_url = settings.database_url.replace("%", "%%")
             alembic_cfg.set_main_option("sqlalchemy.url", escaped_url)
             command.upgrade(alembic_cfg, "head")
@@ -142,6 +144,7 @@ app.include_router(oauth_router.router, prefix="/api/auth", tags=["auth"])
 app.include_router(account_router.router, prefix="/api/account", tags=["account"])
 app.include_router(hotels_router.router, prefix="/api/hotels", tags=["hotels"])
 app.include_router(trains_router.router, prefix="/api/trains", tags=["trains"])
+app.include_router(cabs_router.router, prefix="/api/cabs", tags=["cabs"])
 app.include_router(hotels_router.owner_router, prefix="/api/hotel-owner", tags=["hotel owner"])
 app.include_router(hotels_router.admin_router, prefix="/api/admin", tags=["admin hotels"])
 app.include_router(destinations_router.admin_router, prefix="/api/admin", tags=["admin destinations"])

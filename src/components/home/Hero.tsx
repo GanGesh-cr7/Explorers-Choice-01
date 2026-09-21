@@ -20,6 +20,8 @@ export function Hero() {
       router.push(`/packages${destination ? `?destination=${encodeURIComponent(destination)}` : ""}`);
     } else if (mode === "Hotels") {
       router.push(`/hotels${destination ? `?search=${encodeURIComponent(destination)}` : ""}`);
+    } else if (mode === "Cabs") {
+      router.push(`/cabs`);
     } else {
       router.push(`/contact?subject=${encodeURIComponent(`${mode} enquiry`)}`);
     }
@@ -53,7 +55,7 @@ export function Hero() {
 
           <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-2xl bg-ivory shadow-2xl shadow-forest-dark/30">
             <div className="flex overflow-x-auto border-b border-line px-3 sm:px-6" role="tablist" aria-label="Travel products">
-              {["Flights", "Hotels", "Holidays", "Trains"].map((item) => (
+              {[ "Flights", "Hotels", "Holidays", "Trains", "Cabs"].map((item) => (
                 <button
                   key={item}
                   type="button"
@@ -76,13 +78,13 @@ export function Hero() {
                     {item}
                   </label>
                 ))}
-                {mode !== "Flights" && <span className="font-semibold text-forest">{mode === "Holidays" ? "Curated journeys for every kind of explorer" : "Handpicked stays, ready when you are"}</span>}
+                {mode !== "Flights" && <span className="font-semibold text-forest">{mode === "Holidays" ? "Curated journeys for every kind of explorer" : mode === "Cabs" ? "Airport transfers, city rides & outstation cabs" : "Handpicked stays, ready when you are"}</span>}
               </div>
 
               <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_1fr_auto]">
                 <label className="flex min-h-16 flex-col justify-center rounded-xl border border-line bg-cream px-4 py-2 text-left focus-within:border-terracotta">
                   <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-charcoal-soft">{mode === "Flights" ? "From / To" : "Where do you want to go?"}</span>
-                  <input name="destination" required={mode !== "Trains"} placeholder={mode === "Flights" ? "Delhi, Mumbai or abroad" : "Search a destination"} className="mt-1 w-full bg-transparent text-sm font-semibold text-charcoal outline-none placeholder:text-charcoal-soft/60" />
+                  <input name="destination" required={mode !== "Trains" && mode !== "Cabs"} placeholder={mode === "Flights" ? "Delhi, Mumbai or abroad" : mode === "Cabs" ? "Pickup location" : "Search a destination"} className="mt-1 w-full bg-transparent text-sm font-semibold text-charcoal outline-none placeholder:text-charcoal-soft/60" />
                 </label>
                 <label className="flex min-h-16 flex-col justify-center rounded-xl border border-line bg-cream px-4 py-2 text-left focus-within:border-terracotta">
                   <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-charcoal-soft">Check in</span>
