@@ -1,10 +1,27 @@
-export const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_EXPLORERS_API_URL || "http://localhost:8000"
-).replace(/\/+$/, "").replace(/\/api$/, "");
+/**
+ * Get the backend base URL at runtime (not build time).
+ * This ensures Vercel's environment variable is always used, not a build-time default.
+ */
+export function getApiBaseUrl(): string {
+  const configured = typeof process !== "undefined" && typeof process.env !== "undefined"
+    ? process.env.NEXT_PUBLIC_EXPLORERS_API_URL
+    : undefined;
+  return (configured || "http://localhost:8000")
+    .replace(/\/+$/, "")
+    .replace(/\/api$/, "");
+}
 
 export function buildClientApiUrl(): string {
-  return `${API_BASE_URL}/api`;
+  return `${getApiBaseUrl()}/api`;
 }
+
+/**
+ * Backward compatibility: API_BASE_URL getter for direct access.
+ */
+Object.defineProperty(exports, 'API_BASE_URL', {
+  get: getApiBaseUrl,
+  configurable: true
+});
 
 export const CLIENT_API_URL = buildClientApiUrl();
 export const SERVER_API_URL = buildClientApiUrl();
