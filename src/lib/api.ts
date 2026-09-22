@@ -16,12 +16,8 @@ export function buildClientApiUrl(): string {
 }
 
 /**
- * Backward compatibility: API_BASE_URL getter for direct access.
+ * Lazy getters to prevent module initialization crashes.
+ * These are called on every access to ensure runtime env var resolution.
  */
-Object.defineProperty(exports, 'API_BASE_URL', {
-  get: getApiBaseUrl,
-  configurable: true
-});
-
 export const CLIENT_API_URL = buildClientApiUrl();
 export const SERVER_API_URL = buildClientApiUrl();
