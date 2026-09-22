@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { BookNowCta } from "@/components/cta/BookNowCta";
-import { SERVER_API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 import { stories as fallbackStories } from "@/data/stories";
 
 export const revalidate = 60;
@@ -26,7 +26,7 @@ type StoryOutput = {
 
 async function getStories(): Promise<StoryOutput[]> {
   try {
-    const res = await fetch(`${SERVER_API_URL}/customer-stories`, { next: { revalidate: 60 } });
+    const res = await fetch(`${getApiBaseUrl()}/api/customer-stories`, { next: { revalidate: 60 } });
     if (!res.ok) return fallbackStories as unknown as StoryOutput[];
     const data = await res.json();
     return data.map((d: Record<string, unknown>) => ({

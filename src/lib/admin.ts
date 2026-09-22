@@ -1,7 +1,7 @@
 import type { UserProfile } from "@/lib/auth";
 import type { BookingMode } from "@/lib/bookingMeta";
 
-import { CLIENT_API_URL as API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 export class AdminApiError extends Error {
   status: number;
@@ -15,7 +15,8 @@ export class AdminApiError extends Error {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(`${API_URL}${path}`, {
+    const apiBase = getApiBaseUrl();
+    response = await fetch(`${apiBase}/api${path}`, {
       credentials: "include",
       ...init,
       headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
@@ -436,7 +437,8 @@ export async function attachDocument(bookingId: number, documentType: string, ti
   form.append("file", file);
   let response: Response;
   try {
-    response = await fetch(`${API_URL}/admin/bookings/${bookingId}/documents`, { method: "POST", credentials: "include", body: form });
+    const apiBase = getApiBaseUrl();
+    response = await fetch(`${apiBase}/api/admin/bookings/${bookingId}/documents`, { method: "POST", credentials: "include", body: form });
   } catch {
     throw new AdminApiError("Could not reach the server. Check your connection and try again.", 0);
   }
@@ -463,7 +465,8 @@ export async function uploadPackageImage(file: File): Promise<{ url: string }> {
   form.append("file", file);
   let response: Response;
   try {
-    response = await fetch(`${API_URL}/admin/packages/upload-image`, { method: "POST", credentials: "include", body: form });
+    const apiBase = getApiBaseUrl();
+    response = await fetch(`${apiBase}/api/admin/packages/upload-image`, { method: "POST", credentials: "include", body: form });
   } catch {
     throw new AdminApiError("Could not reach the server. Check your connection and try again.", 0);
   }
@@ -483,11 +486,13 @@ export async function uploadPackageImage(file: File): Promise<{ url: string }> {
 export function packageImageUrl(path: string): string {
   if (!path) return "";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  return `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+  const apiBase = getApiBaseUrl();
+  return `${apiBase}/api${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
 export function adminDocumentUrl(documentId: number): string {
-  return `${API_URL}/admin/documents/${documentId}/download`;
+  const apiBase = getApiBaseUrl();
+  return `${apiBase}/api/admin/documents/${documentId}/download`;
 }
 
 export function formatMoneyAmount(amount: number, currency?: string): string {

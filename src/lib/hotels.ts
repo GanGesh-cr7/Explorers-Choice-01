@@ -1,6 +1,6 @@
 import type { Hotel } from "@/data/hotels";
 import { hotels as demoHotels } from "@/data/hotels";
-import { SERVER_API_URL as API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 type ApiHotel = {
   id: number;
@@ -41,7 +41,7 @@ function toHotel(api: ApiHotel): Hotel {
 
 export async function getHotelsFromApi(): Promise<Hotel[]> {
   try {
-    const response = await fetch(`${API_URL}/hotels`, {
+    const response = await fetch(`${getApiBaseUrl()}/api/hotels`, {
       next: { revalidate: 60 },
       signal: AbortSignal.timeout(1500),
     });

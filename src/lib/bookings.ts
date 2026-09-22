@@ -64,7 +64,7 @@ export type BookingOptionPackage = {
   is_active: boolean;
 };
 
-import { CLIENT_API_URL as API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 async function readError(response: Response): Promise<string> {
   try {
@@ -85,7 +85,7 @@ async function readError(response: Response): Promise<string> {
 }
 
 export async function fetchBookingPackages(): Promise<BookingOptionPackage[]> {
-  const response = await fetch(`${API_URL}/packages`, { next: { revalidate: 0 } });
+  const response = await fetch(`${getApiBaseUrl()}/api/packages`, { next: { revalidate: 0 } });
   if (!response.ok) return [];
   const body = (await response.json().catch(() => [])) as Array<Record<string, unknown>>;
   return body
@@ -119,7 +119,7 @@ export class BookingError extends Error {
 export async function submitBooking(payload: BookingPayload): Promise<BookingConfirmation> {
   let response: Response;
   try {
-    response = await fetch(`${API_URL}/bookings`, {
+    response = await fetch(`${getApiBaseUrl()}/api/bookings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -155,7 +155,7 @@ export async function submitBooking(payload: BookingPayload): Promise<BookingCon
 export async function getConfirmationByReference(reference: string): Promise<BookingConfirmation | null> {
   let response: Response;
   try {
-    response = await fetch(`${API_URL}/bookings/reference/${encodeURIComponent(reference)}`, {
+    response = await fetch(`${getApiBaseUrl()}/api/bookings/reference/${encodeURIComponent(reference)}`, {
       credentials: "include",
     });
   } catch {

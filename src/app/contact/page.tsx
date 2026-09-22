@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { CLIENT_API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 const fieldClasses =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-soft/60 focus:border-terracotta focus:outline-none";
@@ -31,7 +31,8 @@ export default function ContactPage() {
       return;
     }
     try {
-      const res = await fetch(`${CLIENT_API_URL}/enquiries`, {
+      const apiBase = getApiBaseUrl();
+      const res = await fetch(`${apiBase}/api/enquiries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -3,7 +3,7 @@ import { destinations as fallbackDestinations } from "@/data/destinations";
 import type { Package as CatalogPackage } from "@/data/packages";
 import { packages as fallbackPackages } from "@/data/packages";
 
-import { SERVER_API_URL as API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 export type ApiItineraryDay = {
   id?: number;
@@ -96,7 +96,8 @@ function toPackage(api: Record<string, unknown>, detail = false): CatalogPackage
 
 async function request<T>(path: string): Promise<T | null> {
   try {
-    const response = await fetch(`${API_URL}${path}`, {
+    const apiBase = getApiBaseUrl();
+    const response = await fetch(`${apiBase}/api${path}`, {
       next: { revalidate: 60 },
       signal: AbortSignal.timeout(1500),
     });

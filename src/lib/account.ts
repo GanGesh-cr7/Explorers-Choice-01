@@ -70,38 +70,38 @@ export type PackageDetail = {
   important_information: string;
 };
 
-import { CLIENT_API_URL as API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 export async function fetchMyBookings(): Promise<BookingSummary[]> {
-  const response = await fetch(`${API_URL}/account`, { credentials: "include" });
+  const response = await fetch(`${getApiBaseUrl()}/api/account`, { credentials: "include" });
   if (!response.ok) return [];
   return (await response.json()) as BookingSummary[];
 }
 
 export async function fetchBookingDetail(bookingId: number): Promise<BookingDetail> {
-  const response = await fetch(`${API_URL}/account/${bookingId}`, { credentials: "include" });
+  const response = await fetch(`${getApiBaseUrl()}/api/account/${bookingId}`, { credentials: "include" });
   if (!response.ok) throw new Error("Booking not found");
   return (await response.json()) as BookingDetail;
 }
 
 export async function fetchMyPayments(bookingId: number): Promise<PaymentRecord[]> {
-  const response = await fetch(`${API_URL}/account/${bookingId}/payments`, { credentials: "include" });
+  const response = await fetch(`${getApiBaseUrl()}/api/account/${bookingId}/payments`, { credentials: "include" });
   if (!response.ok) return [];
   return (await response.json()) as PaymentRecord[];
 }
 
 export async function fetchMyDocuments(bookingId: number): Promise<DocumentRecord[]> {
-  const response = await fetch(`${API_URL}/account/${bookingId}/documents`, { credentials: "include" });
+  const response = await fetch(`${getApiBaseUrl()}/api/account/${bookingId}/documents`, { credentials: "include" });
   if (!response.ok) return [];
   return (await response.json()) as DocumentRecord[];
 }
 
 export function buildDocumentDownloadUrl(documentId: number): string {
-  return `${API_URL}/account/documents/${documentId}/download`;
+  return `${getApiBaseUrl()}/api/account/documents/${documentId}/download`;
 }
 
 export async function fetchPackageDetail(slug: string): Promise<PackageDetail> {
-  const response = await fetch(`${API_URL}/packages/${slug}`, { credentials: "include" });
+  const response = await fetch(`${getApiBaseUrl()}/api/packages/${slug}`, { credentials: "include" });
   if (!response.ok) throw new Error("Package not found");
   return (await response.json()) as PackageDetail;
 }

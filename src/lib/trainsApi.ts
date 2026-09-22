@@ -1,4 +1,4 @@
-import { CLIENT_API_URL } from "./api";
+import { getApiBaseUrl } from "./api";
 
 export type StationInfo = {
   code: string;
@@ -127,7 +127,7 @@ export type LiveTrainStatus = {
 };
 
 export async function getStations(q: string = ""): Promise<StationInfo[]> {
-  const url = `${CLIENT_API_URL}/trains/stations?q=${encodeURIComponent(q)}`;
+  const url = `${getApiBaseUrl()}/api/trains/stations?q=${encodeURIComponent(q)}`;
   const res = await fetch(url, { cache: "no-store", credentials: "include" });
   if (!res.ok) return [];
   return res.json();
@@ -138,7 +138,7 @@ export async function searchTrains(
   toStation: string,
   date: string
 ): Promise<TrainScheduleItem[]> {
-  const url = `${CLIENT_API_URL}/trains/search?from_station=${encodeURIComponent(
+  const url = `${getApiBaseUrl()}/api/trains/search?from_station=${encodeURIComponent(
     fromStation
   )}&to_station=${encodeURIComponent(toStation)}&date=${encodeURIComponent(date)}`;
   const res = await fetch(url, { cache: "no-store", credentials: "include" });
@@ -152,7 +152,7 @@ export async function searchTrains(
 export async function createTrainBooking(
   payload: TrainBookingPayload
 ): Promise<TrainBookingConfirmation> {
-  const res = await fetch(`${CLIENT_API_URL}/trains/bookings`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/trains/bookings`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -166,7 +166,7 @@ export async function createTrainBooking(
 }
 
 export async function getPnrStatus(pnr: string): Promise<PnrStatus> {
-  const res = await fetch(`${CLIENT_API_URL}/trains/pnr/${encodeURIComponent(pnr)}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/trains/pnr/${encodeURIComponent(pnr)}`, {
     cache: "no-store",
     credentials: "include",
   });
@@ -179,7 +179,7 @@ export async function getPnrStatus(pnr: string): Promise<PnrStatus> {
 
 export async function getLiveTrainStatus(trainNumber: string): Promise<LiveTrainStatus> {
   const res = await fetch(
-    `${CLIENT_API_URL}/trains/live/${encodeURIComponent(trainNumber)}`,
+    `${getApiBaseUrl()}/api/trains/live/${encodeURIComponent(trainNumber)}`,
     { cache: "no-store", credentials: "include" }
   );
   if (!res.ok) {
@@ -193,7 +193,7 @@ export async function getTrainBookingByReference(
   reference: string
 ): Promise<TrainBookingConfirmation | null> {
   const res = await fetch(
-    `${CLIENT_API_URL}/trains/bookings/reference/${encodeURIComponent(reference)}`,
+    `${getApiBaseUrl()}/api/trains/bookings/reference/${encodeURIComponent(reference)}`,
     { cache: "no-store", credentials: "include" }
   );
   if (res.status === 404) return null;
@@ -202,7 +202,7 @@ export async function getTrainBookingByReference(
 }
 
 export async function getMyTrainBookings(): Promise<TrainBookingConfirmation[]> {
-  const res = await fetch(`${CLIENT_API_URL}/trains/my-bookings`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/trains/my-bookings`, {
     credentials: "include",
     cache: "no-store",
   });

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { adminApi, formatWhen, type Offer } from "@/lib/admin";
-import { CLIENT_API_URL } from "@/lib/api";
+import { getApiBaseUrl } from "@/lib/api";
 
 type PackageOption = { id: number; name: string };
 
@@ -30,7 +30,8 @@ export default function AdminOffersPage() {
   useEffect(load, [load]);
 
   useEffect(() => {
-    fetch(`${CLIENT_API_URL}/packages`, { credentials: "include" })
+    const apiBase = getApiBaseUrl();
+    fetch(`${apiBase}/api/packages`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((list: Array<{ id: number; name: string }>) => setPackages(list))
       .catch(() => setPackages([]));

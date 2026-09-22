@@ -1,4 +1,4 @@
-import { CLIENT_API_URL } from "./api";
+import { getApiBaseUrl } from "./api";
 
 export type CabTripType = "LOCAL" | "AIRPORT_TRANSFER" | "OUTSTATION";
 
@@ -135,7 +135,7 @@ export type CabBookingConfirmation = {
 export async function createCabBooking(
   payload: CabBookingPayload
 ): Promise<CabBookingConfirmation> {
-  const res = await fetch(`${CLIENT_API_URL}/cabs/bookings`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/cabs/bookings`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -152,7 +152,7 @@ export async function getCabBookingByReference(
   reference: string
 ): Promise<CabBookingConfirmation | null> {
   const res = await fetch(
-    `${CLIENT_API_URL}/cabs/bookings/reference/${encodeURIComponent(reference)}`,
+    `${getApiBaseUrl()}/api/cabs/bookings/reference/${encodeURIComponent(reference)}`,
     { cache: "no-store", credentials: "include" }
   );
   if (res.status === 404) return null;
@@ -161,7 +161,7 @@ export async function getCabBookingByReference(
 }
 
 export async function getMyCabBookings(): Promise<CabBookingConfirmation[]> {
-  const res = await fetch(`${CLIENT_API_URL}/cabs/my-bookings`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/cabs/my-bookings`, {
     credentials: "include",
     cache: "no-store",
   });
