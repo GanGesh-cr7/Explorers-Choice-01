@@ -16,8 +16,13 @@ export function buildClientApiUrl(): string {
 }
 
 /**
- * Lazy getters to prevent module initialization crashes.
- * These are called on every access to ensure runtime env var resolution.
+ * Export functions instead of constants so they're evaluated at call time, not import time.
+ * This ensures Vercel's runtime environment variable is always used.
  */
+export function getClientApiUrl(): string {
+  return buildClientApiUrl();
+}
+
+// Backward-compatible exports for existing code
 export const CLIENT_API_URL = buildClientApiUrl();
 export const SERVER_API_URL = buildClientApiUrl();

@@ -46,7 +46,8 @@ function apiErrorMessage(body: unknown, fallback: string): string {
 }
 
 export async function registerUser(payload: RegisterPayload): Promise<UserProfile> {
-  const response = await fetch(`${API_URL}/auth/register`, {
+  const apiBase = getApiBaseUrl();
+  const response = await fetch(`${apiBase}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -58,7 +59,8 @@ export async function registerUser(payload: RegisterPayload): Promise<UserProfil
 }
 
 export async function loginUser(payload: LoginPayload): Promise<UserProfile> {
-  const response = await fetch(`${API_URL}/auth/login`, {
+  const apiBase = getApiBaseUrl();
+  const response = await fetch(`${apiBase}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -70,7 +72,8 @@ export async function loginUser(payload: LoginPayload): Promise<UserProfile> {
 }
 
 export async function logoutUser(): Promise<void> {
-  await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" });
+  const apiBase = getApiBaseUrl();
+  await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
 }
 
 export async function fetchCurrentUser(): Promise<UserProfile | null> {
@@ -87,7 +90,8 @@ export async function fetchCurrentUser(): Promise<UserProfile | null> {
 }
 
 export async function updateProfile(updates: Partial<Pick<UserProfile, "full_name" | "phone" | "country">>): Promise<UserProfile> {
-  const response = await fetch(`${API_URL}/auth/me`, {
+  const apiBase = getApiBaseUrl();
+  const response = await fetch(`${apiBase}/api/auth/me`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -99,7 +103,8 @@ export async function updateProfile(updates: Partial<Pick<UserProfile, "full_nam
 }
 
 export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
-  const response = await fetch(`${API_URL}/auth/change-password`, {
+  const apiBase = getApiBaseUrl();
+  const response = await fetch(`${apiBase}/api/auth/change-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -110,7 +115,8 @@ export async function changePassword(currentPassword: string, newPassword: strin
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
-  const response = await fetch(`${API_URL}/auth/forgot-password`, {
+  const apiBase = getApiBaseUrl();
+  const response = await fetch(`${apiBase}/api/auth/forgot-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -123,7 +129,8 @@ export async function requestPasswordReset(email: string): Promise<void> {
 }
 
 export async function resetPassword(token: string, password: string): Promise<void> {
-  const response = await fetch(`${API_URL}/auth/reset-password`, {
+  const apiBase = getApiBaseUrl();
+  const response = await fetch(`${apiBase}/api/auth/reset-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
