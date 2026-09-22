@@ -63,6 +63,8 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://127.0.0.1:3001",
         "http://localhost:3100",
+        "https://www.explorerschoice.online",
+        "https://explorerschoice.online",
     ]
 
     # Allow browser origins served from any localhost or private-LAN address on
@@ -164,6 +166,10 @@ class Settings(BaseSettings):
                 raise ValueError(
                     "COOKIE_SECURE must be true in production to prevent cleartext session cookies."
                 )
+
+        for origin in ("https://www.explorerschoice.online", "https://explorerschoice.online"):
+            if origin not in self.cors_origins:
+                self.cors_origins.append(origin)
         return self
 
 

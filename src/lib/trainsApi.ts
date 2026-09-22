@@ -128,7 +128,7 @@ export type LiveTrainStatus = {
 
 export async function getStations(q: string = ""): Promise<StationInfo[]> {
   const url = `${CLIENT_API_URL}/trains/stations?q=${encodeURIComponent(q)}`;
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: "no-store", credentials: "include" });
   if (!res.ok) return [];
   return res.json();
 }
@@ -141,7 +141,7 @@ export async function searchTrains(
   const url = `${CLIENT_API_URL}/trains/search?from_station=${encodeURIComponent(
     fromStation
   )}&to_station=${encodeURIComponent(toStation)}&date=${encodeURIComponent(date)}`;
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: "no-store", credentials: "include" });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || "Failed to search trains");
@@ -168,6 +168,7 @@ export async function createTrainBooking(
 export async function getPnrStatus(pnr: string): Promise<PnrStatus> {
   const res = await fetch(`${CLIENT_API_URL}/trains/pnr/${encodeURIComponent(pnr)}`, {
     cache: "no-store",
+    credentials: "include",
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -179,7 +180,7 @@ export async function getPnrStatus(pnr: string): Promise<PnrStatus> {
 export async function getLiveTrainStatus(trainNumber: string): Promise<LiveTrainStatus> {
   const res = await fetch(
     `${CLIENT_API_URL}/trains/live/${encodeURIComponent(trainNumber)}`,
-    { cache: "no-store" }
+    { cache: "no-store", credentials: "include" }
   );
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -193,7 +194,7 @@ export async function getTrainBookingByReference(
 ): Promise<TrainBookingConfirmation | null> {
   const res = await fetch(
     `${CLIENT_API_URL}/trains/bookings/reference/${encodeURIComponent(reference)}`,
-    { cache: "no-store" }
+    { cache: "no-store", credentials: "include" }
   );
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Could not load train booking");

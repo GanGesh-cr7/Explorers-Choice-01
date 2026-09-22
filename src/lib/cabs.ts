@@ -153,7 +153,7 @@ export async function getCabBookingByReference(
 ): Promise<CabBookingConfirmation | null> {
   const res = await fetch(
     `${CLIENT_API_URL}/cabs/bookings/reference/${encodeURIComponent(reference)}`,
-    { cache: "no-store" }
+    { cache: "no-store", credentials: "include" }
   );
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Could not load cab booking");

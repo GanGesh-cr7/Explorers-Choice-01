@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { adminApi, formatWhen, type CustomerStory } from "@/lib/admin";
+import { CLIENT_API_URL } from "@/lib/api";
 
 type PackageOption = { id: number; name: string };
 
@@ -29,7 +30,7 @@ export default function AdminStoriesPage() {
   useEffect(load, [load]);
 
   useEffect(() => {
-    fetch(`${(process.env.NEXT_PUBLIC_EXPLORERS_API_URL ?? "http://localhost:8000/api").replace(/\/$/, "")}/packages`, { credentials: "include" })
+    fetch(`${CLIENT_API_URL}/packages`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((list: Array<{ id: number; name: string }>) => setPackages(list))
       .catch(() => setPackages([]));

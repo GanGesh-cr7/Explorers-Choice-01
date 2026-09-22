@@ -101,7 +101,7 @@ export function buildDocumentDownloadUrl(documentId: number): string {
 }
 
 export async function fetchPackageDetail(slug: string): Promise<PackageDetail> {
-  const response = await fetch(`${API_URL}/packages/${slug}`);
+  const response = await fetch(`${API_URL}/packages/${slug}`, { credentials: "include" });
   if (!response.ok) throw new Error("Package not found");
   return (await response.json()) as PackageDetail;
 }
