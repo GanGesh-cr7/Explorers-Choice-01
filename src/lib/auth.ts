@@ -24,7 +24,7 @@ export type LoginPayload = {
   password: string;
 };
 
-import { CLIENT_API_URL as API_URL } from "@/lib/api";
+import { API_BASE_URL, CLIENT_API_URL as API_URL } from "@/lib/api";
 
 function apiErrorMessage(body: unknown, fallback: string): string {
   if (!body || typeof body !== "object" || !("detail" in body)) return fallback;
@@ -75,7 +75,9 @@ export async function logoutUser(): Promise<void> {
 
 export async function fetchCurrentUser(): Promise<UserProfile | null> {
   try {
-    const response = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
+    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      credentials: "include",
+    });
     if (!response.ok) return null;
     return (await response.json()) as UserProfile;
   } catch {

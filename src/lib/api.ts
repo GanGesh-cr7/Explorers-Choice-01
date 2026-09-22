@@ -1,10 +1,9 @@
+export const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_EXPLORERS_API_URL || "http://localhost:8000"
+).replace(/\/+$/, "").replace(/\/api$/, "");
+
 export function buildClientApiUrl(): string {
-  const configured = process.env.NEXT_PUBLIC_EXPLORERS_API_URL;
-  if (configured) {
-    const base = configured.replace(/\/$/, "");
-    return base.endsWith("/api") ? base : `${base}/api`;
-  }
-  return "http://localhost:8000/api";
+  return `${API_BASE_URL}/api`;
 }
 
 export const CLIENT_API_URL = buildClientApiUrl();
