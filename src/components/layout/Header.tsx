@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -20,15 +21,16 @@ const navLinks = [
 
 export function Logo({ dark = false }: { dark?: boolean }) {
   return (
-    <Link href="/" className="group inline-flex items-baseline gap-0.5" aria-label="Explorers Choice home">
-      <span
-        className={`font-display text-2xl tracking-tight ${
-          dark ? "text-ivory" : "text-forest"
-        }`}
-      >
-        Explorers
-      </span>
-      <span className="text-terracotta font-display text-2xl">Choice</span>
+    <Link href="/" className="group inline-flex shrink-0 items-center bg-forest-dark px-1" aria-label="Explorers Choice home">
+      <Image
+        src={dark ? "/images/explorers-choice-logo-white.svg" : "/images/explorers-choice-logo.svg"}
+        alt="Explorers Choice Tours"
+        width={1421}
+        height={592}
+        priority
+        sizes="(min-width: 640px) 230px, 180px"
+        className="h-12 w-[180px] object-contain sm:h-16 sm:w-[230px]"
+      />
     </Link>
   );
 }

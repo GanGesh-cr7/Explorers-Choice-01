@@ -30,12 +30,26 @@ export const metadata: Metadata = {
     description:
       "Carefully chosen journeys, memorable places, and a travel team that handles the details.",
     siteName: "Explorers Choice",
+    locale: "en_US",
+    images: [
+      {
+        url: "/images/og-cover.png",
+        width: 1200,
+        height: 630,
+        alt: "Explorers Choice Tours — Journeys Worth Remembering",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Explorers Choice — Journeys Worth Remembering",
     description:
       "Carefully chosen journeys, memorable places, and a travel team that handles the details.",
+    images: ["/images/og-cover.png"],
+  },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
   },
   robots: {
     index: true,
