@@ -9,6 +9,7 @@ import { PackageCard } from "@/components/cards/PackageCard";
 import { BookNowCta } from "@/components/cta/BookNowCta";
 import { destinations, getDestinationBySlug } from "@/data/destinations";
 import { getPackagesByDestination } from "@/data/packages";
+import { BackButton } from "@/components/ui/BackButton";
 
 export function generateStaticParams() {
   return destinations.map((d) => ({ slug: d.slug }));
@@ -33,6 +34,16 @@ export default async function DestinationDetail({ params }: { params: Promise<{ 
 
   return (
     <>
+      {/* Back Button */}
+      <div className="absolute top-4 left-4 z-20">
+        <BackButton
+          label=""
+          variant="ghost"
+          size="sm"
+          className="!bg-white/20 !text-white hover:!bg-white/30 backdrop-blur-sm"
+        />
+      </div>
+
       {/* Hero */}
       <section className="relative h-[70vh] min-h-[440px] overflow-hidden">
         <Image

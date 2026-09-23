@@ -54,7 +54,7 @@ export function Hero() {
           </div>
 
           <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-2xl bg-ivory shadow-2xl shadow-forest-dark/30">
-            <div className="flex overflow-x-auto border-b border-line px-3 sm:px-6" role="tablist" aria-label="Travel products">
+            <div className="flex border-b border-line px-2 sm:overflow-x-auto sm:px-6" role="tablist" aria-label="Travel products">
               {[ "Flights", "Hotels", "Holidays", "Trains", "Cabs"].map((item) => (
                 <button
                   key={item}
@@ -62,7 +62,7 @@ export function Hero() {
                   role="tab"
                   aria-selected={mode === item}
                   onClick={() => setMode(item)}
-                  className={`relative shrink-0 px-4 py-4 text-sm font-bold transition-colors sm:px-6 ${mode === item ? "text-forest" : "text-charcoal-soft hover:text-forest"}`}
+                  className={`relative min-w-0 flex-1 px-2 py-4 text-xs font-bold transition-colors sm:flex-none sm:px-6 sm:text-sm ${mode === item ? "text-forest" : "text-charcoal-soft hover:text-forest"}`}
                 >
                   {item}
                   {mode === item && <span className="absolute inset-x-4 bottom-0 h-1 rounded-t-full bg-terracotta sm:inset-x-6" />}

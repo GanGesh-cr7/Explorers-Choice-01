@@ -279,6 +279,15 @@ def download_document(
 
 
 # ---------------------------------------------------------------------------
+# Public customer stories (no auth required)
+# ---------------------------------------------------------------------------
+@router.get("/customer-stories", response_model=list[schemas.CustomerStoryRead])
+def public_customer_stories(db: Session = Depends(get_db)):
+    """List published customer stories for public display."""
+    return crud.list_customer_stories(db, published_only=True)
+
+
+# ---------------------------------------------------------------------------
 # Offers + customer stories (CONTENT permission)
 # ---------------------------------------------------------------------------
 @router.get("/offers", response_model=list[schemas.OfferRead])
