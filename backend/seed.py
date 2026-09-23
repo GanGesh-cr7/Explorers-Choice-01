@@ -258,9 +258,9 @@ DESTINATIONS = [
             "Rameswaram and the land's-end sunrise at Kanyakumari. Home ground for "
             "Explorers Choice — expect local hosts, temple food and timeless craft."
         ),
-        "hero_image": "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1569257088808-a3b739fac9d7?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1600100598826-6b4f6ffe5d32?auto=format&fit=crop&w=1200&q=80",
         ],
@@ -673,9 +673,9 @@ PACKAGES = [
         "duration_nights": 5,
         "starting_price": 36500.00,
         "currency": "INR",
-        "hero_image": "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1600&q=80",
+        "hero_image": "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1600&q=80",
         "gallery": [
-            "https://images.unsplash.com/photo-1583430788308-9fe346a8e869?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1600100598826-6b4f6ffe5d32?auto=format&fit=crop&w=1200&q=80",
         ],
         "highlights": ["Meenakshi temple", "Chettinad mansions", "Rameswaram shore", "Kanyakumari sunrise"],
@@ -843,6 +843,13 @@ def seed() -> None:
         for d in DESTINATIONS:
             existing = db.scalars(select(Destination).where(Destination.slug == d["slug"])).first()
             if existing:
+                if existing.hero_image and "photo-1583430788308-9fe346a8e869" in existing.hero_image:
+                    existing.hero_image = d["hero_image"]
+                if existing.gallery:
+                    existing.gallery = [
+                        d["gallery"][0] if "photo-1583430788308-9fe346a8e869" in image else image
+                        for image in existing.gallery
+                    ]
                 slug_to_destination[d["slug"]] = existing
                 continue
             destination = Destination(**d)
@@ -856,6 +863,15 @@ def seed() -> None:
                 select(Package).where(Package.slug == package_data["slug"])
             ).first()
             if existing_pkg:
+                if existing_pkg.hero_image and "photo-1583430788308-9fe346a8e869" in existing_pkg.hero_image:
+                    existing_pkg.hero_image = package_data["hero_image"]
+                if existing_pkg.gallery:
+                    existing_pkg.gallery = [
+                        package_data["gallery"][0]
+                        if "photo-1583430788308-9fe346a8e869" in image
+                        else image
+                        for image in existing_pkg.gallery
+                    ]
                 continue
 
             data = package_data.copy()
