@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -7,9 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { PackageCard } from "@/components/cards/PackageCard";
 import { BookNowCta } from "@/components/cta/BookNowCta";
-import { destinations, getDestinationBySlug } from "@/data/destinations";
-import { getPackagesByDestination } from "@/data/packages";
+import { destinations } from "@/data/destinations";
+import { getDestinationFromApi, getPackagesFromApi } from "@/lib/catalog";
 import { BackButton } from "@/components/ui/BackButton";
+import { SmartImage } from "@/components/ui/SmartImage";
 
 export function generateStaticParams() {
   return destinations.map((d) => ({ slug: d.slug }));
@@ -17,7 +17,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const destination = getDestinationBySlug(slug);
+  const destination = await getDestinationFromApi(slug);
   if (!destination) return { title: "Destination not found" };
   return {
     title: destination.name,
@@ -27,10 +27,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function DestinationDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const destination = getDestinationBySlug(slug);
+  const destination = await getDestinationFromApi(slug);
   if (!destination) notFound();
 
-  const relatedPackages = getPackagesByDestination(slug);
+  const packages = await getPackagesFromApi();
+  const relatedPackages = packages.filter((pkg) => pkg.destinationSlug === slug);
 
   return (
     <>
@@ -46,7 +47,7 @@ export default async function DestinationDetail({ params }: { params: Promise<{ 
 
       {/* Hero */}
       <section className="relative h-[70vh] min-h-[440px] overflow-hidden">
-        <Image
+        <SmartImage
           src={destination.image}
           alt={destination.name}
           fill

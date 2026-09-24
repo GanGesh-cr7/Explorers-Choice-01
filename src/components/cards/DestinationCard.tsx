@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Destination } from "@/data/destinations";
+import { SmartImage } from "@/components/ui/SmartImage";
 
 export function DestinationCard({ destination }: { destination: Destination }) {
   return (
@@ -9,7 +9,7 @@ export function DestinationCard({ destination }: { destination: Destination }) {
       className="group block overflow-hidden rounded-2xl border border-line bg-cream shadow-card transition-transform duration-200 hover:-translate-y-1"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-sand">
-        <Image
+        <SmartImage
           src={destination.image}
           alt={destination.name}
           fill

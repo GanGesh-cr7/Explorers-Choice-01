@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
@@ -7,6 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { PackageCard } from "@/components/cards/PackageCard";
 import { BookNowCta } from "@/components/cta/BookNowCta";
+import { SmartImage } from "@/components/ui/SmartImage";
 import { getPackageFromApi, getPackagesFromApi } from "@/lib/catalog";
 import { packages as fallbackPackages } from "@/data/packages";
 
@@ -40,7 +40,7 @@ export default async function PackageDetail({ params }: { params: Promise<{ slug
     <>
       {/* Hero */}
       <section className="relative h-[65vh] min-h-[400px] overflow-hidden">
-        <Image
+        <SmartImage
           src={pkg.image}
           alt={pkg.name}
           fill

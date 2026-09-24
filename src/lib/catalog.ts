@@ -5,6 +5,20 @@ import { packages as fallbackPackages } from "@/data/packages";
 
 import { getApiBaseUrl } from "@/lib/api";
 
+const MEENAKSHI_TEMPLE_IMAGE =
+  "https://images.unsplash.com/photo-1692173248120-59547c3d4653?auto=format&fit=crop&w=1600&q=80";
+
+const IMAGE_FALLBACKS: Record<string, string> = {
+  "https://images.unsplash.com/photo-1506461883276-59f2ebe600eb": MEENAKSHI_TEMPLE_IMAGE,
+  "https://images.unsplash.com/photo-1583430788308-9fe346a8e869": MEENAKSHI_TEMPLE_IMAGE,
+  "https://images.unsplash.com/photo-1600100598826-6b4f6ffe5d32": MEENAKSHI_TEMPLE_IMAGE,
+};
+
+function resolveImage(url: string): string {
+  if (!url) return "";
+  return IMAGE_FALLBACKS[url.split("?")[0]] ?? url;
+}
+
 export type ApiItineraryDay = {
   id?: number;
   package_id?: number;
@@ -48,7 +62,7 @@ function toDestination(api: Record<string, unknown>): Destination {
     country: String(api.country),
     tagline: String(api.short_description ?? ""),
     description: String(api.description ?? ""),
-    image: String(api.hero_image ?? ""),
+    image: resolveImage(String(api.hero_image ?? "")),
     region: String(api.region ?? ""),
     bestTime: String(api.best_time ?? ""),
     highlights: Array.isArray(api.highlights) ? api.highlights.map(String) : [],
@@ -71,7 +85,7 @@ function toPackage(api: Record<string, unknown>, detail = false): CatalogPackage
     duration: `${durationDays} days`,
     startingPrice: Number(api.starting_price ?? 0),
     highlights: Array.isArray(api.highlights) ? api.highlights.map(String) : [],
-    image: String(api.hero_image ?? ""),
+    image: resolveImage(String(api.hero_image ?? "")),
     summary: String(api.short_description || api.description || ""),
     itinerary: itinerary.map((day) => ({
       day: `Day ${day.day_number}`,
@@ -88,7 +102,7 @@ function toPackage(api: Record<string, unknown>, detail = false): CatalogPackage
     importantInformation: Array.isArray(api.important_information)
       ? api.important_information.map(String)
       : [],
-    gallery: Array.isArray(api.gallery) ? api.gallery.map(String) : [],
+    gallery: Array.isArray(api.gallery) ? api.gallery.map(String).map(resolveImage) : [],
     itineraryDays: detail ? itinerary : [],
     faqs: detail ? faqs : [],
   };

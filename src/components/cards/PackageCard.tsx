@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Package } from "@/data/packages";
+import { SmartImage } from "@/components/ui/SmartImage";
 
 export function formatPrice(price: number) {
   return price.toLocaleString("en-IN");
@@ -10,7 +10,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-cream shadow-card transition-transform duration-200 hover:-translate-y-1">
       <Link href={`/packages/${pkg.slug}`} className="relative block aspect-[3/2] overflow-hidden bg-sand">
-        <Image
+        <SmartImage
           src={pkg.image}
           alt={pkg.name}
           fill
